@@ -24,7 +24,8 @@ describe("ingressos", () => {
   });
 
   it("monta buscas alternativas", () => {
-    const [gyg, google] = ticketSearchLinks("Coliseu", "Roma");
+    const [gyg, civitatis, google] = ticketSearchLinks("Coliseu", "Roma");
+    expect(new URL(civitatis.url).searchParams.get("q")).toBe("site:civitatis.com Coliseu Roma");
     expect(new URL(gyg.url).searchParams.get("q")).toBe("Coliseu Roma");
     expect(new URL(google.url).searchParams.get("q")).toBe("Coliseu Roma ingresso site oficial");
   });

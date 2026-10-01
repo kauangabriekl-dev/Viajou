@@ -283,6 +283,10 @@ export function ticketSearchLinks(name: string, city?: string | null) {
       url: `https://www.getyourguide.com.br/s/?${new URLSearchParams({ q })}`,
     },
     {
+      label: "Passeios no Civitatis",
+      url: `https://www.google.com/search?${new URLSearchParams({ q: `site:civitatis.com ${q}` })}`,
+    },
+    {
       label: "Procurar o site oficial",
       url: `https://www.google.com/search?${new URLSearchParams({ q: `${q} ingresso site oficial` })}`,
     },

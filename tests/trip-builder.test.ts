@@ -69,4 +69,34 @@ describe("buildTrip", () => {
     expect(trip.days).toHaveLength(3);
     expect(trip.days.every((d) => d.stops.length > 0)).toBe(true);
   });
+
+  it("preenche os dias com atrações reais e nunca com dia livre", () => {
+    const attractions = [
+      { name: "Castelo de São Jorge", kind: "historia" as const },
+      { name: "Miradouro da Senhora do Monte", kind: "mirante" as const },
+      { name: "Praça do Comércio", kind: "praca" as const },
+      { name: "Museu Nacional do Azulejo", kind: "museu" as const },
+      { name: "Jardim da Estrela", kind: "parque" as const },
+    ];
+    const trip = buildTrip({
+      days: 6,
+      profile: readProfile("Gosto de história e de tirar fotos"),
+      attractions,
+      destinationName: "Lisboa",
+    });
+    expect(trip.days).toHaveLength(6);
+    expect(trip.source).toBe("atracoes");
+    const titles = trip.days.flatMap((d) => d.stops.map((st) => st.title));
+    expect(titles).toContain("Castelo de São Jorge");
+    expect(trip.days.map((d) => d.title).join(" ")).not.toMatch(/Dia livre/);
+    expect(trip.days.every((d) => d.stops.length > 0)).toBe(true);
+    // Cada atração aparece uma vez nos dias de atrações (as voltas vêm depois).
+    const firstPass = trip.days.slice(0, 2).flatMap((d) => d.stops.map((st) => st.title));
+    expect(new Set(firstPass).size).toBe(firstPass.length);
+  });
+
+  it("sem nenhum dado ainda sugere passeios concretos", () => {
+    const trip = buildTrip({ days: 2, profile: readProfile(""), destinationName: "Agra" });
+    expect(trip.days.map((d) => d.title).join(" ")).toMatch(/Passeio a pé por Agra/);
+  });
 });

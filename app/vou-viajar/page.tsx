@@ -29,7 +29,14 @@ import {
   type ReadyItinerary,
 } from "@/lib/ready-itineraries";
 import { buildMetadata } from "@/lib/seo";
-import { buildTrip, interestLabel, readProfile, type PlacePick } from "@/lib/trip-builder";
+import attractionsData from "@/data/attractions.json";
+import {
+  buildTrip,
+  interestLabel,
+  readProfile,
+  type AttractionPick,
+  type PlacePick,
+} from "@/lib/trip-builder";
 import { formatCents, formatDateRange, pluralize, tripDays } from "@/utils/format";
 
 export const metadata = buildMetadata({
@@ -45,6 +52,16 @@ function rankByTags<T extends { tags: string[] }>(items: T[], prefs: string[]): 
   const score = (i: T) => i.tags.filter((t) => prefs.includes(t)).length;
   return [...items].sort((a, b) => score(b) - score(a));
 }
+
+const attractionKindLabel: Record<AttractionPick["kind"], string> = {
+  mirante: "Mirante",
+  museu: "Museu",
+  praia: "Praia",
+  parque: "Parque e natureza",
+  mercado: "Mercado",
+  praca: "Praça e passeio a pé",
+  historia: "Patrimônio histórico",
+};
 
 const FOOD =
   /restaurante|almo[cç]o|jantar|caf[eé]|mercado|comida|fondue|tapas|frutos do mar|parrilla|feira|comida de rua/i;
@@ -105,7 +122,17 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
 
   const profile = readProfile(plan.about, plan.preferences);
   const picks: PlacePick[] = places.map((p) => ({ name: p.name, type: p.type, slug: p.slug }));
-  const trip = buildTrip({ days, profile, ready, places: picks, styles });
+  const attractions =
+    (attractionsData as Record<string, AttractionPick[]>)[plan.destination.slug] ?? [];
+  const trip = buildTrip({
+    days,
+    profile,
+    ready,
+    places: picks,
+    attractions,
+    styles,
+    destinationName: plan.destination.name,
+  });
 
   const rankedItineraries = rankByTags(
     [...itineraries].sort((a, b) => Math.abs(a.days_count - days) - Math.abs(b.days_count - days)),
@@ -117,7 +144,11 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
     .slice(0, 9);
 
   const readyStops = ready?.days.flatMap((d) => d.stops) ?? [];
-  const toVisit = readyStops.filter((s) => !FOOD.test(`${s.title} ${s.note}`)).slice(0, 6);
+  const toVisit = (
+    readyStops.length
+      ? readyStops.filter((s) => !FOOD.test(`${s.title} ${s.note}`))
+      : attractions.map((a) => ({ title: a.name, note: attractionKindLabel[a.kind] }))
+  ).slice(0, 6);
   const toEat = readyStops.filter((s) => FOOD.test(`${s.title} ${s.note}`)).slice(0, 4);
   const stayHref = `/hospedagem?${new URLSearchParams({
     onde: plan.destination.name,

@@ -1223,6 +1223,180 @@
         "licenseUrl": "https://commons.wikimedia.org/wiki/File:Abbaye.de.Montmartre.1625.Gallica.Etienne.Martellange.jpeg",
         "source": "https://commons.wikimedia.org/wiki/File:Abbaye.de.Montmartre.1625.Gallica.Etienne.Martellange.jpeg"
       }
+    ],
+    "nova-york-5-dias": [
+      {
+        "src": "/images/roteiros/nova-york-5-dias-dia-1.jpg",
+        "title": "View of Empire State Building from Rockefeller Center New York City dllu (cropped)",
+        "author": "Dllu",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu_(cropped).jpg"
+      },
+      {
+        "src": "/images/roteiros/nova-york-5-dias-dia-2.jpg",
+        "title": "Liberty Island - NYC - Usa2011",
+        "author": "Sidvics",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Liberty_Island_-_NYC_-_Usa2011.jpg"
+      },
+      {
+        "src": "/images/roteiros/nova-york-5-dias-dia-3.jpg",
+        "title": "Manhattan 10 2017",
+        "author": "Tim.Reckmann",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Manhattan_10_2017.jpg"
+      },
+      {
+        "src": "/images/roteiros/nova-york-5-dias-dia-4.jpg",
+        "title": "Downtown Manhattan From Aeroplane",
+        "author": "dsearls - Flickr.com",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Downtown_Manhattan_From_Aeroplane.jpg"
+      },
+      {
+        "src": "/images/roteiros/nova-york-5-dias-dia-5.jpg",
+        "title": "NYC diamond district",
+        "author": "ChrisRuvolo",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:NYC_diamond_district.jpg"
+      }
+    ],
+    "foz-do-iguacu-3-dias": [
+      {
+        "src": "/images/roteiros/foz-do-iguacu-3-dias-dia-1.jpg",
+        "title": "Foz do Iguaçu - panoramio (cropped)",
+        "author": "enioprado",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Foz_do_Igua%C3%A7u_-_panoramio_(cropped).jpg"
+      },
+      {
+        "src": "/images/roteiros/foz-do-iguacu-3-dias-dia-2.jpg",
+        "title": "Aerial Foz de Iguaçu 26 Nov 2005",
+        "author": "Mariordo (Mario Roberto Durán Ortiz)",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Aerial_Foz_de_Igua%C3%A7u_26_Nov_2005.jpg"
+      },
+      {
+        "src": "/images/roteiros/foz-do-iguacu-3-dias-dia-3.jpg",
+        "title": "Itaipu geral",
+        "author": "Jonas de Carvalho",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Itaipu_geral.jpg"
+      }
+    ],
+    "bariloche-4-dias": [
+      {
+        "src": "/images/roteiros/bariloche-4-dias-dia-1.jpg",
+        "title": "Llao Llao Peninsula",
+        "author": "Fernando",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Llao_Llao_Peninsula.jpg"
+      },
+      {
+        "src": "/images/roteiros/bariloche-4-dias-dia-2.jpg",
+        "title": "Catedral desde el Lago Nahuel Huapi - panoramio",
+        "author": "enzofloyd",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Catedral_desde_el_Lago_Nahuel_Huapi_-_panoramio.jpg"
+      },
+      {
+        "src": "/images/roteiros/bariloche-4-dias-dia-3.jpg",
+        "title": "View from the Golf course at Llao Llao",
+        "author": "David",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:View_from_the_Golf_course_at_Llao_Llao.jpg"
+      },
+      null
+    ],
+    "jericoacoara-4-dias": [
+      {
+        "src": "/images/roteiros/jericoacoara-4-dias-dia-1.jpg",
+        "title": "Jericoacoara - Duna do Por do Sol - PARQUE NACIONAL DE JERICOACOARA - 1",
+        "author": "Antônio Marcos Capobianco",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Jericoacoara_-_Duna_do_Por_do_Sol_-_PARQUE_NACIONAL_DE_JERICOACOARA_-_1.jpg"
+      },
+      {
+        "src": "/images/roteiros/jericoacoara-4-dias-dia-2.jpg",
+        "title": "Anderps 067",
+        "author": "Anderps",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Anderps_067.JPG"
+      },
+      {
+        "src": "/images/roteiros/jericoacoara-4-dias-dia-3.jpg",
+        "title": "Pedra Furada de Jericoacoara - Ceará",
+        "author": "Rosanetur from Rio de Janeiro, Brazil",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Pedra_Furada_de_Jericoacoara_-_Cear%C3%A1.jpg"
+      },
+      null
+    ],
+    "campos-do-jordao-3-dias": [
+      {
+        "src": "/images/roteiros/campos-do-jordao-3-dias-dia-1.jpg",
+        "title": "Vista área da Vila Capivari, Campos do Jordão (cropped)",
+        "author": "Governo do Estado de São Paulo",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Vista_%C3%A1rea_da_Vila_Capivari,_Campos_do_Jord%C3%A3o_(cropped).jpg"
+      },
+      {
+        "src": "/images/roteiros/campos-do-jordao-3-dias-dia-2.jpg",
+        "title": "Araucárias2",
+        "author": "Ana Taemi",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Arauc%C3%A1rias2.jpg"
+      },
+      {
+        "src": "/images/roteiros/campos-do-jordao-3-dias-dia-3.jpg",
+        "title": "Monumento Natural Estadual da Pedra do Baú Rodrigo Rosa (01)",
+        "author": "Rodrigorosa85",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Monumento_Natural_Estadual_da_Pedra_do_Ba%C3%BA_Rodrigo_Rosa_(01).jpg"
+      }
+    ],
+    "amsterda-3-dias": [
+      {
+        "src": "/images/roteiros/amsterda-3-dias-dia-1.jpg",
+        "title": "Amsterdam, Vondelpark, at the pond-2",
+        "author": "Dguendel",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Amsterdam,_Vondelpark,_at_the_pond-2.jpg"
+      },
+      {
+        "src": "/images/roteiros/amsterda-3-dias-dia-2.jpg",
+        "title": "Eerste Leliedwarsstraat",
+        "author": "Jvhertum",
+        "license": "Public domain",
+        "licenseUrl": "https://commons.wikimedia.org/wiki/File:Eerste_Leliedwarsstraat.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Eerste_Leliedwarsstraat.jpg"
+      },
+      {
+        "src": "/images/roteiros/amsterda-3-dias-dia-3.jpg",
+        "title": "Zaanstad Zaanse Schans 22",
+        "author": "Zairon",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Zaanstad_Zaanse_Schans_22.jpg"
+      }
     ]
   }
 }
