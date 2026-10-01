@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ItineraryCard } from "@/components/cards/ItineraryCard";
+import { ReadyItineraryCard } from "@/components/cards/ReadyItineraryCard";
+import { SectionHeading } from "@/components/home/SectionHeading";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getDestination, listDestinationOptions, listItineraries } from "@/lib/queries";
+import { READY_ITINERARIES, readyForDestination } from "@/lib/ready-itineraries";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -21,6 +24,8 @@ export default async function ItinerariesPage({ searchParams }: PageProps<"/rote
     listDestinationOptions(),
   ]);
 
+  const ready = destination ? readyForDestination(destination.slug) : READY_ITINERARIES.slice(0, 3);
+
   return (
     <Container>
       <PageHeader
@@ -35,6 +40,28 @@ export default async function ItinerariesPage({ searchParams }: PageProps<"/rote
           </Link>
         }
       />
+      {ready.length > 0 && (
+        <section
+          aria-labelledby="prontos-title"
+          className="mb-12 rounded-[var(--radius-card)] bg-espuma p-5 sm:p-8"
+        >
+          <SectionHeading
+            id="prontos-title"
+            lead="Não sabe por onde começar?"
+            title="Roteiros prontos"
+            href="/roteiros/prontos"
+            linkLabel={`Ver todos os ${READY_ITINERARIES.length}`}
+          />
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {ready.map((r) => (
+              <li key={r.slug}>
+                <ReadyItineraryCard itinerary={r} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      <h2 className="mb-4 text-xl font-bold text-petroleo">Roteiros da comunidade</h2>
       <nav aria-label="Filtrar por destino" className="relative -mx-4 mb-8 overflow-x-auto px-4">
         <ul className="flex gap-2">
           <li>

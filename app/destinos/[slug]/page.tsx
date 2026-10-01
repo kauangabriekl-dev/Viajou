@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AchadoCard } from "@/components/achados/AchadoCard";
+import { ReadyItineraryCard } from "@/components/cards/ReadyItineraryCard";
 import { ItineraryCard } from "@/components/cards/ItineraryCard";
 import { PlaceCard } from "@/components/cards/PlaceCard";
 import { PostCard } from "@/components/cards/PostCard";
@@ -27,6 +28,7 @@ import {
   listPlaces,
   listPosts,
 } from "@/lib/queries";
+import { readyForDestination } from "@/lib/ready-itineraries";
 import { buildMetadata } from "@/lib/seo";
 import { photoUrl } from "@/lib/storage";
 import type { PlaceType, TipTopic } from "@/types/database";
@@ -267,6 +269,18 @@ export default async function DestinationPage({
             href={`/roteiros?destino=${destination.slug}`}
             linkLabel="Ver todos"
           />
+          {readyForDestination(destination.slug).length > 0 && (
+            <ul
+              className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              aria-label="Roteiros prontos"
+            >
+              {readyForDestination(destination.slug).map((r) => (
+                <li key={r.slug}>
+                  <ReadyItineraryCard itinerary={r} />
+                </li>
+              ))}
+            </ul>
+          )}
           {itineraries.length ? (
             <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {itineraries.map((i) => (
