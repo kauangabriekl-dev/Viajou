@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { Clock, Lock } from "lucide-react";
 import { TripAssistant } from "@/components/assistant/TripAssistant";
+import attractionsData from "@/data/attractions.json";
+import { normalizePlace } from "@/lib/geo-search";
 import { CopyItineraryButton, OwnerActions } from "@/components/itineraries/ItineraryOwnerActions";
 import { LikeButton, SaveButton } from "@/components/social/Buttons";
 import { ShareButton } from "@/components/social/ShareButton";
@@ -48,6 +50,18 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
   const mentions = it.days.flatMap((day) =>
     day.stops.map((s) => s.place?.name ?? s.custom_name ?? "").filter(Boolean),
   );
+
+  // Dia sem paradas não fica vazio: sugere pontos turísticos do destino que ainda não estão no roteiro.
+  const inTrip = new Set(mentions.map(normalizePlace));
+  const spare = (
+    (attractionsData as Record<string, { name: string }[]>)[destination?.slug ?? ""] ?? []
+  ).filter((a) => !inTrip.has(normalizePlace(a.name)));
+  let spareTurn = 0;
+  const suggestFor = () => {
+    const pick = spare.slice(spareTurn, spareTurn + 2);
+    spareTurn += 2;
+    return pick;
+  };
 
   return (
     <Container className="max-w-6xl space-y-8 py-8 sm:py-12">
@@ -170,7 +184,20 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
                       ))}
                     </ol>
                   ) : (
-                    <p className="mt-3 text-sm text-tinta-soft">Dia livre.</p>
+                    (() => {
+                      const ideas = suggestFor();
+                      return (
+                        <div className="mt-3 rounded-xl bg-espuma p-3 text-sm">
+                          <p className="text-tinta-soft">Ainda sem programação neste dia.</p>
+                          {ideas.length > 0 && (
+                            <p className="mt-1">
+                              <span className="font-semibold">Ideias em {destination?.name}: </span>
+                              {ideas.map((i) => i.name).join(" e ")}.
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })()
                   )}
                 </li>
               ))}
