@@ -1,9 +1,7 @@
 import { PostForm } from "@/components/posts/PostForm";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { requireSession } from "@/lib/auth";
 import { listDestinationOptions, listPlaceOptions } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 
 export const metadata = {
   ...buildMetadata({ title: "Publicar uma viagem", path: "/criar" }),
@@ -11,13 +9,9 @@ export const metadata = {
 };
 
 export default async function CreatePostPage({ searchParams }: PageProps<"/criar">) {
-  if (!(await createClientIfConfigured())) return <SetupNotice what="o formulário de publicação" />;
-  const { supabase } = await requireSession("/criar");
+  await requireSession("/criar");
   const params = await searchParams;
-  const [destinations, places] = await Promise.all([
-    listDestinationOptions(supabase),
-    listPlaceOptions(supabase),
-  ]);
+  const [destinations, places] = await Promise.all([listDestinationOptions(), listPlaceOptions()]);
   const initial =
     typeof params.destino === "string" && destinations.some((d) => d.id === params.destino)
       ? params.destino

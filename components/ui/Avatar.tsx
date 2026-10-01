@@ -24,7 +24,7 @@ export function Avatar({ name, src, size = "md" }: AvatarProps) {
   }
   return (
     <span
-      className={`${sizes[size]} inline-flex shrink-0 items-center justify-center rounded-full bg-atlantico-100 font-bold text-atlantico`}
+      className={`${sizes[size]} inline-flex shrink-0 items-center justify-center rounded-full bg-petroleo-100 font-bold text-petroleo`}
       aria-hidden="true"
     >
       {initials(name)}

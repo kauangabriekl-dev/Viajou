@@ -11,14 +11,12 @@ import { ShareButton } from "@/components/social/ShareButton";
 import { Avatar } from "@/components/ui/Avatar";
 import { Container } from "@/components/ui/Container";
 import { RatingStars } from "@/components/ui/RatingStars";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { getSession } from "@/lib/auth";
 import { deletePost } from "@/lib/actions/posts";
 import { placeTypeLabels, tagLabel } from "@/lib/labels";
 import { countOf, getPost, listComments, viewerPostState } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
 import { photoUrl } from "@/lib/storage";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import {
   formatCents,
   formatDateRange,
@@ -27,10 +25,15 @@ import {
   tripDays,
 } from "@/utils/format";
 
+const BEACH_LABELS = {
+  favorita: "Mais gostou",
+  recomenda: "Recomenda",
+  nao_voltaria: "Não voltaria",
+} as const;
+
 async function load(id: string) {
   if (!z.uuid().safeParse(id).success) return null;
-  const supabase = await createClientIfConfigured();
-  return supabase ? { supabase, post: await getPost(supabase, id) } : null;
+  return { post: await getPost(id) };
 }
 
 export async function generateMetadata({ params }: PageProps<"/viagens/[id]">) {
@@ -51,16 +54,15 @@ export async function generateMetadata({ params }: PageProps<"/viagens/[id]">) {
 
 export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
   const { id } = await params;
-  if (!(await createClientIfConfigured())) return <SetupNotice what="esta viagem" />;
   const loaded = await load(id);
   if (!loaded?.post) notFound();
-  const { supabase, post } = loaded;
+  const { post } = loaded;
 
   const session = await getSession();
   const viewerId = session?.userId ?? null;
   const [comments, state] = await Promise.all([
-    listComments(supabase, post.id),
-    viewerPostState(supabase, viewerId ?? undefined, [post.id]),
+    listComments(post.id),
+    viewerPostState(viewerId ?? undefined, [post.id]),
   ]);
   const days = tripDays(post.trip_start, post.trip_end);
   const dates = formatDateRange(post.trip_start, post.trip_end);
@@ -85,7 +87,7 @@ export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
 
         {post.destination && (
           <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
-            <MapPin aria-hidden="true" className="h-6 w-6 text-atlantico" />
+            <MapPin aria-hidden="true" className="h-6 w-6 text-petroleo" />
             <Link href={`/destinos/${post.destination.slug}`} className="hover:underline">
               {post.destination.name}, {post.destination.state}
             </Link>
@@ -122,7 +124,7 @@ export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
         <dl className="flex flex-wrap gap-x-6 gap-y-3 rounded-[var(--radius-card)] bg-white p-5 text-sm ring-1 ring-linha">
           {dates && (
             <div className="flex items-center gap-2">
-              <CalendarDays aria-hidden="true" className="h-4 w-4 text-atlantico" />
+              <CalendarDays aria-hidden="true" className="h-4 w-4 text-petroleo" />
               <dt className="sr-only">Datas</dt>
               <dd>
                 {dates}
@@ -132,7 +134,7 @@ export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
           )}
           {spent && (
             <div className="flex items-center gap-2">
-              <Wallet aria-hidden="true" className="h-4 w-4 text-atlantico" />
+              <Wallet aria-hidden="true" className="h-4 w-4 text-petroleo" />
               <dt>Gasto total:</dt>
               <dd className="font-bold">{spent}</dd>
             </div>
@@ -151,7 +153,7 @@ export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
               <dd>
                 <Link
                   href={`/lugares/${post.hotel.slug}`}
-                  className="font-semibold text-atlantico underline"
+                  className="font-semibold text-petroleo underline"
                 >
                   {post.hotel.name}
                 </Link>
@@ -173,7 +175,7 @@ export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
                 <li key={place.slug}>
                   <Link
                     href={`/lugares/${place.slug}`}
-                    className="inline-flex rounded-full bg-white px-3 py-1.5 text-sm ring-1 ring-linha hover:ring-atlantico"
+                    className="inline-flex rounded-full bg-white px-3 py-1.5 text-sm ring-1 ring-linha hover:ring-petroleo"
                   >
                     {place.name}{" "}
                     <span className="ml-1 text-tinta-soft">· {placeTypeLabels[place.type]}</span>
@@ -184,12 +186,37 @@ export default async function PostPage({ params }: PageProps<"/viagens/[id]">) {
           </section>
         )}
 
+        {post.beachPicks.length > 0 && (
+          <section aria-labelledby="praias-title" className="space-y-3">
+            <h2 id="praias-title" className="font-semibold text-petroleo">
+              Sobre as praias
+            </h2>
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {post.beachPicks.map((b) => (
+                <div key={b.kind} className="rounded-2xl bg-white p-4 ring-1 ring-linha">
+                  <dt className="text-xs font-semibold tracking-wider text-agua-700 uppercase">
+                    {BEACH_LABELS[b.kind]}
+                  </dt>
+                  <dd className="mt-1">
+                    <Link
+                      href={`/lugares/${b.place.slug}`}
+                      className="font-semibold text-tinta hover:underline"
+                    >
+                      {b.place.name}
+                    </Link>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
         {post.tags.length > 0 && (
           <ul className="flex flex-wrap gap-2" aria-label="Estilo da viagem">
             {post.tags.map((t) => (
               <li
                 key={t}
-                className="rounded-full bg-atlantico-100 px-3 py-1 text-xs font-semibold text-atlantico"
+                className="rounded-full bg-petroleo-100 px-3 py-1 text-xs font-semibold text-petroleo"
               >
                 {tagLabel(t)}
               </li>

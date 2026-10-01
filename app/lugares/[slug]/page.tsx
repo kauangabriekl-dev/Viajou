@@ -11,7 +11,6 @@ import { Container } from "@/components/ui/Container";
 import { DemoBadge } from "@/components/ui/DemoBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RatingStars } from "@/components/ui/RatingStars";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { Tabs } from "@/components/ui/Tabs";
 import { getSession } from "@/lib/auth";
 import { placeTypeLabels } from "@/lib/labels";
@@ -23,13 +22,11 @@ import {
   listReviews,
 } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import { pluralize } from "@/utils/format";
 
 export async function generateMetadata({ params }: PageProps<"/lugares/[slug]">) {
   const { slug } = await params;
-  const supabase = await createClientIfConfigured();
-  const place = supabase ? await getPlace(supabase, slug) : null;
+  const place = await getPlace(slug);
   if (!place) return buildMetadata({ title: "Lugar", path: `/lugares/${slug}` });
   return buildMetadata({
     title: `${place.name}${place.city ? ` em ${place.city}` : ""}: avaliações de viajantes`,
@@ -41,20 +38,18 @@ export async function generateMetadata({ params }: PageProps<"/lugares/[slug]">)
 
 export default async function PlacePage({ params, searchParams }: PageProps<"/lugares/[slug]">) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return <SetupNotice what="este lugar" />;
 
-  const place = await getPlace(supabase, slug);
+  const place = await getPlace(slug);
   if (!place) notFound();
 
   const session = await getSession();
   const tab = query.aba === "reclamacoes" || query.aba === "publicacoes" ? query.aba : "avaliacoes";
 
   const [reviews, complaints, posts, categories] = await Promise.all([
-    listReviews(supabase, { placeId: place.id }),
-    listComplaints(supabase, { placeId: place.id }),
-    tab === "publicacoes" ? listPostsByPlace(supabase, place.id, 12) : Promise.resolve([]),
-    getReviewCategories(supabase, place.type),
+    listReviews({ placeId: place.id }),
+    listComplaints({ placeId: place.id }),
+    tab === "publicacoes" ? listPostsByPlace(place.id, 12) : Promise.resolve([]),
+    getReviewCategories(place.type),
   ]);
   const viewerId = session?.userId ?? null;
   const alreadyReviewed = reviews.some((r) => r.user_id === viewerId);
@@ -129,13 +124,13 @@ export default async function PlacePage({ params, searchParams }: PageProps<"/lu
             <h2 className="font-extrabold">Informações</h2>
             {(place.address || place.city) && (
               <p className="flex gap-2">
-                <MapPin aria-hidden="true" className="h-4 w-4 shrink-0 text-atlantico" />
+                <MapPin aria-hidden="true" className="h-4 w-4 shrink-0 text-petroleo" />
                 {[place.address, place.city, place.state].filter(Boolean).join(", ")}
               </p>
             )}
             {place.phone && (
               <p className="flex gap-2">
-                <Phone aria-hidden="true" className="h-4 w-4 shrink-0 text-atlantico" />
+                <Phone aria-hidden="true" className="h-4 w-4 shrink-0 text-petroleo" />
                 <a href={`tel:${place.phone}`} className="underline">
                   {place.phone}
                 </a>
@@ -143,7 +138,7 @@ export default async function PlacePage({ params, searchParams }: PageProps<"/lu
             )}
             {place.website && (
               <p className="flex gap-2">
-                <ExternalLink aria-hidden="true" className="h-4 w-4 shrink-0 text-atlantico" />
+                <ExternalLink aria-hidden="true" className="h-4 w-4 shrink-0 text-petroleo" />
                 <a
                   href={place.website}
                   target="_blank"

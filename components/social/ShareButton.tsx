@@ -30,7 +30,7 @@ export function ShareButton({ title, path }: { title: string; path: string }) {
     <button
       type="button"
       onClick={share}
-      className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-tinta-soft hover:bg-atlantico-100 hover:text-atlantico"
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-tinta-soft hover:bg-petroleo-100 hover:text-petroleo"
     >
       <Share2 aria-hidden="true" className="h-5 w-5" />
       <span className="sr-only sm:not-sr-only" aria-live="polite">

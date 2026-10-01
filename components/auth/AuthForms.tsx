@@ -44,7 +44,7 @@ export function SignInForm({ next }: { next: string }) {
       </SubmitButton>
       <p className="text-center text-sm text-tinta-soft">
         Ainda não tem conta?{" "}
-        <Link href="/cadastro" className="font-semibold text-atlantico underline">
+        <Link href="/cadastro" className="font-semibold text-petroleo underline">
           Criar conta
         </Link>
       </p>
@@ -76,7 +76,7 @@ export function SignUpForm() {
         hint="Seu endereço público: viajou/perfil/username. Letras minúsculas, números e _."
         errors={e("username")}
       >
-        <div className="flex items-center rounded-xl border border-linha bg-white focus-within:border-atlantico focus-within:ring-2 focus-within:ring-atlantico/20">
+        <div className="flex items-center rounded-xl border border-linha bg-white focus-within:border-petroleo focus-within:ring-2 focus-within:ring-petroleo/20">
           <span className="pl-3.5 text-tinta-soft" aria-hidden="true">
             @
           </span>
@@ -127,7 +127,7 @@ export function SignUpForm() {
       </SubmitButton>
       <p className="text-center text-sm text-tinta-soft">
         Já tem conta?{" "}
-        <Link href="/login" className="font-semibold text-atlantico underline">
+        <Link href="/login" className="font-semibold text-petroleo underline">
           Entrar
         </Link>
       </p>

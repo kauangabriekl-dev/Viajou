@@ -3,10 +3,8 @@ import { ItineraryCard } from "@/components/cards/ItineraryCard";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { getDestination, listDestinationOptions, listItineraries } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 
 export const metadata = buildMetadata({
   title: "Roteiros",
@@ -15,14 +13,12 @@ export const metadata = buildMetadata({
 });
 
 export default async function ItinerariesPage({ searchParams }: PageProps<"/roteiros">) {
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return <SetupNotice what="os roteiros" />;
   const params = await searchParams;
   const slug = typeof params.destino === "string" ? params.destino : undefined;
-  const destination = slug ? await getDestination(supabase, slug) : null;
+  const destination = slug ? await getDestination(slug) : null;
   const [itineraries, destinations] = await Promise.all([
-    listItineraries(supabase, { destinationId: destination?.id, limit: 48, publicOnly: true }),
-    listDestinationOptions(supabase),
+    listItineraries({ destinationId: destination?.id, limit: 48, publicOnly: true }),
+    listDestinationOptions(),
   ]);
 
   return (
@@ -33,7 +29,7 @@ export default async function ItinerariesPage({ searchParams }: PageProps<"/rote
         actions={
           <Link
             href="/criar/roteiro"
-            className="rounded-full bg-atlantico px-5 py-2.5 text-sm font-bold text-white hover:bg-atlantico-900"
+            className="rounded-full bg-petroleo px-5 py-2.5 text-sm font-bold text-white hover:bg-petroleo-900"
           >
             Criar roteiro
           </Link>
@@ -45,7 +41,7 @@ export default async function ItinerariesPage({ searchParams }: PageProps<"/rote
             <Link
               href="/roteiros"
               aria-current={!destination ? "page" : undefined}
-              className="inline-flex rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 ring-linha aria-[current=page]:bg-atlantico aria-[current=page]:text-white"
+              className="inline-flex rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 ring-linha aria-[current=page]:bg-petroleo aria-[current=page]:text-white"
             >
               Todos
             </Link>
@@ -55,7 +51,7 @@ export default async function ItinerariesPage({ searchParams }: PageProps<"/rote
               <Link
                 href={`/roteiros?destino=${d.slug}`}
                 aria-current={destination?.id === d.id ? "page" : undefined}
-                className="inline-flex rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 ring-linha aria-[current=page]:bg-atlantico aria-[current=page]:text-white"
+                className="inline-flex rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 ring-linha aria-[current=page]:bg-petroleo aria-[current=page]:text-white"
               >
                 {d.name}
               </Link>

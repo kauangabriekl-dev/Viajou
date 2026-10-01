@@ -82,7 +82,7 @@ export function ImageUploader({ name, label, max, withAlt, errors }: ImageUpload
       />
       <label
         htmlFor={`${name}-picker`}
-        className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-linha bg-white px-4 py-6 font-semibold text-atlantico peer-focus-visible:outline-3 peer-focus-visible:outline-maracuja hover:border-atlantico"
+        className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-linha bg-white px-4 py-6 font-semibold text-petroleo peer-focus-visible:outline-3 peer-focus-visible:outline-agua hover:border-petroleo"
       >
         <ImagePlus aria-hidden="true" className="h-5 w-5" />
         {items.length ? "Adicionar mais" : "Escolher imagens"}

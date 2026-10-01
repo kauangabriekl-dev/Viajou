@@ -21,10 +21,10 @@ export function Scene({ kind, className = "" }: { kind: SceneKind; className?: s
       aria-hidden="true"
     >
       <rect width="320" height="180" fill={kind === "mountain" ? "#e3eef2" : "#cfe6ee"} />
-      <circle cx={kind === "city" ? 250 : 230} cy="62" r="24" fill="var(--color-maracuja)" />
+      <circle cx={kind === "city" ? 250 : 230} cy="62" r="24" fill="var(--color-sol)" />
       {kind === "beach" && (
         <>
-          <path d="M0 108h320v72H0z" fill="var(--color-atlantico)" />
+          <path d="M0 108h320v72H0z" fill="var(--color-petroleo)" />
           <path d="M0 118c40-8 80 8 120 0s80-8 120 0 60 8 80 4v58H0z" fill="#1c6f8f" />
           <path d="M0 150c60-12 140-10 200 2s100 8 120 4v24H0z" fill="#f1e1b8" />
           <path
@@ -49,9 +49,9 @@ export function Scene({ kind, className = "" }: { kind: SceneKind; className?: s
           <path d="M0 132 60 70l40 34 50-58 60 86z" fill="var(--color-restinga)" />
           <path
             d="M150 132h16v-40h14v40h10V80h18v52h12v-28h16v28h84v48H150z"
-            fill="var(--color-atlantico-900)"
+            fill="var(--color-petroleo-900)"
           />
-          <path d="M0 132h320v48H0z" fill="var(--color-atlantico)" />
+          <path d="M0 132h320v48H0z" fill="var(--color-petroleo)" />
           <path
             d="M0 146c50-6 100 6 160 0s110-6 160 0"
             stroke="#5fa3bd"

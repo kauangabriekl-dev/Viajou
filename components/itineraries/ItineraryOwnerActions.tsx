@@ -7,7 +7,7 @@ import { ConfirmAction } from "@/components/social/ConfirmAction";
 import { copyItinerary, deleteItinerary, setItineraryVisibility } from "@/lib/actions/itineraries";
 
 const btn =
-  "inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-tinta-soft hover:bg-atlantico-100 hover:text-atlantico disabled:opacity-60";
+  "inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-tinta-soft hover:bg-petroleo-100 hover:text-petroleo disabled:opacity-60";
 
 export function CopyItineraryButton({ id, signedIn }: { id: string; signedIn: boolean }) {
   const [pending, startTransition] = useTransition();

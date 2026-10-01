@@ -6,7 +6,6 @@ import { PostCard } from "@/components/cards/PostCard";
 import { Avatar } from "@/components/ui/Avatar";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { Tabs } from "@/components/ui/Tabs";
 import { requireSession } from "@/lib/auth";
 import { markNotificationsRead } from "@/lib/actions/social";
@@ -22,7 +21,6 @@ import {
   listTripPlans,
 } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import type { Complaint, Itinerary, Notification, Post } from "@/types/database";
 import type { TripPlanRow } from "@/lib/queries";
 import { formatCents, formatDateRange, formatRelativeDate, pluralize } from "@/utils/format";
@@ -40,8 +38,7 @@ function notificationHref(n: Notification) {
 }
 
 export default async function AccountPage({ searchParams }: PageProps<"/minha-conta">) {
-  if (!(await createClientIfConfigured())) return <SetupNotice what="sua conta" />;
-  const { supabase, userId, profile } = await requireSession("/minha-conta");
+  const { userId, profile } = await requireSession("/minha-conta");
   const query = await searchParams;
   const tab: Tab = TABS.includes(query.aba as Tab) ? (query.aba as Tab) : "feed";
 
@@ -56,31 +53,33 @@ export default async function AccountPage({ searchParams }: PageProps<"/minha-co
   async function loadTab(): Promise<TabData> {
     switch (tab) {
       case "feed": {
-        const ids = await listFollowingIds(supabase, userId);
+        const ids = await listFollowingIds(userId);
         return {
-          posts: ids.length ? await listPosts(supabase, { userIds: ids, limit: 30 }) : [],
+          posts: ids.length ? await listPosts({ userIds: ids, limit: 30 }) : [],
           following: ids.length,
         };
       }
       case "salvos": {
         const [postIds, itineraryIds] = await Promise.all([
-          listSavedPostIds(supabase, userId),
-          listSavedItineraryIds(supabase, userId),
+          listSavedPostIds(userId),
+          listSavedItineraryIds(userId),
         ]);
         const [posts, itineraries] = await Promise.all([
-          postIds.length ? listPosts(supabase, { ids: postIds, limit: 100 }) : [],
-          itineraryIds.length ? listItineraries(supabase, { ids: itineraryIds, limit: 100 }) : [],
+          postIds.length ? listPosts({ ids: postIds, limit: 100 }) : [],
+          itineraryIds.length
+            ? listItineraries({ ids: itineraryIds, limit: 100, viewerId: userId })
+            : [],
         ]);
         return { posts, itineraries };
       }
       case "roteiros":
-        return { itineraries: await listItineraries(supabase, { userId, limit: 100 }) };
+        return { itineraries: await listItineraries({ userId, limit: 100, viewerId: userId }) };
       case "notificacoes":
-        return { notifications: await listNotifications(supabase, userId) };
+        return { notifications: await listNotifications(userId) };
       case "reclamacoes":
-        return { complaints: await listComplaints(supabase, { userId, limit: 50 }) };
+        return { complaints: await listComplaints({ userId, limit: 50 }) };
       case "viagens":
-        return { plans: await listTripPlans(supabase, userId) };
+        return { plans: await listTripPlans(userId) };
     }
   }
   const data = await loadTab();
@@ -207,7 +206,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/minha-co
         <section className="max-w-2xl space-y-4" aria-label="Notificações">
           {unread > 0 && (
             <form action={markNotificationsRead}>
-              <button type="submit" className="text-sm font-semibold text-atlantico underline">
+              <button type="submit" className="text-sm font-semibold text-petroleo underline">
                 Marcar todas como lidas ({unread})
               </button>
             </form>
@@ -218,7 +217,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/minha-co
                 <li key={n.id}>
                   <Link
                     href={notificationHref(n)}
-                    className={`flex items-center gap-3 px-4 py-3 hover:bg-espuma ${n.read_at ? "" : "bg-atlantico-100/40"}`}
+                    className={`flex items-center gap-3 px-4 py-3 hover:bg-espuma ${n.read_at ? "" : "bg-petroleo-100/40"}`}
                   >
                     <Avatar
                       name={n.actor?.full_name ?? "VIAJOU"}
@@ -272,7 +271,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/minha-co
               <li key={p.id}>
                 <Link
                   href={`/vou-viajar?plano=${p.id}`}
-                  className="block space-y-1 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha hover:ring-atlantico"
+                  className="block space-y-1 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha hover:ring-petroleo"
                 >
                   <p className="text-lg font-extrabold">{p.destination.name}</p>
                   <p className="text-sm text-tinta-soft">
@@ -281,7 +280,7 @@ export default async function AccountPage({ searchParams }: PageProps<"/minha-co
                     {p.budget_cents !== null && ` · até ${formatCents(p.budget_cents)}`}
                   </p>
                   {p.preferences.length > 0 && (
-                    <p className="text-xs text-atlantico">
+                    <p className="text-xs text-petroleo">
                       {p.preferences.map(tagLabel).join(", ")}
                     </p>
                   )}

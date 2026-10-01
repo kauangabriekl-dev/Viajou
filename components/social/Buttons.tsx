@@ -47,7 +47,7 @@ export function SaveButton({
       icon={(active) => (
         <Bookmark
           aria-hidden="true"
-          className={`h-5 w-5 ${active ? "fill-atlantico text-atlantico" : ""}`}
+          className={`h-5 w-5 ${active ? "fill-petroleo text-petroleo" : ""}`}
         />
       )}
     />

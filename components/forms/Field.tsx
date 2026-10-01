@@ -33,7 +33,7 @@ export function Field({ id, label, hint, errors, children, optional }: FieldProp
 }
 
 export const inputClass =
-  "block w-full rounded-xl border border-linha bg-white px-3.5 py-2.5 text-tinta placeholder:text-tinta-soft/70 focus:border-atlantico focus:ring-2 focus:ring-atlantico/20 focus:outline-none aria-invalid:border-red-600";
+  "block w-full rounded-xl border border-linha bg-white px-3.5 py-2.5 text-tinta placeholder:text-tinta-soft/70 focus:border-petroleo focus:ring-2 focus:ring-petroleo/20 focus:outline-none aria-invalid:border-red-600";
 
 export function describedBy(id: string, errors?: string[], hint?: string) {
   if (errors?.length) return `${id}-error`;

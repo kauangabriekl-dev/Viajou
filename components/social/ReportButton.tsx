@@ -62,7 +62,7 @@ export function ReportButton({ targetType, targetId, signedIn }: ReportButtonPro
                   name="reason"
                   value={value}
                   required
-                  className="accent-atlantico"
+                  className="accent-petroleo"
                 />
                 {text}
               </label>

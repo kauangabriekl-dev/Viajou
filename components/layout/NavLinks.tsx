@@ -14,6 +14,7 @@ export function DesktopNav() {
   const items = [
     { href: "/explorar", label: "Explorar" },
     { href: "/destinos", label: "Destinos" },
+    { href: "/achados", label: "Achadinhos" },
     { href: "/roteiros", label: "Roteiros" },
     { href: "/vou-viajar", label: "Vou viajar" },
   ];
@@ -28,7 +29,7 @@ export function DesktopNav() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                  active ? "bg-atlantico-100 text-atlantico" : "text-tinta-soft hover:text-tinta"
+                  active ? "bg-petroleo-100 text-petroleo" : "text-tinta-soft hover:text-tinta"
                 }`}
               >
                 {item.label}
@@ -59,7 +60,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${
-                  active ? "text-atlantico" : "text-tinta-soft"
+                  active ? "text-petroleo" : "text-tinta-soft"
                 }`}
               >
                 <Icon aria-hidden="true" className="h-6 w-6" strokeWidth={active ? 2.4 : 1.8} />

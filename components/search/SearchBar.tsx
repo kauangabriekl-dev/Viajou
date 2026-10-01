@@ -26,7 +26,7 @@ export function SearchBar({
           large ? "p-2 pl-5" : "p-1.5 pl-4"
         }`}
       >
-        <Search aria-hidden="true" className="h-5 w-5 shrink-0 text-atlantico" />
+        <Search aria-hidden="true" className="h-5 w-5 shrink-0 text-petroleo" />
         <input
           id="busca-global"
           name="q"
@@ -42,7 +42,7 @@ export function SearchBar({
         <button
           type="submit"
           aria-label="Buscar"
-          className={`inline-flex shrink-0 items-center justify-center rounded-full bg-maracuja font-bold text-tinta hover:bg-maracuja-600 ${
+          className={`inline-flex shrink-0 items-center justify-center rounded-full bg-agua font-bold text-tinta hover:bg-agua-600 ${
             large ? "h-12 w-12 sm:h-auto sm:w-auto sm:px-5 sm:py-3" : "px-4 py-2 text-sm"
           }`}
         >

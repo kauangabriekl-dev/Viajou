@@ -27,7 +27,7 @@ export function ReviewCard({ review, viewerId, showPlace }: ReviewCardProps) {
       {showPlace && review.place && (
         <Link
           href={`/lugares/${review.place.slug}`}
-          className="text-sm font-bold text-atlantico hover:underline"
+          className="text-sm font-bold text-petroleo hover:underline"
         >
           {review.place.name}
         </Link>

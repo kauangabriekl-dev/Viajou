@@ -7,8 +7,8 @@ import type { Complaint, ComplaintStatus } from "@/types/database";
 import { formatRelativeDate } from "@/utils/format";
 
 const statusStyle: Record<ComplaintStatus, string> = {
-  pending: "bg-maracuja/20 text-tinta",
-  answered: "bg-atlantico-100 text-atlantico",
+  pending: "bg-agua/20 text-tinta",
+  answered: "bg-petroleo-100 text-petroleo",
   resolved: "bg-restinga/15 text-restinga",
   closed: "bg-linha text-tinta-soft",
 };
@@ -38,7 +38,7 @@ export function ComplaintCard({
       {showPlace && complaint.place && (
         <Link
           href={`/lugares/${complaint.place.slug}?aba=reclamacoes`}
-          className="text-sm font-bold text-atlantico hover:underline"
+          className="text-sm font-bold text-petroleo hover:underline"
         >
           {complaint.place.name}
         </Link>
@@ -70,8 +70,8 @@ export function ComplaintCard({
         </ul>
       )}
       {complaint.responses.map((r) => (
-        <div key={r.id} className="space-y-1 rounded-2xl bg-atlantico-100/60 p-4">
-          <p className="flex items-center gap-1.5 text-sm font-bold text-atlantico">
+        <div key={r.id} className="space-y-1 rounded-2xl bg-petroleo-100/60 p-4">
+          <p className="flex items-center gap-1.5 text-sm font-bold text-petroleo">
             <BadgeCheck aria-hidden="true" className="h-4 w-4" />
             Resposta de {r.business?.name ?? "estabelecimento"}
           </p>

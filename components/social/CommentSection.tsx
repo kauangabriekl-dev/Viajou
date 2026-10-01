@@ -58,7 +58,7 @@ export function CommentSection({ postId, comments, viewerId }: CommentSectionPro
         <p className="rounded-xl bg-white p-4 text-sm ring-1 ring-linha">
           <Link
             href={`/login?next=/viagens/${postId}`}
-            className="font-semibold text-atlantico underline"
+            className="font-semibold text-petroleo underline"
           >
             Entre na sua conta
           </Link>{" "}

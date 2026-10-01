@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { exec, sqlArray } from "@/lib/db/client";
 import { friendlyError, type ActionResult } from "@/lib/errors";
 import { fieldErrors, tripPlanSchema } from "@/lib/validation";
 
@@ -32,21 +33,25 @@ export async function createTripPlan(
   const session = await getSession();
   if (!session) return { ok: false, error: "Entre na sua conta para salvar seu plano." };
   const d = parsed.data;
+  const planId = crypto.randomUUID();
 
-  const { data, error } = await session.supabase
-    .from("trip_plans")
-    .insert({
-      user_id: session.userId,
-      destination_id: d.destinationId,
-      start_date: d.startDate,
-      end_date: d.endDate,
-      travelers: d.travelers,
-      budget_cents: d.budget ?? null,
-      preferences: d.preferences,
-    })
-    .select("id")
-    .single<{ id: string }>();
-  if (error || !data) return { ok: false, error: friendlyError(error, "createTripPlan") };
+  try {
+    await exec(
+      `INSERT INTO trip_plans (id, user_id, destination_id, start_date, end_date, travelers, budget_cents, preferences)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, ${sqlArray(d.preferences)})`,
+      [
+        planId,
+        session.userId,
+        d.destinationId,
+        d.startDate,
+        d.endDate,
+        d.travelers,
+        d.budget ?? null,
+      ],
+    );
+  } catch (error) {
+    return { ok: false, error: friendlyError(error as Error, "createTripPlan") };
+  }
 
-  redirect(`/vou-viajar?plano=${data.id}`);
+  redirect(`/vou-viajar?plano=${planId}`);
 }

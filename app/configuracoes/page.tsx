@@ -1,22 +1,19 @@
 import Link from "next/link";
 import { ProfileForm } from "@/components/account/ProfileForm";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { requireSession } from "@/lib/auth";
 import { signOut } from "@/lib/actions/auth";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 
 export const metadata = { ...buildMetadata({ title: "Configurações" }), robots: { index: false } };
 
 export default async function SettingsPage() {
-  if (!(await createClientIfConfigured())) return <SetupNotice what="suas configurações" />;
   const { profile, email } = await requireSession("/configuracoes");
   return (
     <div className="mx-auto max-w-xl space-y-10 px-4 py-10 sm:py-14">
       <div>
         <Link
           href={`/perfil/${profile.username}`}
-          className="text-sm font-semibold text-atlantico underline"
+          className="text-sm font-semibold text-petroleo underline"
         >
           Ver meu perfil
         </Link>

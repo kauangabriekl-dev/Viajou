@@ -8,18 +8,15 @@ import { ShareButton } from "@/components/social/ShareButton";
 import { Avatar } from "@/components/ui/Avatar";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { getSession } from "@/lib/auth";
 import { placeTypeLabels, tagLabel } from "@/lib/labels";
 import { countOf, getItinerary, viewerItineraryState } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import { pluralize } from "@/utils/format";
 
 async function load(id: string) {
   if (!z.uuid().safeParse(id).success) return null;
-  const supabase = await createClientIfConfigured();
-  return supabase ? { supabase, itinerary: await getItinerary(supabase, id) } : null;
+  return { itinerary: await getItinerary(id, (await getSession())?.userId) };
 }
 
 export async function generateMetadata({ params }: PageProps<"/roteiros/[id]">) {
@@ -38,14 +35,13 @@ export async function generateMetadata({ params }: PageProps<"/roteiros/[id]">) 
 
 export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id]">) {
   const { id } = await params;
-  if (!(await createClientIfConfigured())) return <SetupNotice what="este roteiro" />;
   const loaded = await load(id);
   if (!loaded?.itinerary) notFound();
-  const { supabase, itinerary: it } = loaded;
+  const { itinerary: it } = loaded;
 
   const session = await getSession();
   const isOwner = session?.userId === it.user_id;
-  const state = await viewerItineraryState(supabase, session?.userId, it.id);
+  const state = await viewerItineraryState(session?.userId, it.id);
 
   return (
     <Container className="max-w-3xl space-y-8 py-8 sm:py-12">
@@ -63,7 +59,7 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
               {" em "}
               <Link
                 href={`/destinos/${it.destination.slug}`}
-                className="font-semibold text-atlantico underline"
+                className="font-semibold text-petroleo underline"
               >
                 {it.destination.name}
               </Link>
@@ -76,7 +72,7 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
             {it.tags.map((t) => (
               <li
                 key={t}
-                className="rounded-full bg-atlantico-100 px-3 py-1 text-xs font-semibold text-atlantico"
+                className="rounded-full bg-petroleo-100 px-3 py-1 text-xs font-semibold text-petroleo"
               >
                 {tagLabel(t)}
               </li>
@@ -126,21 +122,21 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
               className="rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha sm:p-6"
             >
               <h2 className="text-xl font-extrabold">
-                <span className="text-maracuja-600">Dia {day.day_number}</span>
+                <span className="text-agua-700">Dia {day.day_number}</span>
                 {day.title && <span> · {day.title}</span>}
               </h2>
               {day.description && <p className="mt-1 text-tinta-soft">{day.description}</p>}
               {day.stops.length ? (
-                <ol className="mt-4 space-y-4 border-l-2 border-dashed border-atlantico/30 pl-5">
+                <ol className="mt-4 space-y-4 border-l-2 border-dashed border-petroleo/30 pl-5">
                   {day.stops.map((s) => (
                     <li key={s.id} className="relative">
                       <span
-                        className="absolute top-1.5 -left-[27px] h-3 w-3 rounded-full bg-atlantico ring-4 ring-white"
+                        className="absolute top-1.5 -left-[27px] h-3 w-3 rounded-full bg-petroleo ring-4 ring-white"
                         aria-hidden="true"
                       />
                       <p className="flex flex-wrap items-baseline gap-x-2">
                         {s.start_time && (
-                          <span className="inline-flex items-center gap-1 text-sm font-bold text-atlantico tabular-nums">
+                          <span className="inline-flex items-center gap-1 text-sm font-bold text-petroleo tabular-nums">
                             <Clock aria-hidden="true" className="h-3.5 w-3.5" />
                             {s.start_time.slice(0, 5)}
                           </span>
@@ -148,7 +144,7 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
                         {s.place ? (
                           <Link
                             href={`/lugares/${s.place.slug}`}
-                            className="font-bold underline decoration-linha underline-offset-4 hover:decoration-atlantico"
+                            className="font-bold underline decoration-linha underline-offset-4 hover:decoration-petroleo"
                           >
                             {s.place.name}
                           </Link>

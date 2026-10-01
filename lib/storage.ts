@@ -1,9 +1,16 @@
-import { publicEnv } from "@/lib/env";
+/** Pastas de fotos enviadas pelos usuários (primeiro nível depois do id do usuário). */
+export const PHOTO_FOLDERS = ["posts", "avatars", "complaints", "achados"] as const;
+export type PhotoFolder = (typeof PHOTO_FOLDERS)[number];
 
-export const PHOTOS_BUCKET = "photos";
+/**
+ * Caminho válido de foto: <uuid do usuário>/<pasta>/<uuid>.<jpg|png|webp>.
+ * Sempre gerado no servidor; a rota /fotos só serve caminhos neste formato.
+ */
+export const PHOTO_PATH = new RegExp(
+  `^[0-9a-f-]{36}/(${PHOTO_FOLDERS.join("|")})/[0-9a-f-]{36}\\.(jpg|png|webp)$`,
+);
 
-/** URL pública de um arquivo do bucket de fotos. */
+/** URL de uma foto enviada (servida por app/fotos/[...path]/route.ts). */
 export function photoUrl(path: string): string {
-  const base = publicEnv.NEXT_PUBLIC_SUPABASE_URL ?? "";
-  return `${base}/storage/v1/object/public/${PHOTOS_BUCKET}/${path}`;
+  return `/fotos/${path}`;
 }

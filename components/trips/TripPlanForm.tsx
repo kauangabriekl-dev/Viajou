@@ -96,7 +96,7 @@ export function TripPlanForm({ destinations, initialDestinationId = "", signedIn
           {travelTags.map((t) => (
             <label
               key={t.value}
-              className="cursor-pointer rounded-full border border-linha px-3 py-1.5 text-sm has-checked:border-atlantico has-checked:bg-atlantico-100 has-checked:text-atlantico has-focus-visible:outline-3 has-focus-visible:outline-maracuja"
+              className="cursor-pointer rounded-full border border-linha px-3 py-1.5 text-sm has-checked:border-petroleo has-checked:bg-petroleo-100 has-checked:text-petroleo has-focus-visible:outline-3 has-focus-visible:outline-agua"
             >
               <input type="checkbox" name="preferences" value={t.value} className="sr-only" />
               {t.label}
@@ -112,7 +112,7 @@ export function TripPlanForm({ destinations, initialDestinationId = "", signedIn
       ) : (
         <Link
           href="/login?next=/vou-viajar"
-          className="flex w-full justify-center rounded-full bg-maracuja px-5 py-3 font-bold text-tinta hover:bg-maracuja-600"
+          className="flex w-full justify-center rounded-full bg-agua px-5 py-3 font-bold text-tinta hover:bg-agua-600"
         >
           Entre para salvar seu plano
         </Link>

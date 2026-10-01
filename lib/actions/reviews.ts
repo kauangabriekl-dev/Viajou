@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
+import { exec, one, rows, tx } from "@/lib/db/client";
+import { refreshPlaceRating } from "@/lib/db/rules";
 import { friendlyError, type ActionResult } from "@/lib/errors";
 import type { PlaceType } from "@/types/database";
 import { fieldErrors, reviewSchema } from "@/lib/validation";
@@ -33,45 +35,55 @@ export async function createReview(
 
   const session = await getSession();
   if (!session) return { ok: false, error: "Entre na sua conta para avaliar." };
-  const { supabase, userId } = session;
   const input = parsed.data;
 
-  const { data: place } = await supabase
-    .from("places")
-    .select("slug, type")
-    .eq("id", input.placeId)
-    .maybeSingle<{ slug: string; type: PlaceType }>();
+  const place = await one<{ slug: string; type: PlaceType }>(
+    "SELECT slug, type FROM places WHERE id = $1",
+    [input.placeId],
+  );
   if (!place) return { ok: false, error: "Lugar não encontrado." };
 
   // Só aceita critérios válidos para o tipo do lugar.
-  const { data: allowed } = await supabase
-    .from("place_categories")
-    .select("category:review_categories(id, key)")
-    .eq("place_type", place.type)
-    .overrideTypes<{ category: { id: number; key: string } }[], { merge: false }>();
-  const categoryByKey = new Map((allowed ?? []).map((a) => [a.category.key, a.category.id]));
+  const allowed = await rows<{ id: number; key: string }>(
+    `SELECT rc.id, rc."key" AS "key" FROM place_categories pc
+       JOIN review_categories rc ON rc.id = pc.review_category_id WHERE pc.place_type = $1`,
+    [place.type],
+  );
+  const categoryByKey = new Map(allowed.map((a) => [a.key, a.id]));
 
-  const { data: review, error } = await supabase
-    .from("reviews")
-    .insert({
-      place_id: input.placeId,
-      user_id: userId,
-      rating: input.rating,
-      title: input.title ?? null,
-      body: input.body,
-      visited_on: input.visitedOn ?? null,
-    })
-    .select("id")
-    .single<{ id: string }>();
-  if (error?.code === "23505") return { ok: false, error: "Você já avaliou este lugar." };
-  if (error || !review) return { ok: false, error: friendlyError(error, "createReview") };
-
-  const scoreRows = Object.entries(input.scores)
-    .filter(([key]) => categoryByKey.has(key))
-    .map(([key, score]) => ({ review_id: review.id, category_id: categoryByKey.get(key), score }));
-  if (scoreRows.length) {
-    const { error: scoreError } = await supabase.from("review_category_scores").insert(scoreRows);
-    if (scoreError) friendlyError(scoreError, "review scores"); // avaliação principal já foi salva
+  const reviewId = crypto.randomUUID();
+  try {
+    // Avaliação, notas por critério e média do lugar juntas: ou entra tudo, ou nada.
+    await tx(async (client) => {
+      await exec(
+        "INSERT INTO reviews (id, place_id, user_id, rating, title, body, visited_on) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        [
+          reviewId,
+          input.placeId,
+          session.userId,
+          input.rating,
+          input.title ?? null,
+          input.body,
+          input.visitedOn ?? null,
+        ],
+        client,
+      );
+      for (const [key, score] of Object.entries(input.scores)) {
+        const categoryId = categoryByKey.get(key);
+        if (!categoryId) continue;
+        await exec(
+          "INSERT INTO review_category_scores (review_id, category_id, score) VALUES ($1, $2, $3)",
+          [reviewId, categoryId, score],
+          client,
+        );
+      }
+      await refreshPlaceRating(input.placeId, client);
+    });
+  } catch (error) {
+    // Uma avaliação por usuário por lugar (UNIQUE no banco).
+    if ((error as { code?: string }).code === "23505")
+      return { ok: false, error: "Você já avaliou este lugar." };
+    return { ok: false, error: friendlyError(error as Error, "createReview") };
   }
 
   revalidatePath(`/lugares/${place.slug}`);
@@ -82,12 +94,26 @@ export async function deleteReview(reviewId: string, placeSlug: string): Promise
   if (!z.uuid().safeParse(reviewId).success) return { ok: false, error: "Avaliação inválida." };
   const session = await getSession();
   if (!session) return { ok: false, error: "Entre na sua conta para continuar." };
-  const { error } = await session.supabase
-    .from("reviews")
-    .delete()
-    .eq("id", reviewId)
-    .eq("user_id", session.userId);
-  if (error) return { ok: false, error: friendlyError(error, "deleteReview") };
+  try {
+    const deleted = await tx(async (client) => {
+      const review = await one<{ place_id: string }>(
+        "SELECT place_id FROM reviews WHERE id = $1 AND user_id = $2",
+        [reviewId, session.userId],
+        client,
+      );
+      if (!review) return 0;
+      await exec(
+        "DELETE FROM reviews WHERE id = $1 AND user_id = $2",
+        [reviewId, session.userId],
+        client,
+      );
+      await refreshPlaceRating(review.place_id, client);
+      return 1;
+    });
+    if (!deleted) return { ok: false, error: "Você só pode excluir suas próprias avaliações." };
+  } catch (error) {
+    return { ok: false, error: friendlyError(error as Error, "deleteReview") };
+  }
   revalidatePath(`/lugares/${placeSlug}`);
   return { ok: true };
 }

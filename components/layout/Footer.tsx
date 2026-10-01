@@ -20,23 +20,44 @@ const groups = [
       { href: "/criar/roteiro", label: "Montar um roteiro" },
     ],
   },
+  {
+    title: "Sobre",
+    links: [{ href: "/creditos", label: "Créditos das fotos" }],
+  },
 ];
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-linha bg-white pb-24 lg:pb-0">
-      <Container className="grid gap-10 py-12 sm:grid-cols-[1.5fr_1fr_1fr]">
+    <footer className="relative mt-24 overflow-hidden bg-petroleo-950 pb-24 text-white lg:pb-0">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 1440 160"
+        preserveAspectRatio="none"
+        className="absolute inset-x-0 top-0 h-24 w-full opacity-40"
+      >
+        <path
+          d="M-20 130 C 380 20, 980 20, 1460 110"
+          fill="none"
+          stroke="var(--color-agua)"
+          strokeWidth="1.5"
+          strokeDasharray="3 8"
+        />
+      </svg>
+      <Container className="relative grid grid-cols-1 gap-10 py-14 sm:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))]">
         <div className="max-w-xs space-y-3">
-          <Logo />
-          <p className="text-sm text-tinta-soft">Experiências reais de quem já esteve lá.</p>
+          <Logo tone="light" />
+          <p className="text-sm font-light text-white/75">
+            Experiências reais de quem já esteve lá. Avaliações, relatos e roteiros escritos por
+            viajantes, não por anunciantes.
+          </p>
         </div>
         {groups.map((group) => (
           <div key={group.title}>
-            <h2 className="text-sm font-bold text-tinta">{group.title}</h2>
+            <h2 className="text-sm font-semibold text-agua">{group.title}</h2>
             <ul className="mt-3 space-y-2">
               {group.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-tinta-soft hover:text-atlantico">
+                  <Link href={link.href} className="text-sm text-white/80 hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -45,7 +66,7 @@ export function Footer() {
           </div>
         ))}
       </Container>
-      <Container className="border-t border-linha py-6 text-xs text-tinta-soft">
+      <Container className="relative border-t border-white/10 py-6 text-xs text-white/60">
         © {new Date().getFullYear()} VIAJOU. Projeto em desenvolvimento.
       </Container>
     </footer>

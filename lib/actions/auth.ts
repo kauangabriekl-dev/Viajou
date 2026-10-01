@@ -1,16 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { safeNext } from "@/lib/auth";
-import { publicEnv } from "@/lib/env";
+import { endSession, safeNext, startSession } from "@/lib/auth";
+import { exec, one, searchKey, tx } from "@/lib/db/client";
 import { friendlyError, type ActionResult } from "@/lib/errors";
-import { createClientIfConfigured } from "@/lib/supabase/server";
+import { dummyPasswordHash, hashPassword, verifyPassword } from "@/lib/password";
 import { fieldErrors, signInSchema, signUpSchema } from "@/lib/validation";
 
-const NOT_CONFIGURED: ActionResult = {
-  ok: false,
-  error: "O login ainda não está disponível: o Supabase não foi configurado.",
-};
+const WRONG_LOGIN: ActionResult = { ok: false, error: "E-mail ou senha incorretos." };
 
 export async function signUp(
   _prev: ActionResult | null,
@@ -23,40 +20,46 @@ export async function signUp(
       error: "Revise os campos destacados.",
       fieldErrors: fieldErrors(parsed.error),
     };
-
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return NOT_CONFIGURED;
-
   const { fullName, username, email, password } = parsed.data;
 
-  const { data: taken } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", username)
-    .maybeSingle();
-  if (taken) {
+  const [emailTaken, usernameTaken] = await Promise.all([
+    one("SELECT id FROM users WHERE email = $1", [email]),
+    one("SELECT id FROM profiles WHERE username = $1", [username]),
+  ]);
+  if (emailTaken || usernameTaken) {
     return {
       ok: false,
       error: "Revise os campos destacados.",
-      fieldErrors: { username: ["Este username já está em uso."] },
+      fieldErrors: {
+        ...(emailTaken ? { email: ["Já existe uma conta com este e-mail."] } : {}),
+        ...(usernameTaken ? { username: ["Este username já está em uso."] } : {}),
+      },
     };
   }
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { username, full_name: fullName },
-      emailRedirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/minha-conta`,
-    },
-  });
-  if (error) return { ok: false, error: friendlyError(error, "signUp") };
-
-  if (!data.session) {
-    return {
-      ok: true,
-      message: "Conta criada. Enviamos um link de confirmação para o seu e-mail.",
-    };
+  const userId = crypto.randomUUID();
+  const passwordHash = await hashPassword(password);
+  try {
+    // Conta e perfil nascem juntos (no Supabase isso era o trigger handle_new_user).
+    await tx(async (client) => {
+      await exec(
+        "INSERT INTO users (id, email, password_hash) VALUES ($1, $2, $3)",
+        [userId, email, passwordHash],
+        client,
+      );
+      await exec(
+        "INSERT INTO profiles (id, username, full_name, search_key) VALUES ($1, $2, $3, $4)",
+        [userId, username, fullName, searchKey(username, fullName)],
+        client,
+      );
+      await startSession(userId, client);
+    });
+  } catch (error) {
+    // Corrida rara: outra pessoa pegou o mesmo e-mail ou username entre a checagem e o insert.
+    if ((error as { code?: string }).code === "23505") {
+      return { ok: false, error: "Este e-mail ou username acabou de ser usado. Tente outro." };
+    }
+    return { ok: false, error: friendlyError(error as Error, "signUp") };
   }
   redirect("/minha-conta");
 }
@@ -73,32 +76,31 @@ export async function signIn(
       fieldErrors: fieldErrors(parsed.error),
     };
 
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return NOT_CONFIGURED;
+  const user = await one<{ id: string; password_hash: string }>(
+    "SELECT id, password_hash FROM users WHERE email = $1",
+    [parsed.data.email],
+  );
+  // Sem usuário, compara com um hash qualquer: o tempo de resposta não revela quais e-mails existem.
+  const valid = await verifyPassword(
+    parsed.data.password,
+    user?.password_hash ?? (await dummyPasswordHash()),
+  );
+  if (!user || !valid) return WRONG_LOGIN;
 
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { ok: false, error: friendlyError(error, "signIn") };
-
+  try {
+    await startSession(user.id);
+  } catch (error) {
+    return { ok: false, error: friendlyError(error as Error, "signIn") };
+  }
   redirect(safeNext(formData.get("next")));
 }
 
-/** Google OAuth: habilite o provedor no Supabase e defina NEXT_PUBLIC_ENABLE_GOOGLE_AUTH=true. */
-export async function signInWithGoogle(formData: FormData) {
-  const supabase = await createClientIfConfigured();
-  if (!supabase) redirect("/login");
-  const next = safeNext(formData.get("next"));
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
-    },
-  });
-  if (error || !data.url) redirect("/login?erro=oauth");
-  redirect(data.url);
+/** Login com Google não existe no banco local; o botão só aparece com NEXT_PUBLIC_ENABLE_GOOGLE_AUTH=true. */
+export async function signInWithGoogle() {
+  redirect("/login?erro=oauth");
 }
 
 export async function signOut() {
-  const supabase = await createClientIfConfigured();
-  if (supabase) await supabase.auth.signOut();
+  await endSession();
   redirect("/");
 }

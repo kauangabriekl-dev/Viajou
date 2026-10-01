@@ -44,7 +44,7 @@ export function PostCard({ post, demo = false }: { post: Post; demo?: boolean })
       )}
       <div className="flex flex-1 flex-col gap-3 p-4">
         {post.destination && (
-          <p className="flex items-center gap-1.5 text-sm font-bold text-atlantico">
+          <p className="flex items-center gap-1.5 text-sm font-bold text-petroleo">
             <MapPin aria-hidden="true" className="h-4 w-4" />
             {post.destination.name}
           </p>

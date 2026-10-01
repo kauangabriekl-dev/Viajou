@@ -1,54 +1,75 @@
+import { AchadoCard } from "@/components/achados/AchadoCard";
 import { DestinationCard } from "@/components/cards/DestinationCard";
 import { ItineraryCard } from "@/components/cards/ItineraryCard";
 import { PlaceCard } from "@/components/cards/PlaceCard";
 import { PostCard } from "@/components/cards/PostCard";
+import type { GlobeDestination } from "@/components/home/DestinationGlobe";
+import { Benefits } from "@/components/home/Benefits";
+import { Faq } from "@/components/home/Faq";
 import { Hero } from "@/components/home/Hero";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { ShareCta } from "@/components/home/ShareCta";
 import { Container } from "@/components/ui/Container";
 import { DemoBadge } from "@/components/ui/DemoBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { demoDestinations, demoItineraries, demoPosts } from "@/lib/demo/home";
-import { publicEnv } from "@/lib/env";
-import { listDestinations, listItineraries, listPlaces, listPosts } from "@/lib/queries";
-import { createClientIfConfigured } from "@/lib/supabase/server";
+import type { DestinationWithStats } from "@/types/database";
+import {
+  listAchados,
+  listDestinations,
+  listItineraries,
+  listPlaces,
+  listPosts,
+} from "@/lib/queries";
 
-/** Com Supabase: dados reais. Sem Supabase: demo (se habilitada) ou estados vazios. */
+/** Destinos com coordenadas viram pontos no planeta da home. */
+function toGlobe(destinations: DestinationWithStats[]): GlobeDestination[] {
+  return destinations
+    .filter((d) => d.latitude !== null && d.longitude !== null)
+    .map((d) => ({
+      slug: d.slug,
+      name: d.name,
+      state: d.state,
+      country: d.country,
+      description: d.description,
+      latitude: Number(d.latitude),
+      longitude: Number(d.longitude),
+      reviewsCount: d.reviews_count,
+      ratingAvg: Number(d.rating_avg),
+    }));
+}
+
+/**
+ * Tudo vem do banco. Destinos e lugares de demonstração (seed local) já chegam com is_demo
+ * e ganham o selo; relatos e roteiros só aparecem quando alguém publica de verdade.
+ */
 async function loadHome() {
-  const supabase = await createClientIfConfigured();
-  if (supabase) {
-    const [destinations, posts, itineraries, topPlaces] = await Promise.all([
-      listDestinations(supabase, 12),
-      listPosts(supabase, { limit: 6 }),
-      listItineraries(supabase, { limit: 6, publicOnly: true }),
-      listPlaces(supabase, { minReviews: 1, limit: 6 }),
-    ]);
-    return {
-      destinations: destinations.slice(0, 6),
-      posts,
-      itineraries,
-      topPlaces,
-      demo: false,
-      demoDestinations: destinations.some((d) => d.is_demo),
-    };
-  }
-  const demo = publicEnv.NEXT_PUBLIC_SHOW_DEMO_DATA;
+  const [destinations, posts, itineraries, topPlaces, achados] = await Promise.all([
+    listDestinations(12),
+    listPosts({ limit: 6 }),
+    listItineraries({ limit: 6, publicOnly: true }),
+    listPlaces({ minReviews: 1, limit: 6 }),
+    listAchados({ limit: 6 }),
+  ]);
   return {
-    destinations: demo ? demoDestinations : [],
-    posts: demo ? demoPosts : [],
-    itineraries: demo ? demoItineraries : [],
-    topPlaces: [],
-    demo,
-    demoDestinations: demo,
+    globe: toGlobe(destinations),
+    destinations: destinations.slice(0, 6),
+    posts,
+    itineraries,
+    topPlaces,
+    achados,
+    demo: false,
+    demoDestinations: destinations.some((d) => d.is_demo),
   };
 }
 
 export default async function HomePage() {
   const {
+    globe,
     destinations,
     posts,
     itineraries,
     topPlaces,
+    achados,
     demo,
     demoDestinations: destinationsAreDemo,
   } = await loadHome();
@@ -56,14 +77,18 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero destinations={globe} demo={destinationsAreDemo && globe.length > 0} />
 
-      <div className="space-y-20 pt-16 sm:space-y-24">
+      <div className="space-y-20 pt-16 sm:space-y-28">
+        <Benefits />
+
         <Container>
           <section aria-labelledby="destinos-title">
             <SectionHeading
               id="destinos-title"
-              title="Destinos que estão bombando"
+              eyebrow="Escolha pelo planeta ou pela foto"
+              lead="Destinos que"
+              title="estão bombando"
               href="/destinos"
               linkLabel="Ver todos os destinos"
               badge={destinationsAreDemo ? <DemoBadge /> : undefined}
@@ -71,7 +96,7 @@ export default async function HomePage() {
             {destinations.length > 0 ? (
               <ul className="relative -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
                 {destinations.map((destination) => (
-                  <li key={destination.slug} className="w-[78%] shrink-0 snap-start sm:w-auto">
+                  <li key={destination.slug} className="w-[80%] shrink-0 snap-start sm:w-auto">
                     <DestinationCard destination={destination} />
                   </li>
                 ))}
@@ -86,10 +111,40 @@ export default async function HomePage() {
         </Container>
 
         <Container>
+          <section aria-labelledby="achados-home-title">
+            <SectionHeading
+              id="achados-home-title"
+              eyebrow="Com foto e localização"
+              lead="Achadinhos"
+              title="dos viajantes"
+              description="Prainhas escondidas, mirantes e cafés marcados no mapa por quem já foi."
+              href="/achados"
+              linkLabel="Ver no mapa"
+            />
+            {achados.length > 0 ? (
+              <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {achados.map((a) => (
+                  <li key={a.id}>
+                    <AchadoCard achado={a} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyState
+                title="Nenhum achadinho ainda."
+                description="Encontrou um lugar especial numa viagem? Marque no mapa para os próximos viajantes."
+                action={{ href: "/achados/novo", label: "Postar um achadinho" }}
+              />
+            )}
+          </section>
+        </Container>
+
+        <Container>
           <section aria-labelledby="experiencias-title">
             <SectionHeading
               id="experiencias-title"
-              title="Experiências reais"
+              lead="Experiências"
+              title="reais"
               description="Relatos de viajantes com duração, gastos e o que acharam."
               badge={badge}
             />
@@ -115,7 +170,8 @@ export default async function HomePage() {
           <section aria-labelledby="roteiros-title">
             <SectionHeading
               id="roteiros-title"
-              title="Roteiros da comunidade"
+              lead="Roteiros da"
+              title="comunidade"
               description="Dia a dia, parada por parada. Copie um roteiro e adapte ao seu jeito."
               href="/roteiros"
               linkLabel="Ver todos os roteiros"
@@ -144,7 +200,8 @@ export default async function HomePage() {
             <section aria-labelledby="lugares-title">
               <SectionHeading
                 id="lugares-title"
-                title="Lugares mais bem avaliados"
+                lead="Lugares mais"
+                title="bem avaliados"
                 href="/explorar"
                 linkLabel="Explorar lugares"
               />
@@ -158,6 +215,8 @@ export default async function HomePage() {
             </section>
           </Container>
         )}
+
+        <Faq />
 
         <ShareCta />
       </div>

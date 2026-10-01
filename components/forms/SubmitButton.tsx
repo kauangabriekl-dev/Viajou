@@ -19,8 +19,8 @@ export function SubmitButton({
   const { pending } = useFormStatus();
   const styles =
     variant === "accent"
-      ? "bg-maracuja text-tinta hover:bg-maracuja-600"
-      : "bg-atlantico text-white hover:bg-atlantico-900";
+      ? "bg-agua text-tinta hover:bg-agua-600"
+      : "bg-petroleo text-white hover:bg-petroleo-900";
   return (
     <button
       type="submit"

@@ -6,11 +6,10 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { SetupNotice } from "@/components/ui/SetupNotice";
+import { getSession } from "@/lib/auth";
 import { placeTypePlural } from "@/lib/labels";
 import { getDestination, listDestinations, listPlaces, searchAll } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import type { PlaceType } from "@/types/database";
 import { pluralize } from "@/utils/format";
 
@@ -28,9 +27,6 @@ export async function generateMetadata({ searchParams }: PageProps<"/explorar">)
 const types: PlaceType[] = ["hotel", "restaurant", "beach", "attraction", "tour"];
 
 export default async function ExplorePage({ searchParams }: PageProps<"/explorar">) {
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return <SetupNotice what="a busca" />;
-
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q.trim().slice(0, 80) : "";
   const type = types.includes(params.tipo as PlaceType) ? (params.tipo as PlaceType) : undefined;
@@ -40,7 +36,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
     <form
       action="/explorar"
       role="search"
-      className="flex max-w-2xl items-center gap-2 rounded-full bg-white p-1.5 pl-5 ring-1 ring-linha focus-within:ring-2 focus-within:ring-atlantico"
+      className="flex max-w-2xl items-center gap-2 rounded-full bg-white p-1.5 pl-5 ring-1 ring-linha focus-within:ring-2 focus-within:ring-petroleo"
     >
       <Search aria-hidden="true" className="h-5 w-5 shrink-0 text-tinta-soft" />
       <label htmlFor="explorar-q" className="sr-only">
@@ -56,7 +52,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
       />
       <button
         type="submit"
-        className="rounded-full bg-atlantico px-5 py-2.5 text-sm font-bold text-white hover:bg-atlantico-900"
+        className="rounded-full bg-petroleo px-5 py-2.5 text-sm font-bold text-white hover:bg-petroleo-900"
       >
         Buscar
       </button>
@@ -64,7 +60,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
   );
 
   if (q) {
-    const results = await searchAll(supabase, q);
+    const results = await searchAll(q, (await getSession())?.userId);
     const total =
       results.destinations.length +
       results.places.length +
@@ -93,7 +89,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
                 <li key={d.id}>
                   <Link
                     href={`/destinos/${d.slug}`}
-                    className="inline-flex rounded-full bg-white px-4 py-2 font-semibold ring-1 ring-linha hover:ring-atlantico"
+                    className="inline-flex rounded-full bg-white px-4 py-2 font-semibold ring-1 ring-linha hover:ring-petroleo"
                   >
                     {d.name}, {d.state}
                   </Link>
@@ -126,7 +122,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
                 <li key={u.id}>
                   <Link
                     href={`/perfil/${u.username}`}
-                    className="flex items-center gap-3 rounded-2xl bg-white p-3 ring-1 ring-linha hover:ring-atlantico"
+                    className="flex items-center gap-3 rounded-2xl bg-white p-3 ring-1 ring-linha hover:ring-petroleo"
                   >
                     <Avatar name={u.full_name} src={u.avatar_url} />
                     <span>
@@ -149,7 +145,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
                 <li key={i.id}>
                   <Link
                     href={`/roteiros/${i.id}`}
-                    className="font-semibold text-atlantico underline"
+                    className="font-semibold text-petroleo underline"
                   >
                     {i.title}
                   </Link>{" "}
@@ -165,10 +161,10 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
     );
   }
 
-  const destination = destSlug ? await getDestination(supabase, destSlug) : null;
+  const destination = destSlug ? await getDestination(destSlug) : null;
   const [places, destinations] = await Promise.all([
-    listPlaces(supabase, { type, destinationId: destination?.id, limit: 48 }),
-    type || destination ? Promise.resolve([]) : listDestinations(supabase, 6),
+    listPlaces({ type, destinationId: destination?.id, limit: 48 }),
+    type || destination ? Promise.resolve([]) : listDestinations(6),
   ]);
   const chipHref = (t?: PlaceType) => {
     const sp = new URLSearchParams();
@@ -192,7 +188,7 @@ export default async function ExplorePage({ searchParams }: PageProps<"/explorar
               <Link
                 href={chipHref(t)}
                 aria-current={t === type ? "page" : undefined}
-                className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 ring-linha aria-[current=page]:bg-atlantico aria-[current=page]:text-white"
+                className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold whitespace-nowrap ring-1 ring-linha aria-[current=page]:bg-petroleo aria-[current=page]:text-white"
               >
                 {t ? placeTypePlural[t] : "Todos"}
               </Link>

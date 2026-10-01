@@ -36,8 +36,8 @@ export function ToggleButton({
 
   const base =
     variant === "solid"
-      ? `rounded-full px-5 py-2 text-sm font-bold ${active ? "bg-white text-tinta ring-1 ring-linha" : "bg-atlantico text-white hover:bg-atlantico-900"}`
-      : "rounded-full px-3 py-2 text-sm font-semibold text-tinta-soft hover:bg-atlantico-100 hover:text-atlantico";
+      ? `rounded-full px-5 py-2 text-sm font-bold ${active ? "bg-white text-tinta ring-1 ring-linha" : "bg-petroleo text-white hover:bg-petroleo-900"}`
+      : "rounded-full px-3 py-2 text-sm font-semibold text-tinta-soft hover:bg-petroleo-100 hover:text-petroleo";
 
   const content = (
     <>

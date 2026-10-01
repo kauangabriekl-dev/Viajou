@@ -42,3 +42,6 @@ next-env.d.ts
 
 # manter o exemplo versionado
 !.env.example
+
+# banco H2 local, jar e JDK baixados pelos scripts
+/.data/

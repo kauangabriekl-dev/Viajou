@@ -1,21 +1,27 @@
 @import "tailwindcss";
 
+/*
+ * Identidade VIAJOU: azul-petróleo + verde-água, com fotos reais de lugares.
+ * Regras de uso em .claude/skills/ui-design-system/SKILL.md.
+ */
 @theme {
-  --color-atlantico: #0b4f6c;
-  --color-atlantico-900: #073447;
-  --color-atlantico-100: #dcecf2;
-  --color-espuma: #f4f8f9;
-  --color-tinta: #13262f;
-  --color-tinta-soft: #4a5d66;
-  --color-maracuja: #f4b52e;
-  --color-maracuja-600: #d99a12;
-  --color-restinga: #2e7d66;
-  --color-linha: #d7e3e8;
+  --color-petroleo: #1e5b74;
+  --color-petroleo-900: #0f3b4d;
+  --color-petroleo-950: #0a2a37;
+  --color-petroleo-100: #ddeef1;
+  --color-espuma: #f4f9f9;
+  --color-tinta: #0f2a35;
+  --color-tinta-soft: #4a6571;
+  --color-agua: #5ed3c4;
+  --color-agua-600: #34b3a3;
+  --color-agua-700: #0b6e64;
+  --color-sol: #f6b93b;
+  --color-restinga: #2e8b6e;
+  --color-linha: #d6e6e9;
 
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --radius-card: 1.25rem;
+  --radius-card: 1.5rem;
 }
 
 @layer base {
@@ -30,10 +36,12 @@
     font-family: var(--font-sans);
   }
 
+  /* Foco em duas cores: visível tanto no fundo claro quanto sobre petróleo e fotos. */
   :focus-visible {
-    outline: 3px solid var(--color-maracuja);
+    outline: 2px solid var(--color-tinta);
     outline-offset: 2px;
-    border-radius: 6px;
+    box-shadow: 0 0 0 5px var(--color-agua);
+    border-radius: 8px;
   }
 
   h1,

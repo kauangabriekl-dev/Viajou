@@ -16,22 +16,22 @@ export function ItineraryCard({
     <Link
       href={demo ? "#" : `/roteiros/${itinerary.id}`}
       aria-disabled={demo || undefined}
-      className="group flex h-full flex-col gap-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha hover:ring-atlantico"
+      className="group flex h-full flex-col gap-4 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha hover:ring-petroleo"
     >
       <div className="flex items-center" aria-hidden="true">
         {Array.from({ length: dots }, (_, i) => (
           <span key={i} className="flex flex-1 items-center last:flex-none">
             <span
-              className={`h-3 w-3 shrink-0 rounded-full ${i === 0 || i === dots - 1 ? "bg-maracuja" : "bg-atlantico"}`}
+              className={`h-3 w-3 shrink-0 rounded-full ${i === 0 || i === dots - 1 ? "bg-agua" : "bg-petroleo"}`}
             />
             {i < dots - 1 && (
-              <span className="h-0.5 flex-1 border-t-2 border-dashed border-atlantico/40" />
+              <span className="h-0.5 flex-1 border-t-2 border-dashed border-petroleo/40" />
             )}
           </span>
         ))}
       </div>
       <div className="space-y-1">
-        <h3 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-tinta group-hover:text-atlantico">
+        <h3 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-tinta group-hover:text-petroleo">
           {!itinerary.is_public && (
             <Lock aria-label="Roteiro privado" className="h-4 w-4 shrink-0 text-tinta-soft" />
           )}

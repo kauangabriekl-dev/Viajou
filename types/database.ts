@@ -116,8 +116,12 @@ export type Post = {
   comments: { count: number }[];
 };
 
+export type BeachPickKind = "favorita" | "recomenda" | "nao_voltaria";
+
 export type PostDetail = Post & {
   places: { place: Pick<Place, "slug" | "name" | "type"> }[];
+  /** Respostas de praia: favorita, recomenda, não voltaria. */
+  beachPicks: { kind: BeachPickKind; place: Pick<Place, "slug" | "name"> }[];
 };
 
 export type Comment = {
@@ -203,4 +207,100 @@ export type SearchResults = {
   itineraries: Pick<Itinerary, "id" | "title" | "days_count">[];
 };
 
-export type DestinationWithStats = Destination & { reviews_count: number; rating_avg: number };
+export type DestinationStyle =
+  | "praia"
+  | "frio"
+  | "montanha"
+  | "trilha"
+  | "floresta"
+  | "cachoeira"
+  | "cidade"
+  | "historico"
+  | "gastronomia"
+  | "aventura";
+
+export type DestinationWithStats = Destination & {
+  reviews_count: number;
+  rating_avg: number;
+  /** Estilos do destino: catálogo + conteúdo da comunidade + votos "bom para". */
+  styles?: DestinationStyle[];
+};
+
+// --- Notas e dicas de destino ------------------------------------------------
+export type TipTopic =
+  | "melhor_epoca"
+  | "cafe_da_manha"
+  | "onde_comer"
+  | "onde_ficar"
+  | "passeios"
+  | "custo"
+  | "transporte";
+
+export type DestinationReview = {
+  id: string;
+  destination_id: string;
+  user_id: string;
+  rating: number;
+  body: string;
+  visited_month: number | null;
+  visited_year: number | null;
+  best_months: number[];
+  daily_cost_cents: number | null;
+  created_at: string;
+  author: ProfileSummary;
+};
+
+export type DestinationTip = {
+  id: string;
+  destination_id: string;
+  user_id: string;
+  topic: TipTopic;
+  title: string;
+  body: string;
+  created_at: string;
+  author: ProfileSummary;
+  votes: number;
+};
+
+/** Resumo do destino: só tem números quando há avaliações (nada inventado). */
+export type DestinationInsights = {
+  reviews: DestinationReview[];
+  tips: DestinationTip[];
+  reviewsCount: number;
+  ratingAvg: number | null;
+  /** Quantas pessoas recomendam cada mês (índice 0 = janeiro). */
+  monthVotes: number[];
+  /** Mediana do gasto por dia por pessoa, em centavos, e de quantos relatos ela vem. */
+  dailyCost: { medianCents: number; from: number } | null;
+  viewerReviewed: boolean;
+  viewerVotedTipIds: string[];
+};
+
+// --- Achadinhos ----------------------------------------------------------------
+export type AchadoCategory =
+  | "praia"
+  | "mirante"
+  | "trilha"
+  | "cachoeira"
+  | "comida"
+  | "cafe"
+  | "compras"
+  | "cultura"
+  | "outro";
+
+export type Achado = {
+  id: string;
+  user_id: string;
+  title: string;
+  body: string;
+  category: AchadoCategory;
+  latitude: number;
+  longitude: number;
+  location_name: string | null;
+  tip: string | null;
+  created_at: string;
+  author: ProfileSummary;
+  destination: Pick<Destination, "slug" | "name" | "state"> | null;
+  photos: { id: string; storage_path: string; alt: string | null }[];
+  saves: number;
+};

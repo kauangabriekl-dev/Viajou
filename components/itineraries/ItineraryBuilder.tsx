@@ -168,7 +168,7 @@ export function ItineraryBuilder({ destinations, places }: Props) {
               ].map((o) => (
                 <label
                   key={o.l}
-                  className="flex-1 cursor-pointer rounded-xl border border-linha px-3 py-2.5 text-center text-sm font-semibold has-checked:border-atlantico has-checked:bg-atlantico-100 has-checked:text-atlantico"
+                  className="flex-1 cursor-pointer rounded-xl border border-linha px-3 py-2.5 text-center text-sm font-semibold has-checked:border-petroleo has-checked:bg-petroleo-100 has-checked:text-petroleo"
                 >
                   <input
                     type="radio"
@@ -194,7 +194,7 @@ export function ItineraryBuilder({ destinations, places }: Props) {
             {travelTags.map((t) => (
               <label
                 key={t.value}
-                className="cursor-pointer rounded-full border border-linha px-3 py-1.5 text-sm has-checked:border-atlantico has-checked:bg-atlantico-100 has-checked:text-atlantico"
+                className="cursor-pointer rounded-full border border-linha px-3 py-1.5 text-sm has-checked:border-petroleo has-checked:bg-petroleo-100 has-checked:text-petroleo"
               >
                 <input
                   type="checkbox"
@@ -264,7 +264,7 @@ export function ItineraryBuilder({ destinations, places }: Props) {
                 return (
                   <li key={stop.key} className="space-y-2 rounded-2xl border border-linha p-3">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-atlantico text-xs font-bold text-white">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-petroleo text-xs font-bold text-white">
                         {si + 1}
                       </span>
                       <input
@@ -348,7 +348,7 @@ export function ItineraryBuilder({ destinations, places }: Props) {
               type="button"
               onClick={() => updateDay(di, { stops: [...day.stops, newStop()] })}
               disabled={day.stops.length >= 20}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-atlantico"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-petroleo"
             >
               <Plus aria-hidden="true" className="h-4 w-4" /> Adicionar parada
             </button>
@@ -360,7 +360,7 @@ export function ItineraryBuilder({ destinations, places }: Props) {
         type="button"
         onClick={() => setDays([...days, newDay()])}
         disabled={days.length >= 30}
-        className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-card)] border-2 border-dashed border-linha py-4 font-bold text-atlantico hover:border-atlantico"
+        className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-card)] border-2 border-dashed border-linha py-4 font-bold text-petroleo hover:border-petroleo"
       >
         <Plus aria-hidden="true" className="h-5 w-5" /> Adicionar dia {days.length + 1}
       </button>
@@ -373,7 +373,7 @@ export function ItineraryBuilder({ destinations, places }: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-atlantico px-6 py-3.5 font-bold text-white hover:bg-atlantico-900 disabled:opacity-60 sm:w-auto"
+        className="w-full rounded-full bg-petroleo px-6 py-3.5 font-bold text-white hover:bg-petroleo-900 disabled:opacity-60 sm:w-auto"
       >
         {pending ? "Salvando…" : "Salvar roteiro"}
       </button>

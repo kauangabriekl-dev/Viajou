@@ -9,7 +9,6 @@ import { ReportButton } from "@/components/social/ReportButton";
 import { Avatar } from "@/components/ui/Avatar";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { Tabs } from "@/components/ui/Tabs";
 import { getSession } from "@/lib/auth";
 import {
@@ -23,12 +22,10 @@ import {
 } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
 import { photoUrl } from "@/lib/storage";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 
 export async function generateMetadata({ params }: PageProps<"/perfil/[username]">) {
   const { username } = await params;
-  const supabase = await createClientIfConfigured();
-  const profile = supabase ? await getProfileByUsername(supabase, username) : null;
+  const profile = await getProfileByUsername(username);
   if (!profile) return buildMetadata({ title: "Perfil", path: `/perfil/${username}` });
   return buildMetadata({
     title: `${profile.full_name} (@${profile.username})`,
@@ -45,10 +42,8 @@ export default async function ProfilePage({
   searchParams,
 }: PageProps<"/perfil/[username]">) {
   const [{ username }, query] = await Promise.all([params, searchParams]);
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return <SetupNotice what="este perfil" />;
 
-  const profile = await getProfileByUsername(supabase, username);
+  const profile = await getProfileByUsername(username);
   if (!profile) notFound();
 
   const session = await getSession();
@@ -56,18 +51,14 @@ export default async function ProfilePage({
   const tab: Tab = TABS.includes(query.aba as Tab) ? (query.aba as Tab) : "publicacoes";
 
   const [stats, following, posts, itineraries, reviews, photos] = await Promise.all([
-    getProfileStats(supabase, profile.id),
-    isFollowing(supabase, session?.userId, profile.id),
-    tab === "publicacoes"
-      ? listPosts(supabase, { userId: profile.id, limit: 30 })
-      : Promise.resolve([]),
+    getProfileStats(profile.id),
+    isFollowing(session?.userId, profile.id),
+    tab === "publicacoes" ? listPosts({ userId: profile.id, limit: 30 }) : Promise.resolve([]),
     tab === "roteiros"
-      ? listItineraries(supabase, { userId: profile.id, limit: 30 })
+      ? listItineraries({ userId: profile.id, limit: 30, viewerId: session?.userId })
       : Promise.resolve([]),
-    tab === "avaliacoes"
-      ? listReviews(supabase, { userId: profile.id, limit: 30 })
-      : Promise.resolve([]),
-    tab === "fotos" ? listUserPhotos(supabase, profile.id) : Promise.resolve([]),
+    tab === "avaliacoes" ? listReviews({ userId: profile.id, limit: 30 }) : Promise.resolve([]),
+    tab === "fotos" ? listUserPhotos(profile.id) : Promise.resolve([]),
   ]);
 
   const statItems = [
@@ -101,7 +92,7 @@ export default async function ProfilePage({
           {isSelf ? (
             <Link
               href="/configuracoes"
-              className="rounded-full bg-white px-5 py-2 text-sm font-bold ring-1 ring-linha hover:ring-atlantico"
+              className="rounded-full bg-white px-5 py-2 text-sm font-bold ring-1 ring-linha hover:ring-petroleo"
             >
               Editar perfil
             </Link>

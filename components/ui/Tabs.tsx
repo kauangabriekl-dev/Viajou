@@ -30,7 +30,7 @@ export function Tabs({
                 scroll={false}
                 className={`inline-flex items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-semibold whitespace-nowrap ${
                   current
-                    ? "border-atlantico text-atlantico"
+                    ? "border-petroleo text-petroleo"
                     : "border-transparent text-tinta-soft hover:text-tinta"
                 }`}
               >

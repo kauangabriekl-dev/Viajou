@@ -17,7 +17,7 @@ export function RatingStars({ value, max = 5, size = 16 }: RatingStarsProps) {
           width={size}
           height={size}
           aria-hidden="true"
-          className={i < rounded ? "fill-maracuja text-maracuja" : "fill-none text-linha"}
+          className={i < rounded ? "fill-sol text-sol" : "fill-none text-linha"}
         />
       ))}
     </span>

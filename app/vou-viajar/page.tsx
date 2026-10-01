@@ -8,7 +8,6 @@ import { TripPlanForm } from "@/components/trips/TripPlanForm";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { SetupNotice } from "@/components/ui/SetupNotice";
 import { getSession } from "@/lib/auth";
 import { tagLabel } from "@/lib/labels";
 import {
@@ -19,7 +18,6 @@ import {
   listPosts,
 } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
-import { createClientIfConfigured } from "@/lib/supabase/server";
 import { formatCents, formatDateRange, pluralize, tripDays } from "@/utils/format";
 
 export const metadata = buildMetadata({
@@ -36,8 +34,6 @@ function rankByTags<T extends { tags: string[] }>(items: T[], prefs: string[]): 
 }
 
 export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-viajar">) {
-  const supabase = await createClientIfConfigured();
-  if (!supabase) return <SetupNotice what="o planejador" />;
   const params = await searchParams;
   const session = await getSession();
 
@@ -45,10 +41,10 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
     typeof params.plano === "string" && z.uuid().safeParse(params.plano).success
       ? params.plano
       : null;
-  const plan = planId && session ? await getTripPlan(supabase, planId) : null;
+  const plan = planId && session ? await getTripPlan(planId, session.userId) : null;
 
   if (!plan) {
-    const destinations = await listDestinationOptions(supabase);
+    const destinations = await listDestinationOptions();
     const initial =
       typeof params.destino === "string" && destinations.some((d) => d.id === params.destino)
         ? params.destino
@@ -69,11 +65,11 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
   }
 
   const [itineraries, posts, hotels, restaurants, attractions] = await Promise.all([
-    listItineraries(supabase, { destinationId: plan.destination.id, limit: 30, publicOnly: true }),
-    listPosts(supabase, { destinationId: plan.destination.id, limit: 30 }),
-    listPlaces(supabase, { destinationId: plan.destination.id, type: "hotel", limit: 3 }),
-    listPlaces(supabase, { destinationId: plan.destination.id, type: "restaurant", limit: 3 }),
-    listPlaces(supabase, { destinationId: plan.destination.id, type: "attraction", limit: 3 }),
+    listItineraries({ destinationId: plan.destination.id, limit: 30, publicOnly: true }),
+    listPosts({ destinationId: plan.destination.id, limit: 30 }),
+    listPlaces({ destinationId: plan.destination.id, type: "hotel", limit: 3 }),
+    listPlaces({ destinationId: plan.destination.id, type: "restaurant", limit: 3 }),
+    listPlaces({ destinationId: plan.destination.id, type: "attraction", limit: 3 }),
   ]);
   const days = tripDays(plan.start_date, plan.end_date) ?? 1;
   // Roteiros com duração próxima da viagem vêm primeiro; depois, por preferências.
@@ -102,7 +98,7 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
           }
         />
         {plan.preferences.length > 0 && (
-          <p className="-mt-4 text-sm text-atlantico">
+          <p className="-mt-4 text-sm text-petroleo">
             Preferências: {plan.preferences.map(tagLabel).join(", ")}
           </p>
         )}

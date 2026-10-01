@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
 const nextConfig: NextConfig = {
   images: {
-    // Fotos enviadas pelos usuários (bucket público "photos" do Supabase Storage).
-    remotePatterns: supabaseUrl ? [new URL(`${supabaseUrl}/storage/v1/object/public/**`)] : [],
-    // Só para desenvolvimento com Supabase local (supabase start em 127.0.0.1). Nunca em produção.
-    dangerouslyAllowLocalIP: process.env.NEXT_IMAGES_ALLOW_LOCAL_IP === "true",
+    // Fotos do próprio site: paisagens em public/images e envios dos usuários em /fotos/...
+    localPatterns: [{ pathname: "/images/**" }, { pathname: "/fotos/**" }],
+  },
+  // Arquivos lidos do disco em tempo de execução: garante que vão junto no deploy.
+  outputFileTracingIncludes: {
+    "/api/lugares": ["./data/geo/places.json"],
   },
   experimental: {
     serverActions: {

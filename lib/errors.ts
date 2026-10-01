@@ -7,7 +7,10 @@ type ErrorLike = { code?: string; message?: string; status?: number } | null | u
 const byPgCode: Record<string, string> = {
   "23505": "Você já realizou esta ação.",
   "23503": "O item relacionado não existe mais.",
+  // O H2 usa códigos próprios para a mesma situação (verificado na Fase 0).
+  "23506": "O item relacionado não existe mais.",
   "23514": "Alguns dados estão fora do permitido. Revise e tente de novo.",
+  "23513": "Alguns dados estão fora do permitido. Revise e tente de novo.",
   "42501": "Você não tem permissão para fazer isso.",
   P0002: "Não encontramos o que você procurava.",
   PGRST116: "Não encontramos o que você procurava.",

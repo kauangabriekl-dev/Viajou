@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { travelTagValues } from "@/lib/labels";
+import {
+  achadoCategoryValues,
+  destinationStyleValues,
+  tipTopicValues,
+  travelTagValues,
+} from "@/lib/labels";
 
 /** Campos opcionais de formulário chegam como "" — normaliza para undefined. */
 const optionalText = (max: number) =>
@@ -217,3 +222,78 @@ export function fieldErrors(error: z.ZodError): Record<string, string[]> {
   }
   return out;
 }
+
+// --- Notas e dicas de destino ------------------------------------------------
+const optionalInt = (min: number, max: number, message: string) =>
+  z.preprocess(
+    (v) => (v === "" || v === null || v === undefined ? undefined : v),
+    z.coerce.number({ error: message }).int(message).min(min, message).max(max, message).optional(),
+  );
+
+export const destinationReviewSchema = z.object({
+  destinationId: z.uuid(),
+  rating,
+  body: z
+    .string()
+    .trim()
+    .min(10, "Conte um pouco mais (mínimo de 10 caracteres).")
+    .max(3000, "Use no máximo 3000 caracteres."),
+  visitedMonth: optionalInt(1, 12, "Mês inválido."),
+  visitedYear: optionalInt(1950, 2100, "Ano inválido."),
+  bestMonths: z
+    .array(z.coerce.number().int().min(1).max(12))
+    .max(12)
+    .default([])
+    .transform((months) => [...new Set(months)].sort((a, b) => a - b)),
+  dailyCost: moneyToCents,
+  styles: z
+    .array(z.enum(destinationStyleValues))
+    .max(10)
+    .default([])
+    .transform((list) => [...new Set(list)]),
+});
+
+export const tipSchema = z.object({
+  destinationId: z.uuid(),
+  topic: z.enum(tipTopicValues, { error: "Escolha o assunto da dica." }),
+  title: z.string().trim().min(3, "Dê um título à dica.").max(120, "Use no máximo 120 caracteres."),
+  body: z
+    .string()
+    .trim()
+    .min(10, "Explique a dica (mínimo de 10 caracteres).")
+    .max(1500, "Use no máximo 1500 caracteres."),
+});
+
+// --- Achadinhos ----------------------------------------------------------------
+const coordinate = (min: number, max: number) =>
+  z.preprocess(
+    (v) => (v === "" || v === null || v === undefined ? undefined : v),
+    z.coerce
+      .number({ error: "Marque o local no mapa." })
+      .min(min, "Coordenada inválida.")
+      .max(max, "Coordenada inválida."),
+  );
+
+export const achadoSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(5, "Dê um nome ao achadinho (mínimo de 5 caracteres).")
+      .max(120, "Use no máximo 120 caracteres."),
+    body: z
+      .string()
+      .trim()
+      .min(10, "Conte o que tem de especial (mínimo de 10 caracteres).")
+      .max(2000, "Use no máximo 2000 caracteres."),
+    category: z.enum(achadoCategoryValues, { error: "Escolha uma categoria." }),
+    latitude: coordinate(-90, 90),
+    longitude: coordinate(-180, 180),
+    locationName: optionalText(200),
+    tip: optionalText(500),
+    destinationId: optionalUuid,
+  })
+  .refine((d) => !(d.latitude === 0 && d.longitude === 0), {
+    message: "Marque o local no mapa.",
+    path: ["latitude"],
+  });

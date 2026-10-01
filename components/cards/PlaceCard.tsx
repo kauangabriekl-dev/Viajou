@@ -20,9 +20,9 @@ export function PlaceCard({ place }: { place: PlaceSummary }) {
   return (
     <Link
       href={`/lugares/${place.slug}`}
-      className="group relative flex min-w-0 gap-4 rounded-[var(--radius-card)] bg-white p-3 ring-1 ring-linha hover:ring-atlantico"
+      className="group relative flex min-w-0 gap-4 rounded-[var(--radius-card)] bg-white p-3 ring-1 ring-linha hover:ring-petroleo"
     >
-      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-atlantico-100 text-atlantico">
+      <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-petroleo-100 text-petroleo">
         {place.image_url ? (
           <Image src={place.image_url} alt="" fill sizes="80px" className="object-cover" />
         ) : (
@@ -31,7 +31,7 @@ export function PlaceCard({ place }: { place: PlaceSummary }) {
       </div>
       <div className="min-w-0 space-y-1 py-1">
         <p className="text-xs font-semibold text-restinga">{placeTypeLabels[place.type]}</p>
-        <h3 className="truncate font-extrabold text-tinta group-hover:text-atlantico">
+        <h3 className="truncate font-extrabold text-tinta group-hover:text-petroleo">
           {place.name}
         </h3>
         {place.reviews_count > 0 ? (
@@ -46,7 +46,7 @@ export function PlaceCard({ place }: { place: PlaceSummary }) {
           <p className="text-xs text-tinta-soft">Ainda sem avaliações</p>
         )}
         {place.is_demo && (
-          <p className="text-[11px] font-bold text-maracuja-600">Lugar de demonstração</p>
+          <p className="text-[11px] font-bold text-agua-700">Lugar de demonstração</p>
         )}
       </div>
     </Link>

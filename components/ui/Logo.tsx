@@ -1,7 +1,10 @@
 import Link from "next/link";
 
-/** Marca: um "pin" formado por sol sobre o horizonte. */
-export function Logo() {
+type LogoProps = { tone?: "dark" | "light" };
+
+/** Marca: o planeta da home, com uma linha de trajeto e o destino em verde-água. */
+export function Logo({ tone = "dark" }: LogoProps) {
+  const light = tone === "light";
   return (
     <Link
       href="/"
@@ -9,14 +12,21 @@ export function Logo() {
       aria-label="VIAJOU, página inicial"
     >
       <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill={light ? "white" : "var(--color-petroleo)"} />
         <path
-          d="M16 2c6.6 0 12 5.2 12 11.7C28 22 16 30 16 30S4 22 4 13.7C4 7.2 9.4 2 16 2Z"
-          fill="var(--color-atlantico)"
+          d="M4.5 19c4-5.5 16-7.5 23-3"
+          fill="none"
+          stroke={light ? "var(--color-petroleo)" : "var(--color-petroleo-100)"}
+          strokeWidth="1.8"
+          strokeDasharray="1.6 2.6"
+          strokeLinecap="round"
         />
-        <circle cx="16" cy="12.5" r="4.2" fill="var(--color-maracuja)" />
-        <path d="M8.5 17.5h15" stroke="var(--color-espuma)" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="21.5" cy="12" r="4" fill="var(--color-agua)" />
       </svg>
-      <span className="text-xl font-extrabold tracking-tight text-atlantico">viajou</span>
+      <span className={`text-xl tracking-tight ${light ? "text-white" : "text-petroleo"}`}>
+        <span className="font-bold">via</span>
+        <span className="font-light">jou</span>
+      </span>
     </Link>
   );
 }

@@ -4,9 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
+import { exec, one, rows, sqlArray, tx } from "@/lib/db/client";
+import { placeRefSchema } from "@/lib/place-ref";
+import { resolvePlace } from "@/lib/places.server";
 import { friendlyError, type ActionResult } from "@/lib/errors";
 import { filesFrom, removeImages, uploadImages } from "@/lib/storage.server";
 import { fieldErrors, postSchema } from "@/lib/validation";
+
+/** "Qual praia você mais gostou?", "Qual praia você recomenda?", "Qual praia você não voltaria?" */
+const BEACH_KINDS = ["favorita", "recomenda", "nao_voltaria"] as const;
 
 export async function createPost(
   _prev: ActionResult | null,
@@ -16,7 +22,6 @@ export async function createPost(
     body: formData.get("body"),
     destinationId: formData.get("destinationId") ?? "",
     hotelPlaceId: formData.get("hotelPlaceId") ?? "",
-    placeIds: formData.getAll("placeIds"),
     tripStart: formData.get("tripStart") ?? "",
     tripEnd: formData.get("tripEnd") ?? "",
     spent: formData.get("spent") ?? "",
@@ -30,92 +35,134 @@ export async function createPost(
       fieldErrors: fieldErrors(parsed.error),
     };
 
+  // Lugares visitados (existentes ou digitados) e as três perguntas de praia.
+  const refs = z
+    .array(placeRefSchema)
+    .max(20, "Selecione até 20 lugares.")
+    .safeParse(formData.getAll("placeRefs"));
+  const beachInput = Object.fromEntries(
+    BEACH_KINDS.map((k) => [k, formData.get(`beach_${k}`) || undefined]),
+  );
+  const beaches = z
+    .object(Object.fromEntries(BEACH_KINDS.map((k) => [k, placeRefSchema.optional()])))
+    .safeParse(beachInput);
+  if (!refs.success || !beaches.success)
+    return {
+      ok: false,
+      error: "Revise os lugares informados.",
+      fieldErrors: { placeRefs: ["Algum lugar informado é inválido."] },
+    };
+
   const session = await getSession();
   if (!session) return { ok: false, error: "Entre na sua conta para publicar." };
-  const { supabase, userId } = session;
+  const { userId } = session;
   const input = parsed.data;
 
-  const photos = filesFrom(formData, "photos");
-  const upload = await uploadImages(supabase, userId, photos, "posts");
+  const upload = await uploadImages(userId, filesFrom(formData, "photos"), "posts");
   if (!upload.ok)
     return { ok: false, error: upload.error, fieldErrors: { photos: [upload.error] } };
 
-  const { data: post, error } = await supabase
-    .from("posts")
-    .insert({
-      user_id: userId,
-      body: input.body,
-      destination_id: input.destinationId ?? null,
-      hotel_place_id: input.hotelPlaceId ?? null,
-      trip_start: input.tripStart ?? null,
-      trip_end: input.tripEnd ?? null,
-      spent_cents: input.spent ?? null,
-      rating: input.rating ?? null,
-      tags: input.tags,
-    })
-    .select("id")
-    .single<{ id: string }>();
-  if (error || !post) {
-    await removeImages(supabase, upload.paths);
-    return { ok: false, error: friendlyError(error, "createPost") };
-  }
-
+  const postId = crypto.randomUUID();
   const alts = formData.getAll("photoAlt").map(String);
-  const [placesResult, photosResult] = await Promise.all([
-    input.placeIds.length
-      ? supabase
-          .from("post_places")
-          .insert([...new Set(input.placeIds)].map((place_id) => ({ post_id: post.id, place_id })))
-      : Promise.resolve({ error: null }),
-    upload.paths.length
-      ? supabase.from("post_photos").insert(
-          upload.paths.map((storage_path, position) => ({
-            post_id: post.id,
-            user_id: userId,
-            storage_path,
+  try {
+    // Publicação, lugares e fotos numa transação: ou entra tudo, ou nada.
+    await tx(async (client) => {
+      await exec(
+        `INSERT INTO posts (id, user_id, body, destination_id, hotel_place_id, trip_start, trip_end, spent_cents, rating, tags)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, ${sqlArray(input.tags)})`,
+        [
+          postId,
+          userId,
+          input.body,
+          input.destinationId ?? null,
+          input.hotelPlaceId ?? null,
+          input.tripStart ?? null,
+          input.tripEnd ?? null,
+          input.spent ?? null,
+          input.rating ?? null,
+        ],
+        client,
+      );
+      const destination = input.destinationId
+        ? await one<{ id: string; city: string; state: string; country: string }>(
+            "SELECT id, city, state, country FROM destinations WHERE id = $1",
+            [input.destinationId],
+            client,
+          )
+        : null;
+      const ctx = { destination, userId };
+      const placeIds = new Set<string>();
+      for (const ref of refs.data) placeIds.add(await resolvePlace(client, ref, ctx));
+      const picks: [string, string][] = [];
+      for (const kind of BEACH_KINDS) {
+        const ref = beaches.data[kind];
+        if (!ref) continue;
+        const id = await resolvePlace(client, ref, { ...ctx, forceType: "beach" });
+        picks.push([kind, id]);
+        placeIds.add(id); // a praia respondida também conta como lugar visitado
+      }
+      for (const placeId of placeIds) {
+        await exec(
+          "INSERT INTO post_places (post_id, place_id) VALUES ($1, $2)",
+          [postId, placeId],
+          client,
+        );
+      }
+      for (const [kind, placeId] of picks) {
+        await exec(
+          "INSERT INTO post_beach_picks (post_id, kind, place_id) VALUES ($1, $2, $3)",
+          [postId, kind, placeId],
+          client,
+        );
+      }
+      for (const [position, storagePath] of upload.paths.entries()) {
+        await exec(
+          "INSERT INTO post_photos (id, post_id, user_id, storage_path, position, alt) VALUES ($1, $2, $3, $4, $5, $6)",
+          [
+            crypto.randomUUID(),
+            postId,
+            userId,
+            storagePath,
             position,
-            alt: alts[position]?.trim().slice(0, 200) || null,
-          })),
-        )
-      : Promise.resolve({ error: null }),
-  ]);
-
-  if (placesResult.error || photosResult.error) {
-    await supabase.from("posts").delete().eq("id", post.id);
-    await removeImages(supabase, upload.paths);
-    return {
-      ok: false,
-      error: friendlyError(placesResult.error ?? photosResult.error, "createPost details"),
-    };
+            alts[position]?.trim().slice(0, 200) || null,
+          ],
+          client,
+        );
+      }
+    });
+  } catch (error) {
+    await removeImages(upload.paths);
+    return { ok: false, error: friendlyError(error as Error, "createPost") };
   }
 
   revalidatePath("/");
-  redirect(`/viagens/${post.id}`);
+  redirect(`/viagens/${postId}`);
 }
 
 export async function deletePost(postId: string): Promise<ActionResult> {
   if (!z.uuid().safeParse(postId).success) return { ok: false, error: "Publicação inválida." };
   const session = await getSession();
   if (!session) return { ok: false, error: "Entre na sua conta para continuar." };
-  const { supabase, userId, profile } = session;
+  const { userId, profile } = session;
 
-  const { data: photos } = await supabase
-    .from("post_photos")
-    .select("storage_path")
-    .eq("post_id", postId)
-    .eq("user_id", userId);
-  const { data, error } = await supabase
-    .from("posts")
-    .delete()
-    .eq("id", postId)
-    .eq("user_id", userId)
-    .select("id");
-  if (error) return { ok: false, error: friendlyError(error, "deletePost") };
-  if (!data?.length) return { ok: false, error: "Você só pode excluir suas próprias publicações." };
-  await removeImages(
-    supabase,
-    (photos ?? []).map((p: { storage_path: string }) => p.storage_path),
-  );
+  let photoPaths: string[] = [];
+  try {
+    const deleted = await tx(async (client) => {
+      photoPaths = (
+        await rows<{ storage_path: string }>(
+          "SELECT storage_path FROM post_photos WHERE post_id = $1 AND user_id = $2",
+          [postId, userId],
+          client,
+        )
+      ).map((p) => p.storage_path);
+      // Só o autor exclui; fotos, comentários e curtidas vão junto (ON DELETE CASCADE).
+      return exec("DELETE FROM posts WHERE id = $1 AND user_id = $2", [postId, userId], client);
+    });
+    if (!deleted) return { ok: false, error: "Você só pode excluir suas próprias publicações." };
+  } catch (error) {
+    return { ok: false, error: friendlyError(error as Error, "deletePost") };
+  }
+  await removeImages(photoPaths);
 
   revalidatePath("/");
   redirect(`/perfil/${profile.username}`);

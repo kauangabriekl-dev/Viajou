@@ -30,14 +30,14 @@ export function MapView({ latitude, longitude, zoom = 13, markers = [], label }:
         >
           <path
             d="M0 150 C 80 120, 160 170, 240 140 S 360 110, 400 130 V225 H0Z"
-            fill="var(--color-atlantico)"
+            fill="var(--color-petroleo)"
             opacity="0.18"
           />
           {Array.from({ length: 9 }, (_, i) => (
             <path
               key={`v${i}`}
               d={`M${i * 50} 0V225`}
-              stroke="var(--color-atlantico)"
+              stroke="var(--color-petroleo)"
               strokeOpacity="0.08"
             />
           ))}
@@ -45,15 +45,12 @@ export function MapView({ latitude, longitude, zoom = 13, markers = [], label }:
             <path
               key={`h${i}`}
               d={`M0 ${i * 56}H400`}
-              stroke="var(--color-atlantico)"
+              stroke="var(--color-petroleo)"
               strokeOpacity="0.08"
             />
           ))}
         </svg>
-        <MapPin
-          aria-hidden="true"
-          className="relative h-10 w-10 fill-maracuja text-atlantico-900"
-        />
+        <MapPin aria-hidden="true" className="relative h-10 w-10 fill-agua text-petroleo-900" />
       </div>
       <figcaption className="flex flex-wrap items-center justify-between gap-2 bg-white px-4 py-3 text-sm">
         <span>
@@ -69,7 +66,7 @@ export function MapView({ latitude, longitude, zoom = 13, markers = [], label }:
           href={external}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-semibold text-atlantico underline"
+          className="font-semibold text-petroleo underline"
         >
           Abrir no mapa
         </a>

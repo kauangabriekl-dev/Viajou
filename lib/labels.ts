@@ -1,10 +1,13 @@
 import type {
+  AchadoCategory,
+  DestinationStyle,
   ComplaintCategory,
   ComplaintStatus,
   NotificationType,
   PlaceType,
   ReportReason,
   ReportTarget,
+  TipTopic,
 } from "@/types/database";
 
 export const placeTypeLabels: Record<PlaceType, string> = {
@@ -84,3 +87,87 @@ export type TravelTag = (typeof travelTags)[number]["value"];
 export const travelTagValues = travelTags.map((t) => t.value) as [TravelTag, ...TravelTag[]];
 export const tagLabel = (value: string) =>
   travelTags.find((t) => t.value === value)?.label ?? value;
+
+export const tipTopics: { value: TipTopic; label: string; hint: string }[] = [
+  {
+    value: "melhor_epoca",
+    label: "Melhor época",
+    hint: "Quando ir, clima, alta e baixa temporada",
+  },
+  { value: "cafe_da_manha", label: "Café da manhã", hint: "Onde tomar um bom café da manhã" },
+  { value: "onde_comer", label: "Onde comer", hint: "Restaurantes, comida local, bom e barato" },
+  { value: "onde_ficar", label: "Onde ficar", hint: "Bairros e regiões para se hospedar" },
+  { value: "passeios", label: "Passeios", hint: "O que não dá para perder" },
+  { value: "custo", label: "Custo", hint: "Quanto se gasta e como economizar" },
+  { value: "transporte", label: "Transporte", hint: "Como chegar e como se locomover" },
+];
+export const tipTopicValues = tipTopics.map((t) => t.value) as [TipTopic, ...TipTopic[]];
+export const tipTopicLabel = (value: string) =>
+  tipTopics.find((t) => t.value === value)?.label ?? value;
+
+export const monthShort = [
+  "jan",
+  "fev",
+  "mar",
+  "abr",
+  "mai",
+  "jun",
+  "jul",
+  "ago",
+  "set",
+  "out",
+  "nov",
+  "dez",
+];
+export const monthLong = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
+
+export const achadoCategories: { value: AchadoCategory; label: string }[] = [
+  { value: "praia", label: "Praia escondida" },
+  { value: "mirante", label: "Mirante" },
+  { value: "trilha", label: "Trilha" },
+  { value: "cachoeira", label: "Cachoeira" },
+  { value: "comida", label: "Comida" },
+  { value: "cafe", label: "Café" },
+  { value: "compras", label: "Compras" },
+  { value: "cultura", label: "Cultura" },
+  { value: "outro", label: "Outro" },
+];
+export const achadoCategoryValues = achadoCategories.map((c) => c.value) as [
+  AchadoCategory,
+  ...AchadoCategory[],
+];
+export const achadoCategoryLabel = (value: string) =>
+  achadoCategories.find((c) => c.value === value)?.label ?? value;
+
+/** Estilos de destino (filtro em /destinos). A ordem aqui é a ordem dos chips. */
+export const destinationStyles: { value: DestinationStyle; label: string }[] = [
+  { value: "praia", label: "Praia" },
+  { value: "frio", label: "Frio e neve" },
+  { value: "montanha", label: "Montanha" },
+  { value: "trilha", label: "Trilha" },
+  { value: "floresta", label: "Floresta" },
+  { value: "cachoeira", label: "Cachoeira" },
+  { value: "cidade", label: "Cidade" },
+  { value: "historico", label: "Histórico" },
+  { value: "gastronomia", label: "Gastronomia" },
+  { value: "aventura", label: "Aventura" },
+];
+export const destinationStyleValues = destinationStyles.map((s) => s.value) as [
+  DestinationStyle,
+  ...DestinationStyle[],
+];
+export const destinationStyleLabel = (value: string) =>
+  destinationStyles.find((s) => s.value === value)?.label ?? value;

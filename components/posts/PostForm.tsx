@@ -6,8 +6,9 @@ import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { ImageUploader } from "@/components/forms/ImageUploader";
 import { StarInput } from "@/components/forms/StarInput";
 import { SubmitButton } from "@/components/forms/SubmitButton";
+import { PlacePicker, type PickedPlace } from "@/components/posts/PlacePicker";
 import { createPost } from "@/lib/actions/posts";
-import { placeTypeLabels, travelTags } from "@/lib/labels";
+import { travelTags } from "@/lib/labels";
 import type { Destination, Place } from "@/types/database";
 
 type Props = {
@@ -19,6 +20,9 @@ type Props = {
 export function PostForm({ destinations, places, initialDestinationId = "" }: Props) {
   const [state, action] = useActionState(createPost, null);
   const [destinationId, setDestinationId] = useState(initialDestinationId);
+  const [beachTrip, setBeachTrip] = useState(false);
+  const [visited, setVisited] = useState<PickedPlace[]>([]);
+  const showBeachQuestions = beachTrip || visited.some((p) => p.type === "beach");
   const e = (f: string) => errorsFor(state, f);
   const local = places.filter((p) => p.destination_id === destinationId);
   const hotels = local.filter((p) => p.type === "hotel");
@@ -77,30 +81,16 @@ export function PostForm({ destinations, places, initialDestinationId = "" }: Pr
               </select>
             </Field>
           )}
-          {local.length > 0 && (
-            <fieldset className="space-y-2">
-              <legend className="text-sm font-semibold">
-                Lugares visitados <span className="font-normal text-tinta-soft">(opcional)</span>
-              </legend>
-              <div className="grid max-h-60 gap-1.5 overflow-y-auto rounded-xl border border-linha bg-white p-3 sm:grid-cols-2">
-                {local.map((p) => (
-                  <label key={p.id} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      name="placeIds"
-                      value={p.id}
-                      className="accent-atlantico"
-                    />
-                    <span>
-                      {p.name} <span className="text-tinta-soft">· {placeTypeLabels[p.type]}</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          )}
         </>
       )}
+
+      <PlacePicker
+        name="placeRefs"
+        label="Lugares visitados"
+        hint="Escreva ou busque. Se o lugar ainda não existir, ele é cadastrado e fica disponível para as próximas pessoas."
+        destinationId={destinationId || undefined}
+        onChange={setVisited}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field id="tripStart" label="Ida" optional errors={e("tripStart")}>
@@ -145,14 +135,49 @@ export function PostForm({ destinations, places, initialDestinationId = "" }: Pr
           {travelTags.map((t) => (
             <label
               key={t.value}
-              className="cursor-pointer rounded-full border border-linha bg-white px-3 py-1.5 text-sm has-checked:border-atlantico has-checked:bg-atlantico-100 has-checked:text-atlantico has-focus-visible:outline-3 has-focus-visible:outline-maracuja"
+              className="cursor-pointer rounded-full border border-linha bg-white px-3 py-1.5 text-sm has-checked:border-petroleo has-checked:bg-petroleo-100 has-checked:text-petroleo has-focus-visible:outline-3 has-focus-visible:outline-agua"
             >
-              <input type="checkbox" name="tags" value={t.value} className="sr-only" />
+              <input
+                type="checkbox"
+                name="tags"
+                value={t.value}
+                className="sr-only"
+                onChange={t.value === "praia" ? (ev) => setBeachTrip(ev.target.checked) : undefined}
+              />
               {t.label}
             </label>
           ))}
         </div>
       </fieldset>
+
+      {showBeachQuestions && (
+        <fieldset className="space-y-5 rounded-[var(--radius-card)] bg-petroleo-100/60 p-5">
+          <legend className="sr-only">Sobre as praias</legend>
+          <p className="text-lg font-semibold text-petroleo">Sobre as praias</p>
+          <PlacePicker
+            name="beach_favorita"
+            label="Qual praia você mais gostou?"
+            destinationId={destinationId || undefined}
+            onlyType="beach"
+            single
+          />
+          <PlacePicker
+            name="beach_recomenda"
+            label="Qual praia você recomenda?"
+            destinationId={destinationId || undefined}
+            onlyType="beach"
+            single
+          />
+          <PlacePicker
+            name="beach_nao_voltaria"
+            label="Qual praia você não voltaria?"
+            hint="Seja justo: conte no relato o motivo."
+            destinationId={destinationId || undefined}
+            onlyType="beach"
+            single
+          />
+        </fieldset>
+      )}
 
       <FormMessage state={state} />
       <SubmitButton pendingLabel="Publicando…" className="w-full sm:w-auto">

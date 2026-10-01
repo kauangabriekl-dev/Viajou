@@ -1,7 +1,21 @@
 import "server-only";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
+import { stripLocation } from "@/lib/image-privacy";
 import { checkImage, IMAGE_MAX_FILES, matchesSignature } from "@/lib/images";
-import { PHOTOS_BUCKET } from "@/lib/storage";
-import type { ServerClient } from "@/lib/supabase/server";
+import { PHOTO_PATH, type PhotoFolder } from "@/lib/storage";
+
+/** Pasta das fotos enviadas (fora do git). Configurável com UPLOAD_DIR. */
+export const UPLOAD_DIR = resolve(
+  process.env.UPLOAD_DIR || join(process.cwd(), ".data", "uploads"),
+);
+
+/** Caminho absoluto de uma foto, só para caminhos no formato gerado pelo servidor. */
+export function uploadFilePath(path: string): string | null {
+  if (!PHOTO_PATH.test(path)) return null;
+  const full = resolve(UPLOAD_DIR, path);
+  return full.startsWith(UPLOAD_DIR) ? full : null;
+}
 
 type UploadResult = { ok: true; paths: string[] } | { ok: false; error: string };
 
@@ -13,15 +27,14 @@ export function filesFrom(formData: FormData, field: string): File[] {
 }
 
 /**
- * Valida (tipo, extensão, tamanho e assinatura binária) e envia imagens para
- * <userId>/<folder>/<uuid>.<ext>. Se qualquer envio falhar, remove os já enviados.
- * Compressão/redimensionamento: ponto de extensão futuro (ex.: Edge Function).
+ * Valida (tipo, extensão, tamanho e assinatura binária) e grava as imagens em
+ * <UPLOAD_DIR>/<userId>/<folder>/<uuid>.<ext>. Se qualquer gravação falhar, apaga as já gravadas.
+ * Antes de gravar, remove a localização (GPS) dos metadados: veja lib/image-privacy.ts.
  */
 export async function uploadImages(
-  supabase: ServerClient,
   userId: string,
   files: File[],
-  folder: "posts" | "avatars" | "complaints",
+  folder: PhotoFolder,
   maxFiles = IMAGE_MAX_FILES,
 ): Promise<UploadResult> {
   if (files.length > maxFiles) return { ok: false, error: `Envie no máximo ${maxFiles} imagens.` };
@@ -37,21 +50,29 @@ export async function uploadImages(
     prepared.push({ path: `${userId}/${folder}/${crypto.randomUUID()}.${check.extension}`, file });
   }
 
-  const uploaded: string[] = [];
-  for (const { path, file } of prepared) {
-    const { error } = await supabase.storage
-      .from(PHOTOS_BUCKET)
-      .upload(path, file, { contentType: file.type, upsert: false, cacheControl: "31536000" });
-    if (error) {
-      if (uploaded.length) await supabase.storage.from(PHOTOS_BUCKET).remove(uploaded);
-      if (process.env.NODE_ENV !== "production") console.error("[viajou] upload:", error);
-      return { ok: false, error: "Não foi possível enviar as imagens. Tente de novo." };
+  const written: string[] = [];
+  try {
+    for (const { path, file } of prepared) {
+      const target = uploadFilePath(path);
+      if (!target) throw new Error("Caminho de foto inválido");
+      await mkdir(dirname(target), { recursive: true });
+      const clean = stripLocation(new Uint8Array(await file.arrayBuffer()), file.type);
+      await writeFile(target, clean, { flag: "wx" });
+      written.push(path);
     }
-    uploaded.push(path);
+  } catch (error) {
+    await removeImages(written);
+    if (process.env.NODE_ENV !== "production") console.error("[viajou] upload:", error);
+    return { ok: false, error: "Não foi possível enviar as imagens. Tente de novo." };
   }
-  return { ok: true, paths: uploaded };
+  return { ok: true, paths: written };
 }
 
-export async function removeImages(supabase: ServerClient, paths: string[]) {
-  if (paths.length) await supabase.storage.from(PHOTOS_BUCKET).remove(paths);
+export async function removeImages(paths: string[]) {
+  await Promise.all(
+    paths.map(async (path) => {
+      const target = uploadFilePath(path);
+      if (target) await rm(target, { force: true });
+    }),
+  );
 }

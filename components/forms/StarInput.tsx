@@ -28,7 +28,7 @@ export function StarInput({ name, label, required, errors, compact }: StarInputP
         {[1, 2, 3, 4, 5].map((n) => (
           <label
             key={n}
-            className="cursor-pointer rounded-md has-focus-visible:outline-3 has-focus-visible:outline-maracuja"
+            className="cursor-pointer rounded-md has-focus-visible:outline-3 has-focus-visible:outline-agua"
             onMouseEnter={() => setHover(n)}
           >
             <input
@@ -45,7 +45,7 @@ export function StarInput({ name, label, required, errors, compact }: StarInputP
             </span>
             <Star
               aria-hidden="true"
-              className={`${size} ${n <= shown ? "fill-maracuja text-maracuja" : "text-linha"}`}
+              className={`${size} ${n <= shown ? "fill-sol text-sol" : "text-linha"}`}
             />
           </label>
         ))}

@@ -62,6 +62,29 @@ description: Regras de negócio e de produto do VIAJOU (avaliações, publicaç�
 - Qualquer usuário logado pode denunciar publicação, comentário, avaliação, perfil ou foto, uma vez por item. As denúncias ficam em `reports` para revisão humana.
 - Ainda não existe painel de moderação. Não remova nem esconda conteúdo automaticamente com base em denúncias: isso vira ferramenta de censura entre usuários e concorrentes.
 
+## Lugares da comunidade
+
+- Ao publicar uma viagem, a pessoa escreve ou busca os lugares visitados. Se o lugar não existe, é criado como **lugar da comunidade** (`places.is_community = true`, `created_by`). Antes de criar, o sistema reaproveita um lugar com o mesmo nome (sem acento) no mesmo destino, para não duplicar.
+- Em relatos de praia: "Qual praia você mais gostou?", "Qual você recomenda?" e "Qual você não voltaria?" (`post_beach_picks`). "Não voltaria" pede o motivo no relato: é opinião de viajante, não acusação a estabelecimento.
+- Lugares da comunidade ainda não têm revisão: quando houver painel de moderação, eles entram nele.
+
+## Notas e dicas de destino
+
+- Além da nota de cada lugar, existe a **nota do destino** (uma por pessoa), com os meses em que a pessoa recomenda ir e o gasto por dia, por pessoa. O resumo mostra média, meses mais recomendados e a **mediana** do gasto, sempre com "de quantos relatos". Sem avaliações, nada de números.
+- **Dicas por assunto**: melhor época, café da manhã, onde comer, onde ficar, passeios, custo e transporte. "Foi útil" ordena as dicas; ninguém vota na própria.
+
+## Achadinhos
+
+- Lugar especial com foto (pelo menos uma) e **localização exata**, marcada no mapa ou pelo GPS. O nome do local e o destino mais próximo (até 80 km) são calculados no servidor.
+- A localização é pública por escolha da pessoa: o formulário avisa para não marcar casas. A localização gravada dentro das fotos (EXIF/XMP) é sempre apagada.
+- "Como chegar" abre a rota no Google Maps; "Salvar para ir" guarda na conta.
+
+## Roteiro sugerido pela comunidade
+
+- Montado na hora (`lib/suggested-itinerary.ts`) com os sinais reais: notas (média com peso, para uma nota sozinha não vencer muitas), recomendações e favoritas de praia, "não voltaria" (desconta e pode excluir), dicas votadas, achadinhos salvos e uso em roteiros públicos. Cada parada mostra **por que** está ali.
+- Sem dados suficientes, não sugere nada e convida a avaliar. Nunca é apresentado como viagem de uma pessoa: o selo é "Roteiro sugerido pela comunidade". Salvar cria uma cópia privada editável.
+- Referência de formato: guias de destino (seções quando ir, onde ficar, onde comer, passeios). Não copie texto de nenhum guia.
+
 ## Escopo atual
 
-Fora do MVP: reservas e pagamentos, anúncios, IA, mensagens diretas, mapa interativo (existe só o placeholder `MapView`) e cadastro de lugares por usuários (hoje o catálogo é mantido pela equipe). Antes de criar algo nessas áreas, confirme com o responsável pelo produto.
+Fora do MVP: reservas e pagamentos, anúncios, IA generativa, mensagens diretas e painel de moderação. Antes de criar algo nessas áreas, confirme com o responsável pelo produto.
