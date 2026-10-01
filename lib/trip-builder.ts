@@ -9,6 +9,7 @@
  * Cada escolha vira um "porquê" mostrado à pessoa.
  */
 import { normalizePlace } from "@/lib/geo-search";
+import type { DayTrip } from "@/lib/day-trips";
 import type { ReadyItinerary, ReadyPeriod } from "@/lib/ready-itineraries";
 import type { DestinationStyle } from "@/types/database";
 
@@ -238,17 +239,8 @@ export function readProfile(
 
 export type BuiltStop = { period: ReadyPeriod; title: string; note: string };
 
-/**
- * "planejado": experiências reais. "opcional": sugestões que a pessoa escolhe (bate-voltas).
- * "livre": dia livre de propósito, quando não há mais experiências novas e relevantes.
- */
-export type BuiltDay = {
-  title: string;
-  stops: BuiltStop[];
-  kind?: "planejado" | "opcional" | "livre";
-  /** Ideias para o dia livre ou para o dia de sugestões. */
-  options?: string[];
-};
+/** Um dia do roteiro principal: sempre com experiências reais. */
+export type BuiltDay = { title: string; stops: BuiltStop[] };
 
 export type PlacePick = {
   name: string;
@@ -256,15 +248,24 @@ export type PlacePick = {
   slug?: string;
 };
 
+export type Suggestion = { title: string; note: string };
+
+/**
+ * Roteiro modular: o número de dias da viagem não é meta de preenchimento.
+ *  - days: roteiro principal, só com experiências reais (pode ter menos dias que a viagem);
+ *  - remaining: como aproveitar os dias que sobraram (bate-voltas curados e, no máximo,
+ *    um dia livre);
+ *  - forYou / extras: o que ficou de fora, separado pelo que combina com o perfil.
+ */
 export type BuiltTrip = {
   days: BuiltDay[];
   reasons: string[];
   tips: string[];
-  /** "Você ainda pode conhecer": experiências relevantes que ficaram fora do roteiro. */
-  moreToSee: { title: string; note: string }[];
-  /** Quantos dias têm programação de verdade (o resto é opcional ou livre). */
-  plannedDays: number;
-  /** De onde veio a base do roteiro. */
+  remaining: { days: number; dayTrips: DayTrip[]; freeDay: string[] | null };
+  /** Experiências que combinam com o que a pessoa contou e não couberam no roteiro. */
+  forYou: Suggestion[];
+  /** Outras experiências relevantes que você pode adicionar. */
+  extras: Suggestion[];
   source: "pronto" | "lugares" | "atracoes" | "nenhum";
 };
 
@@ -312,9 +313,14 @@ function coreWords(text: string) {
 function coveredBy(name: string, usedTitles: string[]) {
   const core = coreWords(name);
   if (!core.length) return usedTitles.some((t) => normalizePlace(t) === normalizePlace(name));
+  // Mesmo lugar se as palavras de um nome estão todas no outro, em qualquer direção
+  // ("Igreja de Santa Rita" e "Igreja de Santa Rita de Cássia").
   return usedTitles.some((t) => {
-    const words = new Set(coreWords(t));
-    return core.every((w) => words.has(w));
+    const other = coreWords(t);
+    if (!other.length) return false;
+    const mine = new Set(core);
+    const theirs = new Set(other);
+    return core.every((w) => theirs.has(w)) || other.every((w) => mine.has(w));
   });
 }
 
@@ -430,6 +436,7 @@ function daysFromAttractions(
 ): BuiltDay[] {
   const perDay = MAX_STOPS[p.pace];
   const days: BuiltDay[] = [];
+  const leftovers: AttractionPick[] = [];
   let lastKind: AttractionKind | null = null;
   let noteTurn = 0;
   while (days.length < maxDays && pool.length) {
@@ -449,6 +456,12 @@ function daysFromAttractions(
       picked.push(x.a);
       kinds.add(x.a.kind);
     }
+    // Um dia de verdade tem pelo menos duas experiências próximas; atração sozinha
+    // não vira dia (fica nas "outras experiências").
+    if (picked.length < 2) {
+      leftovers.push(seed);
+      continue;
+    }
     for (const a of picked.slice(1)) pool.splice(pool.indexOf(a), 1);
     lastKind = seed.kind;
     const stops = picked
@@ -462,11 +475,11 @@ function daysFromAttractions(
       })
       .sort((x, y) => PERIOD_ORDER[x.period] - PERIOD_ORDER[y.period]);
     days.push({
-      kind: "planejado",
-      title: stops.length > 1 ? `${seed.name} e arredores` : seed.name,
+      title: `${seed.name} e arredores`,
       stops,
     });
   }
+  pool.unshift(...leftovers);
   return days;
 }
 
@@ -492,7 +505,7 @@ function daysFromPlaces(places: PlacePick[], p: TravelerProfile): BuiltDay[] {
         title: meal.name,
         note: "Restaurante avaliado pela comunidade.",
       });
-    days.push({ kind: "planejado", title: chunk[0].name, stops });
+    days.push({ title: chunk[0].name, stops });
   }
   return days;
 }
@@ -512,41 +525,41 @@ function trimDay(day: BuiltDay, p: TravelerProfile): BuiltDay {
   return { ...day, stops: kept.filter((s) => best.has(s)) };
 }
 
-function freeDay(p: TravelerProfile, styles: DestinationStyle[]): BuiltDay {
-  const options = [
+/** Ideias para o (único) dia livre, quando ele faz sentido. */
+function freeDayOptions(p: TravelerProfile, styles: DestinationStyle[]): string[] {
+  return [
     "Descansar e recarregar as energias",
-    "Voltar ao lugar favorito da viagem",
-    styles.includes("praia") ? "Aproveitar a praia sem pressa" : null,
-    "Conhecer restaurantes e cafés que chamaram sua atenção",
-    "Explorar a região sem roteiro",
-    "Adaptar ao clima: deixe para hoje o que a chuva ou o calor adiaram",
-    p.kids ? "Um programa só das crianças, no ritmo delas" : null,
+    "Voltar ao lugar de que você mais gostou",
+    styles.includes("praia") ? "Ficar na praia que você preferiu, sem horário" : null,
+    "Provar restaurantes e cafés que chamaram sua atenção",
+    "Guardar para o clima: o que a chuva ou o calor adiaram",
+    p.kids ? "Um programa no ritmo das crianças" : null,
   ].filter((o): o is string => Boolean(o));
-  return { kind: "livre", title: "Dia livre", stops: [], options };
 }
 
 /**
  * Validação final: nenhuma parada repetida (nem a mesma coisa com outro nome) entre os
  * dias planejados. Paradas repetidas saem; dia planejado que fica vazio vira dia livre.
  */
-export function validateTrip(days: BuiltDay[], p: TravelerProfile, styles: DestinationStyle[]) {
+export function validateTrip(days: BuiltDay[]): BuiltDay[] {
   const seen: string[] = [];
-  return days.map((day) => {
-    if (day.kind !== "planejado") return day;
-    const stops = day.stops.filter((s) => {
-      if (coveredBy(s.title, seen)) return false;
-      seen.push(s.title);
-      return true;
-    });
-    return stops.length ? { ...day, stops } : freeDay(p, styles);
-  });
+  return days
+    .map((day) => ({
+      ...day,
+      stops: day.stops.filter((s) => {
+        if (coveredBy(s.title, seen)) return false;
+        seen.push(s.title);
+        return true;
+      }),
+    }))
+    .filter((day) => day.stops.length > 0);
 }
 
 /** Paradas repetidas num roteiro (para testes e para conferir antes de mostrar). */
 export function findRepeats(days: BuiltDay[]): string[] {
   const seen: string[] = [];
   const repeats: string[] = [];
-  for (const s of days.filter((d) => d.kind !== "livre").flatMap((d) => d.stops)) {
+  for (const s of days.flatMap((d) => d.stops)) {
     if (coveredBy(s.title, seen)) repeats.push(s.title);
     seen.push(s.title);
   }
@@ -562,8 +575,8 @@ export function buildTrip(input: {
   styles?: DestinationStyle[];
   /** Nome do destino (não vira atração dele mesmo). */
   destinationName?: string;
-  /** Cidades reais próximas, oferecidas como bate-voltas opcionais. */
-  nearby?: { name: string; km: number }[];
+  /** Bate-voltas consagrados do destino (lista curada em lib/day-trips.ts). */
+  dayTrips?: DayTrip[];
 }): BuiltTrip {
   const p = input.profile;
   const styles = input.styles ?? [];
@@ -576,7 +589,6 @@ export function buildTrip(input: {
   if (input.ready) {
     source = "pronto";
     const base: BuiltDay[] = input.ready.days.map((d) => ({
-      kind: "planejado",
       title: d.title,
       stops: [...d.stops],
     }));
@@ -612,7 +624,16 @@ export function buildTrip(input: {
 
   // Atrações reais que ainda não aparecem no roteiro (nem com outro nome ou idioma).
   const usedTitles = () => days.flatMap((d) => d.stops.map((s) => s.title));
-  const pool = dedupeAttractions(input.attractions ?? [])
+  const cityName = normalizePlace(input.destinationName ?? "");
+  const pool = dedupeAttractions(
+    (input.attractions ?? []).map((x) => ({
+      ...x,
+      // "Sadar Bazaar, Agra" → "Sadar Bazaar"
+      name: x.name.replace(/,s*([^,]+)$/, (m, tail: string) =>
+        normalizePlace(tail) === cityName ? "" : m,
+      ),
+    })),
+  )
     .filter((x) => normalizePlace(x.name) !== normalizePlace(input.destinationName ?? ""))
     .filter((x) => attractionScore(x, p) > -3)
     .filter((x) => !coveredBy(x.name, usedTitles()))
@@ -620,7 +641,12 @@ export function buildTrip(input: {
     .sort((x, y) => y.score - x.score || x.i - y.i)
     .map((x) => x.a);
   if (days.length < total && pool.length) {
-    const extra = daysFromAttractions(pool, p, total - days.length);
+    // Só as mais procuradas (a lista vem ordenada por popularidade) viram dias;
+    // as demais ficam como experiências que a pessoa pode adicionar.
+    const TOP = 10;
+    const top = pool.slice(0, TOP);
+    const extra = daysFromAttractions(top, p, total - days.length);
+    pool.splice(0, TOP, ...top);
     if (extra.length) {
       if (source === "nenhum") source = "atracoes";
       days.push(...extra);
@@ -630,29 +656,27 @@ export function buildTrip(input: {
     }
   }
 
-  // Ajusta ritmo e gostos e faz a validação contra repetições.
-  days = days.map((d) => (d.kind === "planejado" ? trimDay(d, p) : d));
-  days = validateTrip(days, p, styles);
-  const plannedDays = days.filter((d) => d.kind === "planejado").length;
+  // Ajusta ritmo e gostos e faz a validação contra repetições (dia vazio sai do roteiro).
+  days = validateTrip(days.map((d) => trimDay(d, p)));
+  const planned = days.length;
+  const remainingDays = total - planned;
 
-  // Faltou conteúdo novo e relevante: um dia de sugestões opcionais e o resto livre.
-  const nearby = input.nearby ?? [];
-  if (days.length < total && nearby.length) {
-    days.push({
-      kind: "opcional",
-      title: "Dia de sugestões opcionais",
-      stops: [],
-      options: nearby.slice(0, 4).map((c) => `Bate-volta a ${c.name} (cerca de ${c.km} km)`),
-    });
-  }
-  while (days.length < total) days.push(freeDay(p, styles));
-  if (plannedDays < total) {
-    reasons.push(
-      `Montamos ${plannedDays} ${plannedDays === 1 ? "dia completo" : "dias completos"} com experiências diferentes. Para não repetir programas nem inventar atividades, ${
-        total - plannedDays === 1
-          ? "o outro dia ficou"
-          : `os outros ${total - plannedDays} dias ficaram`
-      } com sugestões opcionais ou livre.`,
+  // Bate-voltas só da lista curada e só se ainda não fazem parte do roteiro.
+  const finalTitles = days.flatMap((d) => d.stops.map((s) => s.title));
+  const dayTrips = (input.dayTrips ?? []).filter((t) => !coveredBy(t.name, finalTitles));
+  const tripsShown = remainingDays > 0 ? dayTrips.slice(0, remainingDays) : [];
+  const remaining: BuiltTrip["remaining"] = {
+    days: Math.max(0, remainingDays),
+    dayTrips: tripsShown,
+    // Dia livre: no máximo um, e só quando os bate-voltas não cobrem os dias que sobraram.
+    freeDay: remainingDays > tripsShown.length ? freeDayOptions(p, styles) : null,
+  };
+
+  if (remainingDays > 0) {
+    reasons.unshift(
+      planned > 0
+        ? `Encontramos experiências diferentes e relevantes para ${planned} ${planned === 1 ? "dia" : "dias"}. Não completamos os outros ${remainingDays} com programas repetidos ou inventados: veja abaixo como aproveitá-los.`
+        : "Ainda não temos experiências confirmadas para este destino. Em vez de inventar um roteiro, reunimos abaixo o que você pode fazer.",
     );
   }
 
@@ -671,20 +695,27 @@ export function buildTrip(input: {
   if (p.limitedMobility)
     reasons.push("Evitamos trilhas e passeios de muito esforço por causa da mobilidade.");
 
-  // "Você ainda pode conhecer": o que é relevante e ficou de fora.
-  const finalTitles = days.flatMap((d) => d.stops.map((s) => s.title));
-  const moreToSee: BuiltTrip["moreToSee"] = [];
-  for (const s of leftoverReady) {
-    if (!coveredBy(s.title, [...finalTitles, ...moreToSee.map((m) => m.title)]))
-      moreToSee.push({ title: s.title, note: s.note });
+  // O que ficou de fora: primeiro o que combina com o perfil, depois o restante.
+  const forYou: Suggestion[] = [];
+  const extras: Suggestion[] = [];
+  // Nada que já esteja no roteiro, nos bate-voltas ou na própria lista volta a aparecer.
+  const taken = () => [
+    ...finalTitles,
+    ...remaining.dayTrips.map((t) => t.name),
+    ...forYou.map((m) => m.title),
+    ...extras.map((m) => m.title),
+  ];
+  for (const st of leftoverReady) {
+    if (coveredBy(st.title, taken())) continue;
+    (stopScore(st, p) > 0 ? forYou : extras).push({ title: st.title, note: st.note });
   }
-  for (const a of pool) {
-    if (!coveredBy(a.name, [...finalTitles, ...moreToSee.map((m) => m.title)]))
-      moreToSee.push({ title: a.name, note: attractionKindLabel[a.kind] });
+  for (const at of pool) {
+    if (coveredBy(at.name, taken())) continue;
+    (attractionScore(at, p) > 0 ? forYou : extras).push({
+      title: at.name,
+      note: attractionKindLabel[at.kind],
+    });
   }
-  if (!days.some((d) => d.kind === "opcional"))
-    for (const c of nearby.slice(0, 2))
-      moreToSee.push({ title: `Bate-volta a ${c.name}`, note: `Cidade a cerca de ${c.km} km` });
 
   const tips: string[] = [];
   if (p.kids)
@@ -705,7 +736,15 @@ export function buildTrip(input: {
   if (p.likes.includes("noite") && !p.kids)
     tips.push("Deixe o dia seguinte às noites mais animadas com programação leve.");
 
-  return { days, reasons, tips, moreToSee: moreToSee.slice(0, 8), plannedDays, source };
+  return {
+    days,
+    reasons,
+    tips,
+    remaining,
+    forYou: forYou.slice(0, 6),
+    extras: extras.slice(0, 8),
+    source,
+  };
 }
 
 export const interestLabel: Record<Interest, string> = {

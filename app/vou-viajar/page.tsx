@@ -1,27 +1,19 @@
 import Link from "next/link";
 import { z } from "zod";
-import {
-  BedDouble,
-  Lightbulb,
-  MapPinned,
-  Quote,
-  Sparkles,
-  Star,
-  UtensilsCrossed,
-} from "lucide-react";
+import { BedDouble, Lightbulb, MapPinned, Quote, UtensilsCrossed } from "lucide-react";
 import { TripAssistant } from "@/components/assistant/TripAssistant";
 import { ItineraryCard } from "@/components/cards/ItineraryCard";
 import { PlaceCard } from "@/components/cards/PlaceCard";
 import { PostCard } from "@/components/cards/PostCard";
 import { ReadyItineraryCard } from "@/components/cards/ReadyItineraryCard";
+import { ModularTrip } from "@/components/trips/ModularTrip";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { TripPlanForm } from "@/components/trips/TripPlanForm";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getSession } from "@/lib/auth";
-import { nearbyCities } from "@/lib/geo-search";
-import { getPlacesIndex } from "@/lib/geo.server";
+import { dayTripsFor } from "@/lib/day-trips";
 import { tagLabel } from "@/lib/labels";
 import {
   getDestination,
@@ -35,7 +27,6 @@ import {
 import {
   READY_ITINERARIES,
   readyForDestination,
-  readyPeriodLabel,
   type ReadyItinerary,
 } from "@/lib/ready-itineraries";
 import { buildMetadata } from "@/lib/seo";
@@ -125,17 +116,8 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
   const picks: PlacePick[] = places.map((p) => ({ name: p.name, type: p.type, slug: p.slug }));
   const attractions =
     (attractionsData as Record<string, AttractionPick[]>)[plan.destination.slug] ?? [];
-  // Cidades reais por perto, para os dias a mais virarem bate-voltas (sem repetir programa).
-  const nearby =
-    destination?.latitude != null && destination.longitude != null && days > 3
-      ? nearbyCities(
-          await getPlacesIndex(),
-          Number(destination.latitude),
-          Number(destination.longitude),
-        ).filter((c) => c.name !== plan.destination.name)
-      : [];
   const trip = buildTrip({
-    nearby,
+    dayTrips: dayTripsFor(plan.destination.slug),
     days,
     profile,
     ready,
@@ -206,84 +188,36 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
           <SectionHeading
             id="vv-seu-roteiro"
             lead="Montamos para você"
-            title={`${pluralize(days, "dia", "dias")} em ${plan.destination.name}`}
+            title={
+              trip.days.length
+                ? `${pluralize(trip.days.length, "dia", "dias")} de experiências em ${plan.destination.name}`
+                : `Sua viagem a ${plan.destination.name}`
+            }
           />
-          <div className="mb-6 rounded-2xl border border-agua/50 bg-white p-4">
-            <p className="mb-2 flex items-center gap-2 text-sm font-bold text-petroleo">
-              <Sparkles aria-hidden="true" className="h-4 w-4 text-agua-700" />
-              Por que montamos assim
-            </p>
-            <ul className="list-disc space-y-1 pl-5 text-sm text-tinta-soft">
-              {trip.reasons.map((r) => (
-                <li key={r}>{r}</li>
-              ))}
-              {!plan.about && (
-                <li>
-                  Quer um roteiro mais a sua cara? Crie um{" "}
-                  <Link href="/vou-viajar" className="font-semibold text-petroleo underline">
-                    novo plano
-                  </Link>{" "}
-                  e preencha “Conte sobre você”.
-                </li>
-              )}
-            </ul>
-            {(profile.likes.length > 0 || profile.dislikes.length > 0) && (
-              <p className="mt-3 flex flex-wrap gap-1.5 text-xs">
-                {profile.likes.map((l) => (
-                  <span key={l} className="rounded-full bg-petroleo-100 px-2.5 py-1 text-petroleo">
-                    Gosta de {interestLabel[l]}
-                  </span>
-                ))}
-                {profile.dislikes.map((l) => (
-                  <span key={l} className="rounded-full bg-linha px-2.5 py-1 text-tinta-soft">
-                    Sem {interestLabel[l]}
-                  </span>
-                ))}
-              </p>
-            )}
-          </div>
-          <ol className="space-y-6">
-            {trip.days.map((day, i) => (
-              <li key={`${i}-${day.title}`} className="relative border-l-2 border-agua pl-6">
-                <span
-                  aria-hidden="true"
-                  className="absolute top-0 -left-[13px] grid h-6 w-6 place-items-center rounded-full bg-petroleo text-xs font-bold text-white"
-                >
-                  {i + 1}
+          {(profile.likes.length > 0 || profile.dislikes.length > 0) && (
+            <p className="mb-4 flex flex-wrap gap-1.5 text-xs">
+              {profile.likes.map((l) => (
+                <span key={l} className="rounded-full bg-petroleo-100 px-2.5 py-1 text-petroleo">
+                  Gosta de {interestLabel[l]}
                 </span>
-                <h3 className="text-lg font-semibold">
-                  <span className="sr-only">Dia {i + 1}: </span>
-                  {day.title}
-                </h3>
-                {day.kind === "livre" || day.kind === "opcional" ? (
-                  <div className="mt-3 rounded-xl border border-dashed border-agua bg-white p-4">
-                    <p className="text-sm text-tinta-soft">
-                      {day.kind === "livre"
-                        ? "Um dia sem programação, de propósito: use como preferir."
-                        : "Escolha uma opção se quiser conhecer os arredores:"}
-                    </p>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-tinta">
-                      {day.options?.map((o) => (
-                        <li key={o}>{o}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <ul className="mt-3 space-y-3">
-                    {day.stops.map((stop) => (
-                      <li key={`${stop.period}-${stop.title}`} className="rounded-xl bg-espuma p-4">
-                        <p className="text-xs font-semibold tracking-wide text-agua-700 uppercase">
-                          {readyPeriodLabel[stop.period]}
-                        </p>
-                        <p className="font-semibold text-tinta">{stop.title}</p>
-                        <p className="text-sm text-tinta-soft">{stop.note}</p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ol>
+              ))}
+              {profile.dislikes.map((l) => (
+                <span key={l} className="rounded-full bg-linha px-2.5 py-1 text-tinta-soft">
+                  Sem {interestLabel[l]}
+                </span>
+              ))}
+            </p>
+          )}
+          <ModularTrip trip={trip} />
+          {!plan.about && (
+            <p className="mt-4 text-sm text-tinta-soft">
+              Quer um roteiro mais a sua cara? Crie um{" "}
+              <Link href="/vou-viajar" className="font-semibold text-petroleo underline">
+                novo plano
+              </Link>{" "}
+              e preencha “Conte sobre você”.
+            </p>
+          )}
           {trip.tips.length > 0 && (
             <div className="mt-6 rounded-2xl bg-petroleo p-5 text-white">
               <p className="mb-2 flex items-center gap-2 font-bold">
@@ -298,29 +232,9 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
             </div>
           )}
           <p className="mt-4 text-xs text-tinta-soft">
-            Roteiro montado automaticamente a partir do seu texto, dos roteiros prontos da equipe
-            Viajou e dos lugares avaliados no destino. Ajuste à vontade.
+            Roteiro montado a partir do seu texto, dos roteiros prontos da equipe Viajou, dos
+            lugares avaliados e dos pontos turísticos do destino. Ajuste à vontade.
           </p>
-          {trip.moreToSee.length > 0 && (
-            <div className="mt-8 rounded-2xl border border-sol/60 bg-white p-5">
-              <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-petroleo">
-                <Star aria-hidden="true" className="h-5 w-5 fill-sol text-sol" />
-                Você ainda pode conhecer
-              </h3>
-              <p className="mb-3 text-sm text-tinta-soft">
-                Ficaram fora do roteiro, mas valem a visita se sobrar tempo ou para trocar algum
-                programa.
-              </p>
-              <ul className="grid gap-2 sm:grid-cols-2">
-                {trip.moreToSee.map((m) => (
-                  <li key={m.title} className="rounded-xl bg-espuma px-3 py-2 text-sm">
-                    <span className="font-semibold">{m.title}</span>
-                    <span className="block text-xs text-tinta-soft">{m.note}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </section>
 
         {destination && (

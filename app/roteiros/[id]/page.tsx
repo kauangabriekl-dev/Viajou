@@ -56,12 +56,11 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
   const spare = (
     (attractionsData as Record<string, { name: string }[]>)[destination?.slug ?? ""] ?? []
   ).filter((a) => !inTrip.has(normalizePlace(a.name)));
-  let spareTurn = 0;
-  const suggestFor = () => {
-    const pick = spare.slice(spareTurn, spareTurn + 2);
-    spareTurn += 2;
-    return pick;
-  };
+  // Ideias calculadas antes de renderizar: 2 por dia vazio, sem repetir entre os dias.
+  const emptyDayIds = it.days.filter((d) => d.stops.length === 0).map((d) => d.id);
+  const ideasByDay = new Map(
+    emptyDayIds.map((id, i) => [id, spare.slice(i * 2, i * 2 + 2)] as const),
+  );
 
   return (
     <Container className="max-w-6xl space-y-8 py-8 sm:py-12">
@@ -185,7 +184,7 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
                     </ol>
                   ) : (
                     (() => {
-                      const ideas = suggestFor();
+                      const ideas = ideasByDay.get(day.id) ?? [];
                       return (
                         <div className="mt-3 rounded-xl bg-espuma p-3 text-sm">
                           <p className="text-tinta-soft">Ainda sem programação neste dia.</p>

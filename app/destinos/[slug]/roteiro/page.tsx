@@ -2,6 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Lightbulb, MapPin, Sparkles, Utensils } from "lucide-react";
 import { SaveSuggestedButton } from "@/components/destinations/SaveSuggestedButton";
+import { ModularTrip } from "@/components/trips/ModularTrip";
+import attractionsData from "@/data/attractions.json";
+import { dayTripsFor } from "@/lib/day-trips";
+import { readyForDestination } from "@/lib/ready-itineraries";
+import { buildTrip, readProfile, type AttractionPick } from "@/lib/trip-builder";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { getSession } from "@/lib/auth";
@@ -40,6 +45,22 @@ export default async function SuggestedItineraryPage({
     getSuggestionCandidates(destination.id),
   ]);
   const plan = buildSuggestedItinerary(candidates, days);
+  // Enquanto a comunidade não avaliou o suficiente, mostramos o roteiro da equipe Viajou,
+  // montado com o mesmo motor do "Vou viajar" (sem repetir nem inventar programas).
+  const teamTrip = plan
+    ? null
+    : buildTrip({
+        days,
+        profile: readProfile(""),
+        ready:
+          readyForDestination(destination.slug).sort(
+            (a, b) => Math.abs(a.days.length - days) - Math.abs(b.days.length - days),
+          )[0] ?? null,
+        attractions: (attractionsData as Record<string, AttractionPick[]>)[destination.slug] ?? [],
+        styles: destination.styles ?? [],
+        destinationName: destination.name,
+        dayTrips: dayTripsFor(destination.slug),
+      });
   const base = `/destinos/${destination.slug}/roteiro`;
 
   return (
@@ -140,6 +161,19 @@ export default async function SuggestedItineraryPage({
           <p className="text-xs text-tinta-soft">
             Salvar cria uma cópia privada nos seus roteiros, que você pode editar e publicar.
           </p>
+        </>
+      ) : teamTrip && (teamTrip.days.length > 0 || teamTrip.remaining.dayTrips.length > 0) ? (
+        <>
+          <p className="rounded-xl bg-espuma px-4 py-3 text-sm text-tinta-soft">
+            Ainda não há avaliações suficientes da comunidade, então este é o roteiro da equipe
+            Viajou. Ele dá lugar ao roteiro dos viajantes assim que houver avaliações.
+          </p>
+          <ModularTrip trip={teamTrip} headingLevel={2} />
+          <EmptyState
+            title={`Já foi para ${destination.name}?`}
+            description="Avalie lugares e deixe dicas: é com elas que o roteiro dos viajantes é montado."
+            action={{ href: `/destinos/${destination.slug}#dicas`, label: "Avaliar e dar dicas" }}
+          />
         </>
       ) : (
         <EmptyState

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { dayTripsFor } from "@/lib/day-trips";
 import { getReadyItinerary } from "@/lib/ready-itineraries";
 import {
   buildTrip,
@@ -31,17 +32,17 @@ describe("readProfile", () => {
   });
 });
 
-describe("buildTrip", () => {
+describe("buildTrip (roteiro modular)", () => {
   const rio = getReadyItinerary("rio-de-janeiro-5-dias")!;
+  const paraty = getReadyItinerary("paraty-4-dias")!;
   const jeri = getReadyItinerary("jericoacoara-4-dias")!;
 
-  it("encurta o roteiro pronto escolhendo os dias que combinam", () => {
+  it("encurta o roteiro pronto e manda o resto para as sugestões", () => {
     const trip = buildTrip({ days: 2, profile: readProfile("Amo praia e pôr do sol"), ready: rio });
     expect(trip.days).toHaveLength(2);
-    expect(trip.source).toBe("pronto");
     expect(trip.days.map((d) => d.title)).toContain("Zona Sul na praia");
-    // O que ficou de fora do roteiro aparece em "Você ainda pode conhecer".
-    expect(trip.moreToSee.length).toBeGreaterThan(0);
+    expect(trip.remaining.days).toBe(0);
+    expect(trip.forYou.length + trip.extras.length).toBeGreaterThan(0);
   });
 
   it("limita as paradas pelo ritmo e tira trilhas com mobilidade reduzida", () => {
@@ -56,23 +57,42 @@ describe("buildTrip", () => {
     expect(trip.tips.join(" ")).toMatch(/acessibilidade/);
   });
 
-  it("usa lugares da comunidade e não inventa dias para completar", () => {
+  it("8 dias em Paraty: não estica o roteiro, um dia livre no máximo e bate-voltas curados", () => {
+    const trip = buildTrip({
+      days: 8,
+      profile: readProfile(""),
+      ready: paraty,
+      styles: ["historico", "praia", "cachoeira"],
+      destinationName: "Paraty",
+      dayTrips: dayTripsFor("paraty-rj"),
+      attractions: [
+        {
+          name: "Paraty Bay, Paraty-Mirim and Saco do Mamanguá Environmental Protection Area",
+          kind: "praia",
+        },
+      ],
+    });
+    // Só os dias com experiências reais: o roteiro pronto tem 4.
+    expect(trip.days).toHaveLength(4);
+    expect(trip.remaining.days).toBe(4);
+    // Cunha já aparece no roteiro (estrada Paraty–Cunha), então não vira bate-volta.
+    expect(trip.remaining.dayTrips.map((t) => t.name)).toEqual(["Saco do Mamanguá"]);
+    // Dois dias sem bate-volta: o dia livre aparece uma única vez, como bloco.
+    expect(trip.remaining.freeDay).not.toBeNull();
+    expect(findRepeats(trip.days)).toEqual([]);
+    // O que já é bate-volta não volta nas outras experiências.
+    expect([...trip.forYou, ...trip.extras].some((x) => /Mamangu/.test(x.title))).toBe(false);
+    expect(trip.reasons[0]).toMatch(/Não completamos os outros 4/);
+  });
+
+  it("sem dia sobrando, não há dia livre nem bate-volta", () => {
     const trip = buildTrip({
       days: 4,
       profile: readProfile(""),
-      places: [
-        { name: "Praia das Conchas", type: "beach" },
-        { name: "Mirante Histórico", type: "attraction" },
-        { name: "Casa do Coco", type: "restaurant" },
-      ],
-      styles: ["praia", "historico"],
+      ready: paraty,
+      dayTrips: dayTripsFor("paraty-rj"),
     });
-    expect(trip.days).toHaveLength(4);
-    expect(trip.source).toBe("lugares");
-    expect(trip.days.flatMap((d) => d.stops.map((s) => s.title))).toContain("Casa do Coco");
-    expect(trip.plannedDays).toBe(1);
-    expect(trip.days.slice(1).every((d) => d.kind === "livre")).toBe(true);
-    expect(trip.reasons.join(" ")).toMatch(/Para não repetir programas nem inventar atividades/);
+    expect(trip.remaining).toEqual({ days: 0, dayTrips: [], freeDay: null });
   });
 
   it("monta dias variados com atrações próximas, sem repetir", () => {
@@ -92,15 +112,10 @@ describe("buildTrip", () => {
     });
     expect(trip.source).toBe("atracoes");
     expect(findRepeats(trip.days)).toEqual([]);
-    const titles = trip.days.flatMap((d) => d.stops.map((s) => s.title));
-    expect(titles).toContain("Castelo de São Jorge");
-    // Cada dia mistura tipos diferentes de lugar.
-    for (const day of trip.days.filter((d) => d.kind === "planejado")) {
-      expect(new Set(day.stops.map((s) => s.title)).size).toBe(day.stops.length);
-    }
+    expect(trip.days.flatMap((d) => d.stops.map((s) => s.title))).toContain("Castelo de São Jorge");
   });
 
-  it("8 dias em Jericoacoara: nada repetido, opcional e dias livres conscientes", () => {
+  it("Jericoacoara: o mesmo lugar não volta com outro nome ou idioma", () => {
     const trip = buildTrip({
       days: 8,
       profile: readProfile(""),
@@ -109,32 +124,28 @@ describe("buildTrip", () => {
         { name: "Praia de Jericoacoara", kind: "praia" },
         { name: "Jericoacoara Beach", kind: "praia" },
         { name: "Lagoa do Paraíso", kind: "parque" },
-        { name: "Parque Nacional de Jericoacoara", kind: "parque" },
       ],
-      styles: ["praia", "aventura"],
       destinationName: "Jericoacoara",
-      nearby: [
-        { name: "Camocim", km: 60 },
-        { name: "Sobral", km: 150 },
-      ],
     });
-    expect(trip.days).toHaveLength(8);
     expect(findRepeats(trip.days)).toEqual([]);
-    const titles = trip.days.flatMap((d) => d.stops.map((s) => s.title));
-    // "Lagoa do Paraíso" já está no dia "Lagoa do Paraíso e Lagoa Azul": não volta sozinha.
-    expect(titles.filter((t) => /Para[ií]so/.test(t))).toHaveLength(1);
-    const optional = trip.days.find((d) => d.kind === "opcional");
-    expect(optional?.options?.join(" ")).toMatch(/Bate-volta a Camocim/);
-    const free = trip.days.filter((d) => d.kind === "livre");
-    expect(free.length).toBeGreaterThan(0);
-    expect(free.every((d) => (d.options?.length ?? 0) >= 4)).toBe(true);
-    expect(trip.days.map((d) => d.title).join(" ")).not.toMatch(/Passeio a pé por|Bairros de/);
+    const everything = [
+      ...trip.days.flatMap((d) => d.stops.map((s) => s.title)),
+      ...trip.forYou.map((s) => s.title),
+      ...trip.extras.map((s) => s.title),
+    ];
+    // "Lagoa do Paraíso" já está no dia "Lagoa do Paraíso e Lagoa Azul".
+    expect(everything.filter((t) => /Para[ií]so/.test(t))).toHaveLength(1);
+    expect(
+      everything.filter((t) => /Jericoacoara (Beach|$)|^Praia de Jericoacoara/.test(t)).length,
+    ).toBeLessThanOrEqual(1);
   });
 
-  it("sem nenhum dado não inventa nada: só dias livres explicados", () => {
-    const trip = buildTrip({ days: 2, profile: readProfile(""), destinationName: "Agra" });
-    expect(trip.days.every((d) => d.kind === "livre" && d.stops.length === 0)).toBe(true);
-    expect(trip.plannedDays).toBe(0);
+  it("sem nenhum dado não inventa nada", () => {
+    const trip = buildTrip({ days: 3, profile: readProfile(""), destinationName: "Agra" });
+    expect(trip.days).toHaveLength(0);
+    expect(trip.remaining.days).toBe(3);
+    expect(trip.remaining.freeDay).not.toBeNull();
+    expect(trip.reasons[0]).toMatch(/Em vez de inventar um roteiro/);
   });
 
   it("não repete o mesmo lugar escrito em dois idiomas", () => {
@@ -148,5 +159,55 @@ describe("buildTrip", () => {
       "Praia de Jericoacoara",
       "Parque Nacional de Jericoacoara",
     ]);
+  });
+
+  it("reconhece o mesmo lugar com nome mais longo (Santa Rita x Santa Rita de Cássia)", () => {
+    const paratyReady = getReadyItinerary("paraty-4-dias")!;
+    const trip = buildTrip({
+      days: 6,
+      profile: readProfile(""),
+      ready: paratyReady,
+      attractions: [
+        { name: "Igreja de Santa Rita de Cássia", kind: "historia", lat: -23.219, lng: -44.713 },
+        { name: "Forte Defensor Perpétuo", kind: "historia", lat: -23.212, lng: -44.71 },
+      ],
+      destinationName: "Paraty",
+    });
+    const all = [
+      ...trip.days.flatMap((d) => d.stops.map((s) => s.title)),
+      ...trip.forYou.map((x) => x.title),
+      ...trip.extras.map((x) => x.title),
+    ];
+    expect(all.filter((t) => /Santa Rita/.test(t))).toHaveLength(1);
+  });
+
+  it("atração sozinha não vira um dia inteiro", () => {
+    const trip = buildTrip({
+      days: 3,
+      profile: readProfile(""),
+      attractions: [
+        { name: "Arco do Cego", kind: "historia", lat: 38.735, lng: -9.142 },
+        { name: "Torre de Belém", kind: "historia", lat: 38.6916, lng: -9.216 },
+      ],
+      destinationName: "Lisboa",
+    });
+    // Duas atrações do mesmo tipo e longe uma da outra: nenhuma vira dia sozinha.
+    expect(trip.days).toHaveLength(0);
+    expect(trip.extras.map((x) => x.title)).toEqual(
+      expect.arrayContaining(["Arco do Cego", "Torre de Belém"]),
+    );
+  });
+
+  it("tira o nome da cidade do fim do nome da atração", () => {
+    const trip = buildTrip({
+      days: 1,
+      profile: readProfile(""),
+      attractions: [
+        { name: "Agra Fort", kind: "historia", lat: 27.1795, lng: 78.0211 },
+        { name: "Sadar Bazaar, Agra", kind: "mercado", lat: 27.16, lng: 78.0 },
+      ],
+      destinationName: "Agra",
+    });
+    expect(trip.days[0]?.stops.map((s) => s.title)).toContain("Sadar Bazaar");
   });
 });
