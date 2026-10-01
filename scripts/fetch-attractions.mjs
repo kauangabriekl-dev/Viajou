@@ -40,15 +40,28 @@ const plain = (s) =>
 
 // Tipo do lugar pelo nome do artigo (pt e en). A ordem importa: o primeiro que bater vale.
 const KINDS = [
-  ["mirante", /\b(miradouro|mirante|belvedere|viewpoint|lookout|morro|monte|colina|cerro|mount|hill|peak|pico)\b/],
+  [
+    "mirante",
+    /\b(miradouro|mirante|belvedere|viewpoint|lookout|morro|monte|colina|cerro|mount|hill|peak|pico)\b/,
+  ],
   ["museu", /\b(museu|museum|galeria|gallery|pinacoteca)\b/],
   ["praia", /\b(praia|beach|playa|ilha|island|isla|baia|bay)\b/],
-  ["parque", /\b(parque|park|jardim|garden|jardin|bosque|lago|lake|lagoa|cachoeira|waterfall|cascata|zoo|zoologico|aquario|aquarium)\b/],
+  [
+    "parque",
+    /\b(parque|park|jardim|garden|jardin|bosque|lago|lake|lagoa|cachoeira|waterfall|cascata|zoo|zoologico|aquario|aquarium)\b/,
+  ],
   ["mercado", /\b(mercado|market|feira|bazar|bazaar|souk)\b/],
-  ["praca", /\b(praca|square|plaza|piazza|place|largo|rua|street|avenida|avenue|boulevard|bairro|quarter|district|calcadao)\b/],
-  ["historia", /\b(castelo|castle|palacio|palace|igreja|church|catedral|cathedral|basilica|mosteiro|monastery|convento|convent|templo|temple|santuario|shrine|forte|fort|fortaleza|fortress|torre|tower|ponte|bridge|monumento|monument|estatua|statue|arco|arch|ruinas|ruins|muralha|wall|farol|lighthouse|teatro|theatre|theater|opera|mesquita|mosque|sinagoga|pagoda|elevador)\b/],
+  [
+    "praca",
+    /\b(praca|square|plaza|piazza|place|largo|rua|street|avenida|avenue|boulevard|bairro|quarter|district|calcadao)\b/,
+  ],
+  [
+    "historia",
+    /\b(castelo|castle|palacio|palace|igreja|church|catedral|cathedral|basilica|mosteiro|monastery|convento|convent|templo|temple|santuario|shrine|forte|fort|fortaleza|fortress|torre|tower|ponte|bridge|monumento|monument|estatua|statue|arco|arch|ruinas|ruins|muralha|wall|farol|lighthouse|teatro|theatre|theater|opera|mesquita|mosque|sinagoga|pagoda|elevador)\b/,
+  ],
 ];
-const BLOCK = /\b(embaixada|embassy|consulado|hospital|escola|school|universidade|university|faculdade|estacao|station|metro|aeroporto|airport|hotel|edificio|building|empresa|banco|bank|assassinato|massacre|ataque|attack|festival|eleicao|distrito|district of|municipio|freguesia|parish|diocese|patriarcado|maternidade|clube|club|estadio|stadium|cemiterio|cemetery|prisao|prison|tribunal|ministerio|ministry|liceu|colegio)\b|\d+[,-]\d+/;
+const BLOCK =
+  /\b(embaixada|embassy|consulado|hospital|escola|school|universidade|university|faculdade|estacao|station|metro|aeroporto|airport|hotel|edificio|building|empresa|banco|bank|assassinato|massacre|ataque|attack|festival|eleicao|distrito|district of|municipio|freguesia|parish|diocese|patriarcado|maternidade|clube|club|estadio|stadium|cemiterio|cemetery|prisao|prison|tribunal|ministerio|ministry|liceu|colegio)\b|\d+[,-]\d+/;
 
 function kindOf(title) {
   const t = plain(title);
@@ -74,7 +87,11 @@ async function withViews(lang, items) {
   const views = new Map();
   for (let i = 0; i < items.length; i += 50) {
     const batch = items.slice(i, i + 50);
-    const data = await api(lang, { action: "query", prop: "pageviews", titles: batch.map((b) => b.name).join("|") });
+    const data = await api(lang, {
+      action: "query",
+      prop: "pageviews",
+      titles: batch.map((b) => b.name).join("|"),
+    });
     for (const p of data.query?.pages ?? []) {
       const total = Object.values(p.pageviews ?? {}).reduce((a, n) => a + (n ?? 0), 0);
       views.set(p.title, total);
@@ -86,7 +103,13 @@ async function withViews(lang, items) {
 const clean = (name) => name.replace(/\s*\([^)]*\)\s*$/, "").trim();
 
 const store = existsSync(OUT) && !REDO ? JSON.parse(readFileSync(OUT, "utf8")) : {};
-const client = new pg.Client({ host: "127.0.0.1", port: 5435, database: "viajou", user: "viajou", password: "viajou" });
+const client = new pg.Client({
+  host: "127.0.0.1",
+  port: 5435,
+  database: "viajou",
+  user: "viajou",
+  password: "viajou",
+});
 await client.connect();
 const { rows } = await client.query(
   "SELECT slug, latitude, longitude FROM destinations WHERE latitude IS NOT NULL ORDER BY slug",
@@ -107,7 +130,16 @@ for (const d of rows) {
     }
     const best = found
       .sort((a, b) => b.views - a.views)
-      .filter((f, i, all) => all.findIndex((x) => plain(clean(x.name)) === plain(clean(f.name))) === i)
+      .filter(
+        (f, i, all) => all.findIndex((x) => plain(clean(x.name)) === plain(clean(f.name))) === i,
+      )
+      // Mesmo lugar em pt e en (ex.: "Praia de X" e "X Beach"): pontos a menos de 400 m.
+      .filter(
+        (f, i, all) =>
+          !all
+            .slice(0, i)
+            .some((x) => x.kind === f.kind && Math.hypot(x.lat - f.lat, x.lng - f.lng) < 0.004),
+      )
       .slice(0, PER_DESTINATION)
       .map((f) => ({
         name: clean(f.name),
@@ -116,7 +148,12 @@ for (const d of rows) {
         lng: Math.round(f.lng * 1e5) / 1e5,
       }));
     store[d.slug] = best;
-    console.log(`${d.slug}: ${best.length} — ${best.slice(0, 4).map((b) => b.name).join(", ")}`);
+    console.log(
+      `${d.slug}: ${best.length} — ${best
+        .slice(0, 4)
+        .map((b) => b.name)
+        .join(", ")}`,
+    );
     writeFileSync(OUT, JSON.stringify(store) + "\n");
   } catch (err) {
     console.log(`  erro em ${d.slug}: ${err.message} (rode de novo depois)`);

@@ -237,7 +237,18 @@ export function readProfile(
 }
 
 export type BuiltStop = { period: ReadyPeriod; title: string; note: string };
-export type BuiltDay = { title: string; stops: BuiltStop[] };
+
+/**
+ * "planejado": experiências reais. "opcional": sugestões que a pessoa escolhe (bate-voltas).
+ * "livre": dia livre de propósito, quando não há mais experiências novas e relevantes.
+ */
+export type BuiltDay = {
+  title: string;
+  stops: BuiltStop[];
+  kind?: "planejado" | "opcional" | "livre";
+  /** Ideias para o dia livre ou para o dia de sugestões. */
+  options?: string[];
+};
 
 export type PlacePick = {
   name: string;
@@ -249,8 +260,12 @@ export type BuiltTrip = {
   days: BuiltDay[];
   reasons: string[];
   tips: string[];
+  /** "Você ainda pode conhecer": experiências relevantes que ficaram fora do roteiro. */
+  moreToSee: { title: string; note: string }[];
+  /** Quantos dias têm programação de verdade (o resto é opcional ou livre). */
+  plannedDays: number;
   /** De onde veio a base do roteiro. */
-  source: "pronto" | "lugares" | "atracoes" | "estilo";
+  source: "pronto" | "lugares" | "atracoes" | "nenhum";
 };
 
 const MAX_STOPS: Record<Pace, number> = { leve: 2, normal: 3, intenso: 4 };
@@ -271,85 +286,59 @@ function stopScore(stop: { title: string; note: string }, p: TravelerProfile) {
   return score;
 }
 
-const STYLE_DAYS: Partial<Record<DestinationStyle, BuiltDay>> = {
-  praia: {
-    title: "Dia de praia sem pressa",
-    stops: [
-      {
-        period: "manha",
-        title: "Praia mais calma da região",
-        note: "Chegue cedo para pegar lugar e mar mais tranquilo.",
-      },
-      {
-        period: "tarde",
-        title: "Almoço pé na areia",
-        note: "Peixe ou frutos do mar do dia, sem horário para voltar.",
-      },
-    ],
-  },
-  gastronomia: {
-    title: "Roteiro de sabores",
-    stops: [
-      {
-        period: "manha",
-        title: "Mercado ou feira local",
-        note: "O melhor jeito de conhecer os ingredientes da região.",
-      },
-      {
-        period: "noite",
-        title: "Jantar com prato típico",
-        note: "Pergunte aos moradores onde eles comem.",
-      },
-    ],
-  },
-  historico: {
-    title: "Centro histórico a pé",
-    stops: [
-      {
-        period: "manha",
-        title: "Caminhada pelo centro antigo",
-        note: "Muitas cidades têm passeios a pé gratuitos com guia local.",
-      },
-      {
-        period: "tarde",
-        title: "Museu ou igreja principal",
-        note: "Confira o horário: muitos fecham um dia por semana.",
-      },
-    ],
-  },
-  montanha: {
-    title: "Mirantes e paisagens",
-    stops: [
-      {
-        period: "manha",
-        title: "Mirante mais alto da região",
-        note: "De manhã a visibilidade costuma ser melhor.",
-      },
-      { period: "tarde", title: "Café com vista", note: "Tempo para descansar e fotografar." },
-    ],
-  },
-  cidade: {
-    title: "A cidade como os moradores",
-    stops: [
-      {
-        period: "manha",
-        title: "Bairro fora do circuito turístico",
-        note: "Cafés, praças e comércio local.",
-      },
-      {
-        period: "noite",
-        title: "Região de bares e restaurantes",
-        note: "Bom para sentir o ritmo da cidade à noite.",
-      },
-    ],
-  },
-};
+// ---------------------------------------------------------------------------
+// Identidade de lugares e atividades (para não repetir nem "a mesma coisa com outro nome")
+// ---------------------------------------------------------------------------
+
+// Palavras que mudam de idioma ou de jeito de falar, mas não de lugar.
+const GENERIC_WORDS = new Set(
+  (
+    "a o as os de da do das dos e em no na nos nas the of and to at in " +
+    "praia beach playa parque park parco nacional national museu museum museo igreja church iglesia " +
+    "catedral cathedral palacio palace castelo castle torre tower ponte bridge mercado market " +
+    "praca square plaza lago lake lagoa monte mount morro hill passeio visita tour caminhada " +
+    "centro historico city cidade old velha"
+  ).split(" "),
+);
+
+/** Palavras que identificam o lugar ("Praia de Jericoacoara" e "Jericoacoara Beach" → jericoacoara). */
+function coreWords(text: string) {
+  return normalizePlace(text)
+    .split(" ")
+    .filter((w) => w.length > 2 && !GENERIC_WORDS.has(w));
+}
+
+/** O lugar já aparece em alguma parada usada (ex.: "Lagoa do Paraíso" dentro de "Lagoa do Paraíso e Lagoa Azul"). */
+function coveredBy(name: string, usedTitles: string[]) {
+  const core = coreWords(name);
+  if (!core.length) return usedTitles.some((t) => normalizePlace(t) === normalizePlace(name));
+  return usedTitles.some((t) => {
+    const words = new Set(coreWords(t));
+    return core.every((w) => words.has(w));
+  });
+}
 
 export type AttractionKind =
   "mirante" | "museu" | "praia" | "parque" | "mercado" | "praca" | "historia";
 
 /** Ponto turístico conhecido do destino (data/attractions.json, via scripts/fetch-attractions.mjs). */
-export type AttractionPick = { name: string; kind: AttractionKind };
+export type AttractionPick = { name: string; kind: AttractionKind; lat?: number; lng?: number };
+
+function placeKey(a: AttractionPick) {
+  const core = coreWords(a.name).sort().join(" ");
+  return `${a.kind}:${core || normalizePlace(a.name)}`;
+}
+
+/** Remove o mesmo lugar escrito em outro idioma (mantém o primeiro, mais popular). */
+export function dedupeAttractions(list: AttractionPick[]): AttractionPick[] {
+  const seen = new Set<string>();
+  return list.filter((a) => {
+    const key = placeKey(a);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
 const KIND_INTEREST: Record<AttractionKind, Interest[]> = {
   mirante: ["fotografia", "natureza"],
@@ -361,7 +350,7 @@ const KIND_INTEREST: Record<AttractionKind, Interest[]> = {
   historia: ["historia"],
 };
 
-// Programa sugerido por tipo de lugar: sempre algo para fazer, mesmo que seja só apreciar.
+// O que fazer em cada tipo de lugar. Notas diferentes para não repetir a mesma frase.
 const KIND_NOTES: Record<AttractionKind, string[]> = {
   mirante: [
     "Suba no fim da tarde e fique para o pôr do sol.",
@@ -385,7 +374,7 @@ const KIND_NOTES: Record<AttractionKind, string[]> = {
   ],
   praca: [
     "Sente-se num café ou num banco e observe o movimento.",
-    "Caminhe pelos arredores e fotografe no fim do dia, com a luz mais bonita.",
+    "Fotografe no fim do dia, com a luz mais bonita.",
   ],
   historia: [
     "Reserve cerca de uma hora para a visita e confira o horário de abertura.",
@@ -404,6 +393,16 @@ const KIND_PERIOD: Record<AttractionKind, ReadyPeriod> = {
 };
 const PERIOD_ORDER: Record<ReadyPeriod, number> = { manha: 0, dia: 1, tarde: 2, noite: 3 };
 
+export const attractionKindLabel: Record<AttractionKind, string> = {
+  mirante: "Mirante",
+  museu: "Museu",
+  praia: "Praia",
+  parque: "Parque e natureza",
+  mercado: "Mercado",
+  praca: "Praça e passeio a pé",
+  historia: "Patrimônio histórico",
+};
+
 function attractionScore(a: AttractionPick, p: TravelerProfile) {
   let score = 0;
   for (const i of KIND_INTEREST[a.kind]) {
@@ -414,35 +413,46 @@ function attractionScore(a: AttractionPick, p: TravelerProfile) {
   return score;
 }
 
+const km = (a: AttractionPick, b: AttractionPick) =>
+  a.lat != null && a.lng != null && b.lat != null && b.lng != null
+    ? Math.hypot((a.lat - b.lat) * 111, (a.lng - b.lng) * 111 * Math.cos((a.lat * Math.PI) / 180))
+    : 3; // sem coordenadas: trata como "perto o suficiente"
+
 /**
- * Dias com pontos turísticos reais do destino. Cada dia mistura uma visita de manhã
- * (história, museu, praia) com programas mais leves à tarde (parque, praça, mirante).
+ * Dias com pontos turísticos reais. Cada dia parte da atração mais relevante que sobrou
+ * e junta as mais próximas dela (até ~4 km), de tipos diferentes; evita repetir no dia
+ * seguinte a categoria principal do dia anterior.
  */
 function daysFromAttractions(
-  list: AttractionPick[],
+  pool: AttractionPick[],
   p: TravelerProfile,
-  count: number,
-  used: Set<string>,
+  maxDays: number,
 ): BuiltDay[] {
-  const pool = list
-    .map((a, i) => ({ a, i, score: attractionScore(a, p) }))
-    .filter((x) => x.score > -3 && !used.has(normalizePlace(x.a.name)))
-    .sort((x, y) => y.score - x.score || x.i - y.i)
-    .map((x) => x.a);
   const perDay = MAX_STOPS[p.pace];
   const days: BuiltDay[] = [];
+  let lastKind: AttractionKind | null = null;
   let noteTurn = 0;
-  while (days.length < count && pool.length) {
-    const picked: AttractionPick[] = [];
-    // Um programa de manhã e um de tarde, quando houver; depois completa com o que sobrar.
-    for (const period of ["manha", "tarde"] as const) {
-      const idx = pool.findIndex((a) => KIND_PERIOD[a.kind] === period);
-      if (idx >= 0 && picked.length < perDay) picked.push(...pool.splice(idx, 1));
+  while (days.length < maxDays && pool.length) {
+    // Semente: a de maior nota cuja categoria não seja a do dia anterior, se houver.
+    let seedIdx = pool.findIndex((a) => a.kind !== lastKind);
+    if (seedIdx < 0) seedIdx = 0;
+    const seed = pool.splice(seedIdx, 1)[0];
+    const picked = [seed];
+    const kinds = new Set([seed.kind]);
+    const nearby = pool
+      .map((a, i) => ({ a, i, d: km(seed, a) }))
+      .filter((x) => x.d <= 4 && !kinds.has(x.a.kind))
+      .sort((x, y) => x.d - y.d);
+    for (const x of nearby) {
+      if (picked.length >= perDay) break;
+      if (kinds.has(x.a.kind)) continue;
+      picked.push(x.a);
+      kinds.add(x.a.kind);
     }
-    while (picked.length < perDay && pool.length) picked.push(pool.shift()!);
+    for (const a of picked.slice(1)) pool.splice(pool.indexOf(a), 1);
+    lastKind = seed.kind;
     const stops = picked
       .map((a) => {
-        used.add(normalizePlace(a.name));
         const notes = KIND_NOTES[a.kind];
         return {
           period: KIND_PERIOD[a.kind],
@@ -452,71 +462,15 @@ function daysFromAttractions(
       })
       .sort((x, y) => PERIOD_ORDER[x.period] - PERIOD_ORDER[y.period]);
     days.push({
-      title: stops.length > 1 ? `${stops[0].title} e arredores` : stops[0].title,
+      kind: "planejado",
+      title: stops.length > 1 ? `${seed.name} e arredores` : seed.name,
       stops,
     });
   }
   return days;
 }
 
-/** Quando tudo já foi usado: voltar com calma aos melhores lugares, com algo concreto a fazer. */
-function revisitDay(list: AttractionPick[], n: number, destination: string): BuiltDay {
-  const best = list.filter((a) => a.kind !== "museu");
-  const a = best[n % Math.max(1, best.length)];
-  const b = best[(n + 1) % Math.max(1, best.length)];
-  if (!a)
-    return {
-      title: `Passeio a pé por ${destination}`,
-      stops: [
-        {
-          period: "manha",
-          title: "Caminhada pelo centro",
-          note: "Explore as ruas principais, entre em lojas e cafés.",
-        },
-        {
-          period: "tarde",
-          title: "Pôr do sol num ponto alto ou à beira d’água",
-          note: "Pergunte na hospedagem qual é o lugar preferido dos moradores.",
-        },
-      ],
-    };
-  return {
-    title: `Com calma: ${a.name}`,
-    stops: [
-      {
-        period: "manha",
-        title: a.name,
-        note: "Volte sem pressa para ver o que ficou de fora e tirar as fotos com outra luz.",
-      },
-      ...(b && b !== a
-        ? [
-            {
-              period: "tarde" as const,
-              title: `Café ou almoço perto de ${b.name}`,
-              note: "Escolha uma mesa com vista e aproveite o lugar sem programação.",
-            },
-          ]
-        : []),
-    ],
-  };
-}
-
-function trimDay(day: BuiltDay, p: TravelerProfile): BuiltDay {
-  const kept = day.stops.filter((s) => stopScore(s, p) > -3);
-  const limit = MAX_STOPS[p.pace];
-  if (kept.length <= limit) return { ...day, stops: kept };
-  // Mantém as paradas de maior nota, mas na ordem original do dia (manhã → noite).
-  const best = new Set(
-    [...kept]
-      .map((s, i) => ({ s, i, score: stopScore(s, p) }))
-      .sort((a, b) => b.score - a.score || a.i - b.i)
-      .slice(0, limit)
-      .map((x) => x.s),
-  );
-  return { ...day, stops: kept.filter((s) => best.has(s)) };
-}
-
-/** Dias montados com os lugares cadastrados (atrações, praias e restaurantes). */
+/** Dias montados com os lugares cadastrados pela comunidade (visitas e restaurantes). */
 function daysFromPlaces(places: PlacePick[], p: TravelerProfile): BuiltDay[] {
   const visits = places.filter(
     (x) => x.type === "attraction" || x.type === "beach" || x.type === "tour",
@@ -538,9 +492,65 @@ function daysFromPlaces(places: PlacePick[], p: TravelerProfile): BuiltDay[] {
         title: meal.name,
         note: "Restaurante avaliado pela comunidade.",
       });
-    days.push({ title: chunk[0].name, stops });
+    days.push({ kind: "planejado", title: chunk[0].name, stops });
   }
   return days;
+}
+
+function trimDay(day: BuiltDay, p: TravelerProfile): BuiltDay {
+  const kept = day.stops.filter((s) => stopScore(s, p) > -3);
+  const limit = MAX_STOPS[p.pace];
+  if (kept.length <= limit) return { ...day, stops: kept };
+  // Mantém as paradas de maior nota, mas na ordem original do dia (manhã → noite).
+  const best = new Set(
+    [...kept]
+      .map((s, i) => ({ s, i, score: stopScore(s, p) }))
+      .sort((a, b) => b.score - a.score || a.i - b.i)
+      .slice(0, limit)
+      .map((x) => x.s),
+  );
+  return { ...day, stops: kept.filter((s) => best.has(s)) };
+}
+
+function freeDay(p: TravelerProfile, styles: DestinationStyle[]): BuiltDay {
+  const options = [
+    "Descansar e recarregar as energias",
+    "Voltar ao lugar favorito da viagem",
+    styles.includes("praia") ? "Aproveitar a praia sem pressa" : null,
+    "Conhecer restaurantes e cafés que chamaram sua atenção",
+    "Explorar a região sem roteiro",
+    "Adaptar ao clima: deixe para hoje o que a chuva ou o calor adiaram",
+    p.kids ? "Um programa só das crianças, no ritmo delas" : null,
+  ].filter((o): o is string => Boolean(o));
+  return { kind: "livre", title: "Dia livre", stops: [], options };
+}
+
+/**
+ * Validação final: nenhuma parada repetida (nem a mesma coisa com outro nome) entre os
+ * dias planejados. Paradas repetidas saem; dia planejado que fica vazio vira dia livre.
+ */
+export function validateTrip(days: BuiltDay[], p: TravelerProfile, styles: DestinationStyle[]) {
+  const seen: string[] = [];
+  return days.map((day) => {
+    if (day.kind !== "planejado") return day;
+    const stops = day.stops.filter((s) => {
+      if (coveredBy(s.title, seen)) return false;
+      seen.push(s.title);
+      return true;
+    });
+    return stops.length ? { ...day, stops } : freeDay(p, styles);
+  });
+}
+
+/** Paradas repetidas num roteiro (para testes e para conferir antes de mostrar). */
+export function findRepeats(days: BuiltDay[]): string[] {
+  const seen: string[] = [];
+  const repeats: string[] = [];
+  for (const s of days.filter((d) => d.kind !== "livre").flatMap((d) => d.stops)) {
+    if (coveredBy(s.title, seen)) repeats.push(s.title);
+    seen.push(s.title);
+  }
+  return repeats;
 }
 
 export function buildTrip(input: {
@@ -550,28 +560,38 @@ export function buildTrip(input: {
   places?: PlacePick[];
   attractions?: AttractionPick[];
   styles?: DestinationStyle[];
-  /** Nome do destino, usado nos dias de passeio a pé quando não há mais atrações. */
+  /** Nome do destino (não vira atração dele mesmo). */
   destinationName?: string;
+  /** Cidades reais próximas, oferecidas como bate-voltas opcionais. */
+  nearby?: { name: string; km: number }[];
 }): BuiltTrip {
   const p = input.profile;
+  const styles = input.styles ?? [];
   const total = Math.max(1, Math.min(14, input.days));
   const reasons: string[] = [];
-  let source: BuiltTrip["source"] = "estilo";
+  let source: BuiltTrip["source"] = "nenhum";
   let days: BuiltDay[] = [];
+  let leftoverReady: BuiltStop[] = [];
 
   if (input.ready) {
     source = "pronto";
-    const base = input.ready.days.map((d) => ({ ...d, stops: [...d.stops] }));
+    const base: BuiltDay[] = input.ready.days.map((d) => ({
+      kind: "planejado",
+      title: d.title,
+      stops: [...d.stops],
+    }));
     if (base.length > total) {
       // Escolhe os dias que mais combinam com a pessoa, mantendo a ordem original.
       const ranked = base
         .map((d, i) => ({ d, i, score: d.stops.reduce((acc, s) => acc + stopScore(s, p), 0) }))
-        .sort((a, b) => b.score - a.score || a.i - b.i)
+        .sort((a, b) => b.score - a.score || a.i - b.i);
+      days = ranked
         .slice(0, total)
-        .sort((a, b) => a.i - b.i);
-      days = ranked.map((r) => r.d);
+        .sort((a, b) => a.i - b.i)
+        .map((r) => r.d);
+      leftoverReady = ranked.slice(total).flatMap((r) => r.d.stops);
       reasons.push(
-        `Sua viagem tem ${total} ${total === 1 ? "dia" : "dias"}: escolhemos os dias do roteiro de ${input.ready.title.toLowerCase()} que mais combinam com você.`,
+        `Sua viagem tem ${total} ${total === 1 ? "dia" : "dias"}: escolhemos os dias do roteiro "${input.ready.title}" que mais combinam com você.`,
       );
     } else {
       days = base;
@@ -580,47 +600,61 @@ export function buildTrip(input: {
   }
 
   if (days.length < total && input.places?.length) {
-    const extra = daysFromPlaces(input.places, p);
+    const used = days.flatMap((d) => d.stops.map((s) => s.title));
+    const fresh = input.places.filter((x) => !coveredBy(x.name, used));
+    const extra = daysFromPlaces(fresh, p);
     if (extra.length) {
-      if (source === "estilo") source = "lugares";
+      if (source === "nenhum") source = "lugares";
       days.push(...extra.slice(0, total - days.length));
       reasons.push("Incluímos lugares avaliados por viajantes do Viajou neste destino.");
     }
   }
 
-  // Atrações já presentes (no roteiro pronto ou nos lugares) não se repetem.
-  const used = new Set(days.flatMap((d) => d.stops.map((st) => normalizePlace(st.title))));
-  const attractions = (input.attractions ?? []).filter(
-    (x) => normalizePlace(x.name) !== normalizePlace(input.destinationName ?? ""),
-  );
-  if (days.length < total && attractions.length) {
-    const extra = daysFromAttractions(attractions, p, total - days.length, used);
+  // Atrações reais que ainda não aparecem no roteiro (nem com outro nome ou idioma).
+  const usedTitles = () => days.flatMap((d) => d.stops.map((s) => s.title));
+  const pool = dedupeAttractions(input.attractions ?? [])
+    .filter((x) => normalizePlace(x.name) !== normalizePlace(input.destinationName ?? ""))
+    .filter((x) => attractionScore(x, p) > -3)
+    .filter((x) => !coveredBy(x.name, usedTitles()))
+    .map((a, i) => ({ a, i, score: attractionScore(a, p) }))
+    .sort((x, y) => y.score - x.score || x.i - y.i)
+    .map((x) => x.a);
+  if (days.length < total && pool.length) {
+    const extra = daysFromAttractions(pool, p, total - days.length);
     if (extra.length) {
-      if (source === "estilo") source = "atracoes";
+      if (source === "nenhum") source = "atracoes";
       days.push(...extra);
-      reasons.push("Completamos com os pontos turísticos mais procurados do destino.");
+      reasons.push(
+        "Completamos com pontos turísticos conhecidos do destino, agrupados pela proximidade.",
+      );
     }
   }
 
-  // Dias temáticos pelo estilo do destino, cada um com programas concretos.
-  const themes = (input.styles ?? [])
-    .map((st) => STYLE_DAYS[st])
-    .filter((d): d is BuiltDay => Boolean(d));
-  for (const theme of themes) if (days.length < total) days.push(theme);
+  // Ajusta ritmo e gostos e faz a validação contra repetições.
+  days = days.map((d) => (d.kind === "planejado" ? trimDay(d, p) : d));
+  days = validateTrip(days, p, styles);
+  const plannedDays = days.filter((d) => d.kind === "planejado").length;
 
-  let revisit = 0;
-  while (days.length < total)
-    days.push(revisitDay(attractions, revisit++, input.destinationName ?? "a cidade"));
-
-  // Dia que ficou vazio (tudo o que tinha a pessoa não curte) ganha outro programa real.
-  let refill = 0;
-  days = days
-    .map((d) => trimDay(d, p))
-    .map((d) => {
-      if (d.stops.length) return d;
-      const [fresh] = daysFromAttractions(attractions, p, 1, used);
-      return fresh ?? revisitDay(attractions, refill++, input.destinationName ?? "a cidade");
+  // Faltou conteúdo novo e relevante: um dia de sugestões opcionais e o resto livre.
+  const nearby = input.nearby ?? [];
+  if (days.length < total && nearby.length) {
+    days.push({
+      kind: "opcional",
+      title: "Dia de sugestões opcionais",
+      stops: [],
+      options: nearby.slice(0, 4).map((c) => `Bate-volta a ${c.name} (cerca de ${c.km} km)`),
     });
+  }
+  while (days.length < total) days.push(freeDay(p, styles));
+  if (plannedDays < total) {
+    reasons.push(
+      `Montamos ${plannedDays} ${plannedDays === 1 ? "dia completo" : "dias completos"} com experiências diferentes. Para não repetir programas nem inventar atividades, ${
+        total - plannedDays === 1
+          ? "o outro dia ficou"
+          : `os outros ${total - plannedDays} dias ficaram`
+      } com sugestões opcionais ou livre.`,
+    );
+  }
 
   if (p.pace === "leve")
     reasons.push("Você prefere um ritmo tranquilo: deixamos no máximo 2 programas por dia.");
@@ -636,6 +670,21 @@ export function buildTrip(input: {
     );
   if (p.limitedMobility)
     reasons.push("Evitamos trilhas e passeios de muito esforço por causa da mobilidade.");
+
+  // "Você ainda pode conhecer": o que é relevante e ficou de fora.
+  const finalTitles = days.flatMap((d) => d.stops.map((s) => s.title));
+  const moreToSee: BuiltTrip["moreToSee"] = [];
+  for (const s of leftoverReady) {
+    if (!coveredBy(s.title, [...finalTitles, ...moreToSee.map((m) => m.title)]))
+      moreToSee.push({ title: s.title, note: s.note });
+  }
+  for (const a of pool) {
+    if (!coveredBy(a.name, [...finalTitles, ...moreToSee.map((m) => m.title)]))
+      moreToSee.push({ title: a.name, note: attractionKindLabel[a.kind] });
+  }
+  if (!days.some((d) => d.kind === "opcional"))
+    for (const c of nearby.slice(0, 2))
+      moreToSee.push({ title: `Bate-volta a ${c.name}`, note: `Cidade a cerca de ${c.km} km` });
 
   const tips: string[] = [];
   if (p.kids)
@@ -656,7 +705,7 @@ export function buildTrip(input: {
   if (p.likes.includes("noite") && !p.kids)
     tips.push("Deixe o dia seguinte às noites mais animadas com programação leve.");
 
-  return { days, reasons, tips, source };
+  return { days, reasons, tips, moreToSee: moreToSee.slice(0, 8), plannedDays, source };
 }
 
 export const interestLabel: Record<Interest, string> = {

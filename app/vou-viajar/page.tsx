@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { z } from "zod";
-import { BedDouble, Lightbulb, MapPinned, Quote, Sparkles, UtensilsCrossed } from "lucide-react";
+import {
+  BedDouble,
+  Lightbulb,
+  MapPinned,
+  Quote,
+  Sparkles,
+  Star,
+  UtensilsCrossed,
+} from "lucide-react";
 import { TripAssistant } from "@/components/assistant/TripAssistant";
 import { ItineraryCard } from "@/components/cards/ItineraryCard";
 import { PlaceCard } from "@/components/cards/PlaceCard";
@@ -12,6 +20,8 @@ import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getSession } from "@/lib/auth";
+import { nearbyCities } from "@/lib/geo-search";
+import { getPlacesIndex } from "@/lib/geo.server";
 import { tagLabel } from "@/lib/labels";
 import {
   getDestination,
@@ -31,6 +41,7 @@ import {
 import { buildMetadata } from "@/lib/seo";
 import attractionsData from "@/data/attractions.json";
 import {
+  attractionKindLabel,
   buildTrip,
   interestLabel,
   readProfile,
@@ -52,16 +63,6 @@ function rankByTags<T extends { tags: string[] }>(items: T[], prefs: string[]): 
   const score = (i: T) => i.tags.filter((t) => prefs.includes(t)).length;
   return [...items].sort((a, b) => score(b) - score(a));
 }
-
-const attractionKindLabel: Record<AttractionPick["kind"], string> = {
-  mirante: "Mirante",
-  museu: "Museu",
-  praia: "Praia",
-  parque: "Parque e natureza",
-  mercado: "Mercado",
-  praca: "Praça e passeio a pé",
-  historia: "Patrimônio histórico",
-};
 
 const FOOD =
   /restaurante|almo[cç]o|jantar|caf[eé]|mercado|comida|fondue|tapas|frutos do mar|parrilla|feira|comida de rua/i;
@@ -124,7 +125,17 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
   const picks: PlacePick[] = places.map((p) => ({ name: p.name, type: p.type, slug: p.slug }));
   const attractions =
     (attractionsData as Record<string, AttractionPick[]>)[plan.destination.slug] ?? [];
+  // Cidades reais por perto, para os dias a mais virarem bate-voltas (sem repetir programa).
+  const nearby =
+    destination?.latitude != null && destination.longitude != null && days > 3
+      ? nearbyCities(
+          await getPlacesIndex(),
+          Number(destination.latitude),
+          Number(destination.longitude),
+        ).filter((c) => c.name !== plan.destination.name)
+      : [];
   const trip = buildTrip({
+    nearby,
     days,
     profile,
     ready,
@@ -244,17 +255,32 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
                   <span className="sr-only">Dia {i + 1}: </span>
                   {day.title}
                 </h3>
-                <ul className="mt-3 space-y-3">
-                  {day.stops.map((stop) => (
-                    <li key={`${stop.period}-${stop.title}`} className="rounded-xl bg-espuma p-4">
-                      <p className="text-xs font-semibold tracking-wide text-agua-700 uppercase">
-                        {readyPeriodLabel[stop.period]}
-                      </p>
-                      <p className="font-semibold text-tinta">{stop.title}</p>
-                      <p className="text-sm text-tinta-soft">{stop.note}</p>
-                    </li>
-                  ))}
-                </ul>
+                {day.kind === "livre" || day.kind === "opcional" ? (
+                  <div className="mt-3 rounded-xl border border-dashed border-agua bg-white p-4">
+                    <p className="text-sm text-tinta-soft">
+                      {day.kind === "livre"
+                        ? "Um dia sem programação, de propósito: use como preferir."
+                        : "Escolha uma opção se quiser conhecer os arredores:"}
+                    </p>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-tinta">
+                      {day.options?.map((o) => (
+                        <li key={o}>{o}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <ul className="mt-3 space-y-3">
+                    {day.stops.map((stop) => (
+                      <li key={`${stop.period}-${stop.title}`} className="rounded-xl bg-espuma p-4">
+                        <p className="text-xs font-semibold tracking-wide text-agua-700 uppercase">
+                          {readyPeriodLabel[stop.period]}
+                        </p>
+                        <p className="font-semibold text-tinta">{stop.title}</p>
+                        <p className="text-sm text-tinta-soft">{stop.note}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ol>
@@ -275,6 +301,26 @@ export default async function TripPlannerPage({ searchParams }: PageProps<"/vou-
             Roteiro montado automaticamente a partir do seu texto, dos roteiros prontos da equipe
             Viajou e dos lugares avaliados no destino. Ajuste à vontade.
           </p>
+          {trip.moreToSee.length > 0 && (
+            <div className="mt-8 rounded-2xl border border-sol/60 bg-white p-5">
+              <h3 className="mb-1 flex items-center gap-2 text-lg font-bold text-petroleo">
+                <Star aria-hidden="true" className="h-5 w-5 fill-sol text-sol" />
+                Você ainda pode conhecer
+              </h3>
+              <p className="mb-3 text-sm text-tinta-soft">
+                Ficaram fora do roteiro, mas valem a visita se sobrar tempo ou para trocar algum
+                programa.
+              </p>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {trip.moreToSee.map((m) => (
+                  <li key={m.title} className="rounded-xl bg-espuma px-3 py-2 text-sm">
+                    <span className="font-semibold">{m.title}</span>
+                    <span className="block text-xs text-tinta-soft">{m.note}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
 
         {destination && (

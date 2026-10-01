@@ -134,3 +134,30 @@ export function nearestCity(
   }
   return bestKm <= 60 ? best : null;
 }
+
+/**
+ * Cidades reais perto de um ponto, para sugerir bate-voltas: entre `minKm` e `maxKm`
+ * de distância, as mais populosas primeiro.
+ */
+export function nearbyCities(
+  index: PlacesIndex,
+  latitude: number,
+  longitude: number,
+  { minKm = 20, maxKm = 180, limit = 6 }: { minKm?: number; maxKm?: number; limit?: number } = {},
+): { name: string; km: number }[] {
+  const found: { name: string; km: number; population: number }[] = [];
+  for (const e of index.entries) {
+    if (e.result.kind !== "city") continue;
+    // Corte rápido por latitude antes de calcular a distância real.
+    if (Math.abs(e.result.latitude - latitude) > maxKm / 100) continue;
+    const km = distanceKm(latitude, longitude, e.result.latitude, e.result.longitude);
+    if (km >= minKm && km <= maxKm)
+      found.push({ name: e.result.name, km, population: e.population });
+  }
+  const seen = new Set<string>();
+  return found
+    .sort((a, b) => b.population - a.population)
+    .filter((c) => !seen.has(c.name) && Boolean(seen.add(c.name)))
+    .slice(0, limit)
+    .map(({ name, km }) => ({ name, km: Math.round(km) }));
+}
