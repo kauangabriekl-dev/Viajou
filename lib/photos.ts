@@ -5,6 +5,8 @@
  *
  * Relatos, avaliações e reclamações continuam só com fotos reais dos usuários.
  */
+import fetchedPhotos from "@/data/photos.json";
+
 export type PhotoCredit = {
   src: string;
   title: string;
@@ -53,7 +55,8 @@ export const HERO_PHOTOS: HeroPhoto[] = [
 ];
 
 /** Capas por slug de destino. */
-export const DESTINATION_PHOTOS: Record<string, PhotoCredit> = {
+/** Escolhidas à mão; têm prioridade sobre as buscadas pelo script. */
+const CURATED_DESTINATION_PHOTOS: Record<string, PhotoCredit> = {
   "porto-seguro-ba": {
     src: "/images/destinos/porto-seguro-ba.jpg",
     title: "Porto Seguro",
@@ -97,6 +100,25 @@ export const DESTINATION_PHOTOS: Record<string, PhotoCredit> = {
   },
 };
 
+/**
+ * Fotos buscadas por scripts/fetch-photos.mjs: uma por destino e uma por dia de cada
+ * roteiro pronto, sempre com licença livre conferida e crédito.
+ */
+const FETCHED = fetchedPhotos as {
+  destinations: Record<string, PhotoCredit>;
+  days: Record<string, (PhotoCredit | null)[]>;
+};
+
+export const DESTINATION_PHOTOS: Record<string, PhotoCredit> = {
+  ...FETCHED.destinations,
+  ...CURATED_DESTINATION_PHOTOS,
+};
+
+/** Foto do dia N (começando em 0) de um roteiro pronto, quando o script achou uma. */
+export function readyDayPhoto(itinerarySlug: string, dayIndex: number): PhotoCredit | null {
+  return FETCHED.days[itinerarySlug]?.[dayIndex] ?? null;
+}
+
 export type Cover = { src: string; credit: PhotoCredit | null };
 
 /** Capa do destino: a foto cadastrada no banco tem prioridade; depois, a foto livre local. */
@@ -106,4 +128,10 @@ export function destinationCover(slug: string, coverUrl?: string | null): Cover 
   return photo ? { src: photo.src, credit: photo } : null;
 }
 
-export const ALL_PHOTOS: PhotoCredit[] = [...HERO_PHOTOS, ...Object.values(DESTINATION_PHOTOS)];
+export const ALL_PHOTOS: PhotoCredit[] = [
+  ...HERO_PHOTOS,
+  ...Object.values(DESTINATION_PHOTOS),
+  ...Object.values(FETCHED.days)
+    .flat()
+    .filter((p): p is PhotoCredit => p !== null),
+];

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { Clock, Lock } from "lucide-react";
+import { TripAssistant } from "@/components/assistant/TripAssistant";
 import { CopyItineraryButton, OwnerActions } from "@/components/itineraries/ItineraryOwnerActions";
 import { LikeButton, SaveButton } from "@/components/social/Buttons";
 import { ShareButton } from "@/components/social/ShareButton";
@@ -10,7 +11,7 @@ import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { getSession } from "@/lib/auth";
 import { placeTypeLabels, tagLabel } from "@/lib/labels";
-import { countOf, getItinerary, viewerItineraryState } from "@/lib/queries";
+import { countOf, getDestination, getItinerary, viewerItineraryState } from "@/lib/queries";
 import { buildMetadata } from "@/lib/seo";
 import { pluralize } from "@/utils/format";
 
@@ -42,10 +43,15 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
   const session = await getSession();
   const isOwner = session?.userId === it.user_id;
   const state = await viewerItineraryState(session?.userId, it.id);
+  const destination = it.destination ? await getDestination(it.destination.slug) : null;
+  // Nomes das paradas: é por eles que o assistente reconhece atrações com ingresso (ex.: Coliseu).
+  const mentions = it.days.flatMap((day) =>
+    day.stops.map((s) => s.place?.name ?? s.custom_name ?? "").filter(Boolean),
+  );
 
   return (
-    <Container className="max-w-3xl space-y-8 py-8 sm:py-12">
-      <header className="space-y-4">
+    <Container className="max-w-6xl space-y-8 py-8 sm:py-12">
+      <header className="max-w-3xl space-y-4">
         {!it.is_public && (
           <p className="inline-flex items-center gap-1.5 rounded-full bg-linha px-3 py-1 text-xs font-bold text-tinta-soft">
             <Lock aria-hidden="true" className="h-3.5 w-3.5" /> Privado: só você vê
@@ -112,62 +118,82 @@ export default async function ItineraryPage({ params }: PageProps<"/roteiros/[id
         </div>
       </header>
 
-      {it.days.length === 0 ? (
-        <EmptyState title="Este roteiro ainda não tem dias." />
-      ) : (
-        <ol className="space-y-6">
-          {it.days.map((day) => (
-            <li
-              key={day.id}
-              className="rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha sm:p-6"
-            >
-              <h2 className="text-xl font-extrabold">
-                <span className="text-agua-700">Dia {day.day_number}</span>
-                {day.title && <span> · {day.title}</span>}
-              </h2>
-              {day.description && <p className="mt-1 text-tinta-soft">{day.description}</p>}
-              {day.stops.length ? (
-                <ol className="mt-4 space-y-4 border-l-2 border-dashed border-petroleo/30 pl-5">
-                  {day.stops.map((s) => (
-                    <li key={s.id} className="relative">
-                      <span
-                        className="absolute top-1.5 -left-[27px] h-3 w-3 rounded-full bg-petroleo ring-4 ring-white"
-                        aria-hidden="true"
-                      />
-                      <p className="flex flex-wrap items-baseline gap-x-2">
-                        {s.start_time && (
-                          <span className="inline-flex items-center gap-1 text-sm font-bold text-petroleo tabular-nums">
-                            <Clock aria-hidden="true" className="h-3.5 w-3.5" />
-                            {s.start_time.slice(0, 5)}
-                          </span>
-                        )}
-                        {s.place ? (
-                          <Link
-                            href={`/lugares/${s.place.slug}`}
-                            className="font-bold underline decoration-linha underline-offset-4 hover:decoration-petroleo"
-                          >
-                            {s.place.name}
-                          </Link>
-                        ) : (
-                          <span className="font-bold">{s.custom_name}</span>
-                        )}
-                        {s.place && (
-                          <span className="text-xs text-tinta-soft">
-                            {placeTypeLabels[s.place.type]}
-                          </span>
-                        )}
-                      </p>
-                      {s.notes && <p className="mt-0.5 text-sm text-tinta-soft">{s.notes}</p>}
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <p className="mt-3 text-sm text-tinta-soft">Dia livre.</p>
-              )}
-            </li>
-          ))}
-        </ol>
-      )}
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+        <div>
+          {it.days.length === 0 ? (
+            <EmptyState title="Este roteiro ainda não tem dias." />
+          ) : (
+            <ol className="space-y-6">
+              {it.days.map((day) => (
+                <li
+                  key={day.id}
+                  className="rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha sm:p-6"
+                >
+                  <h2 className="text-xl font-extrabold">
+                    <span className="text-agua-700">Dia {day.day_number}</span>
+                    {day.title && <span> · {day.title}</span>}
+                  </h2>
+                  {day.description && <p className="mt-1 text-tinta-soft">{day.description}</p>}
+                  {day.stops.length ? (
+                    <ol className="mt-4 space-y-4 border-l-2 border-dashed border-petroleo/30 pl-5">
+                      {day.stops.map((s) => (
+                        <li key={s.id} className="relative">
+                          <span
+                            className="absolute top-1.5 -left-[27px] h-3 w-3 rounded-full bg-petroleo ring-4 ring-white"
+                            aria-hidden="true"
+                          />
+                          <p className="flex flex-wrap items-baseline gap-x-2">
+                            {s.start_time && (
+                              <span className="inline-flex items-center gap-1 text-sm font-bold text-petroleo tabular-nums">
+                                <Clock aria-hidden="true" className="h-3.5 w-3.5" />
+                                {s.start_time.slice(0, 5)}
+                              </span>
+                            )}
+                            {s.place ? (
+                              <Link
+                                href={`/lugares/${s.place.slug}`}
+                                className="font-bold underline decoration-linha underline-offset-4 hover:decoration-petroleo"
+                              >
+                                {s.place.name}
+                              </Link>
+                            ) : (
+                              <span className="font-bold">{s.custom_name}</span>
+                            )}
+                            {s.place && (
+                              <span className="text-xs text-tinta-soft">
+                                {placeTypeLabels[s.place.type]}
+                              </span>
+                            )}
+                          </p>
+                          {s.notes && <p className="mt-0.5 text-sm text-tinta-soft">{s.notes}</p>}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <p className="mt-3 text-sm text-tinta-soft">Dia livre.</p>
+                  )}
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+        {destination && (
+          <div className="lg:sticky lg:top-24">
+            <TripAssistant
+              destination={{
+                slug: destination.slug,
+                name: destination.name,
+                city: destination.city,
+                country: destination.country,
+                latitude: destination.latitude === null ? null : Number(destination.latitude),
+                longitude: destination.longitude === null ? null : Number(destination.longitude),
+                styles: destination.styles ?? [],
+              }}
+              mentions={mentions}
+            />
+          </div>
+        )}
+      </div>
     </Container>
   );
 }

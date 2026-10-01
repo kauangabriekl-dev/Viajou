@@ -6,6 +6,7 @@ import { ReadyItineraryCard } from "@/components/cards/ReadyItineraryCard";
 import { ItineraryCard } from "@/components/cards/ItineraryCard";
 import { PlaceCard } from "@/components/cards/PlaceCard";
 import { PostCard } from "@/components/cards/PostCard";
+import { TripAssistant } from "@/components/assistant/TripAssistant";
 import { DestinationInsights } from "@/components/destinations/DestinationInsights";
 import { StyleIcon } from "@/components/destinations/StyleIcon";
 import { SectionHeading } from "@/components/home/SectionHeading";
@@ -261,6 +262,19 @@ export default async function DestinationPage({
             />
           </section>
         )}
+
+        <TripAssistant
+          wide
+          destination={{
+            slug: destination.slug,
+            name: destination.name,
+            city: destination.city,
+            country: destination.country,
+            latitude: destination.latitude === null ? null : Number(destination.latitude),
+            longitude: destination.longitude === null ? null : Number(destination.longitude),
+            styles: destination.styles ?? [],
+          }}
+        />
 
         <Link
           href={`/hospedagem?onde=${encodeURIComponent(destination.name)}`}

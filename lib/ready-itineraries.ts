@@ -1568,6 +1568,227 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
       "Roupas que cubram ombros e joelhos são bem-vindas fora dos resorts.",
     ],
   },
+  {
+    slug: "roma-4-dias",
+    title: "Roma em 4 dias",
+    place: "Roma",
+    country: "Itália",
+    region: "internacional",
+    destinationSlug: "roma-it",
+    styles: ["historico", "cidade", "gastronomia"],
+    bestMonths: [4, 5, 9, 10],
+    budget: 2,
+    summary:
+      "Dois mil anos de história a pé: o centro antigo, o Vaticano, as praças barrocas e as trattorias de bairro. O roteiro junta atrações vizinhas no mesmo dia e deixa o fim da tarde para caminhar.",
+    days: [
+      {
+        title: "Roma antiga",
+        stops: [
+          {
+            period: "manha",
+            title: "Coliseu",
+            note: "Entre no primeiro horário. O ingresso com hora marcada costuma incluir o Fórum Romano e o Palatino.",
+          },
+          {
+            period: "tarde",
+            title: "Fórum Romano e Monte Palatino",
+            note: "Ruínas do centro político da Roma antiga; pouca sombra, leve água.",
+          },
+          {
+            period: "noite",
+            title: "Monti",
+            note: "Bairro vizinho ao Coliseu, com bares e restaurantes pequenos.",
+          },
+        ],
+      },
+      {
+        title: "Vaticano",
+        stops: [
+          {
+            period: "manha",
+            title: "Museus Vaticanos e Capela Sistina",
+            note: "As filas são longas: reserve o horário antes. Ombros e joelhos cobertos.",
+          },
+          {
+            period: "tarde",
+            title: "Basílica de São Pedro",
+            note: "Entrada gratuita, com fila de segurança; dá para subir na cúpula.",
+          },
+          {
+            period: "noite",
+            title: "Castelo Sant'Angelo e a ponte",
+            note: "Bonito iluminado, à beira do Tibre.",
+          },
+        ],
+      },
+      {
+        title: "Praças e fontes",
+        stops: [
+          {
+            period: "manha",
+            title: "Panteão",
+            note: "Templo romano com a cúpula de concreto mais famosa do mundo.",
+          },
+          {
+            period: "tarde",
+            title: "Fontana di Trevi e Piazza Navona",
+            note: "Trevi lota o dia todo; cedo ou tarde da noite é mais calmo.",
+          },
+          {
+            period: "noite",
+            title: "Escadaria da Praça de Espanha",
+            note: "Proibido sentar nos degraus; caminhe até a Via del Corso.",
+          },
+        ],
+      },
+      {
+        title: "Trastevere e mirantes",
+        stops: [
+          {
+            period: "manha",
+            title: "Villa Borghese",
+            note: "Parque grande; a Galeria Borghese exige reserva com horário.",
+          },
+          {
+            period: "tarde",
+            title: "Trastevere",
+            note: "Ruas de pedra e igrejas antigas do outro lado do rio.",
+          },
+          {
+            period: "noite",
+            title: "Mirante do Gianicolo",
+            note: "Vista da cidade inteira no pôr do sol.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Centro Storico", why: "Tudo a pé, perto do Panteão e da Navona." },
+      { area: "Monti", why: "Perto do Coliseu e do metrô, com bom custo." },
+      { area: "Prati", why: "Tranquilo e ao lado do Vaticano." },
+    ],
+    extraCosts: [
+      "Ingressos do Coliseu, dos Museus Vaticanos e da Galeria Borghese.",
+      "Taxa turística municipal cobrada por noite na hospedagem.",
+    ],
+    tips: [
+      "Compre os ingressos com hora marcada assim que fechar as datas: esgotam na alta temporada.",
+      "Beba água das fontes públicas (nasoni): é potável.",
+      "Cuidado com batedores de carteira no metrô e em Trevi.",
+    ],
+  },
+  {
+    slug: "paris-4-dias",
+    title: "Paris em 4 dias",
+    place: "Paris",
+    country: "França",
+    region: "internacional",
+    destinationSlug: "paris-fr",
+    styles: ["cidade", "historico", "gastronomia"],
+    bestMonths: [4, 5, 6, 9, 10],
+    budget: 3,
+    summary:
+      "Museus, monumentos, bairros com cara de vila e cafés em cada esquina. Quatro dias permitem ver os clássicos e ainda passear sem pressa às margens do Sena.",
+    days: [
+      {
+        title: "Torre Eiffel e o Sena",
+        stops: [
+          {
+            period: "manha",
+            title: "Torre Eiffel",
+            note: "Reserve a subida com horário; o topo fecha com vento forte.",
+          },
+          {
+            period: "tarde",
+            title: "Trocadéro e Champ de Mars",
+            note: "Os dois melhores pontos para fotografar a torre.",
+          },
+          {
+            period: "noite",
+            title: "Passeio de barco pelo Sena",
+            note: "Ao anoitecer, com os monumentos iluminados.",
+          },
+        ],
+      },
+      {
+        title: "Louvre e centro",
+        stops: [
+          {
+            period: "manha",
+            title: "Museu do Louvre",
+            note: "Entrada com horário marcado; escolha poucas alas para não cansar.",
+          },
+          {
+            period: "tarde",
+            title: "Jardim das Tulherias",
+            note: "Caminhe até a Place de la Concorde.",
+          },
+          {
+            period: "noite",
+            title: "Champs-Élysées e Arco do Triunfo",
+            note: "Suba no arco para ver as avenidas em estrela.",
+          },
+        ],
+      },
+      {
+        title: "Île de la Cité e Marais",
+        stops: [
+          {
+            period: "manha",
+            title: "Catedral de Notre-Dame",
+            note: "Reaberta depois do incêndio de 2019; a entrada é gratuita.",
+          },
+          {
+            period: "manha",
+            title: "Sainte-Chapelle",
+            note: "Capela com vitrais do século XIII; melhor em dia de sol.",
+          },
+          {
+            period: "tarde",
+            title: "Le Marais",
+            note: "Ruas medievais, lojas e a Place des Vosges.",
+          },
+        ],
+      },
+      {
+        title: "Montmartre",
+        stops: [
+          {
+            period: "manha",
+            title: "Basílica de Sacré-Cœur",
+            note: "No alto de Montmartre, com vista da cidade.",
+          },
+          {
+            period: "tarde",
+            title: "Place du Tertre",
+            note: "Pintores ao ar livre e ruas de ladeira.",
+          },
+          {
+            period: "noite",
+            title: "Museu d'Orsay (alternativa)",
+            note: "Se chover, troque a tarde pelo museu dos impressionistas.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Le Marais", why: "Central, animado e a pé de muita coisa." },
+      { area: "Saint-Germain-des-Prés", why: "Clássico, perto do Louvre e do Sena." },
+      {
+        area: "Perto de uma estação de metrô",
+        why: "Fora do centro, o metrô resolve tudo e a diária cai.",
+      },
+    ],
+    extraCosts: [
+      "Ingressos da Torre Eiffel, do Louvre e dos museus.",
+      "Taxa de estadia cobrada por noite na hospedagem.",
+    ],
+    tips: [
+      "Reserve Torre Eiffel e Louvre com antecedência: os horários esgotam.",
+      "Muitos museus são gratuitos no primeiro domingo de alguns meses; confira no site de cada um.",
+      "Use o metrô: chega a quase todas as atrações.",
+    ],
+  },
 ];
 
 export function getReadyItinerary(slug: string) {

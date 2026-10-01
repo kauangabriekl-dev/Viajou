@@ -1,0 +1,1221 @@
+{
+  "destinations": {
+    "agra-in": {
+      "src": "/images/destinos/agra-in.jpg",
+      "title": "Aks The Reflection Taj Mahal",
+      "author": "Antrix3",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Aks_The_Reflection_Taj_Mahal.jpg"
+    },
+    "arraial-do-cabo-rj": {
+      "src": "/images/destinos/arraial-do-cabo-rj.jpg",
+      "title": "Cidade de Arraial do Cabo",
+      "author": "marcusrg",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Cidade_de_Arraial_do_Cabo.jpg"
+    },
+    "atenas-gr": {
+      "src": "/images/destinos/atenas-gr.jpg",
+      "title": "The Parthenon in Athens",
+      "author": "Steve Swayne",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:The_Parthenon_in_Athens.jpg"
+    },
+    "bali-id": {
+      "src": "/images/destinos/bali-id.jpg",
+      "title": "Tanah-Lot Bali Indonesia Pura-Tanah-Lot-01",
+      "author": "CEphoto, Uwe Aranas",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tanah-Lot_Bali_Indonesia_Pura-Tanah-Lot-01.jpg"
+    },
+    "banff-ca": {
+      "src": "/images/destinos/banff-ca.jpg",
+      "title": "Town of Banff viewed from Sulphur Mountain",
+      "author": "Ethan Sahagun",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Town_of_Banff_viewed_from_Sulphur_Mountain.jpg"
+    },
+    "bangkok-th": {
+      "src": "/images/destinos/bangkok-th.jpg",
+      "title": "4Y1A1159 Bangkok (33536795515)",
+      "author": "Ninara from Helsinki, Finland",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:4Y1A1159_Bangkok_(33536795515).jpg"
+    },
+    "barcelona-es": {
+      "src": "/images/destinos/barcelona-es.jpg",
+      "title": "Evening light over Barcelona",
+      "author": "M McBey",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Evening_light_over_Barcelona.jpg"
+    },
+    "bariloche-ar": {
+      "src": "/images/destinos/bariloche-ar.jpg",
+      "title": "Aeropuerto Internacional Teniente Luis Candelaria (Bariloche)",
+      "author": "SoleFabrizio",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Aeropuerto_Internacional_Teniente_Luis_Candelaria_(Bariloche).JPG"
+    },
+    "berlim-de": {
+      "src": "/images/destinos/berlim-de.jpg",
+      "title": "Museumsinsel Berlin Juli 2021 1 (cropped) b",
+      "author": "File:Museumsinsel Berlin Juli 2021 1 (cropped).jpg : Kasa Fue derivative work: G",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Museumsinsel_Berlin_Juli_2021_1_(cropped)_b.jpg"
+    },
+    "bonito-ms": {
+      "src": "/images/destinos/bonito-ms.jpg",
+      "title": "Abismo Anhumas, Bonito, MS",
+      "author": "Caio Vilela",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Abismo_Anhumas,_Bonito,_MS.JPG"
+    },
+    "bora-bora-pf": {
+      "src": "/images/destinos/bora-bora-pf.jpg",
+      "title": "Matira Beach, Bora Bora, French Polynesia",
+      "author": "The original uploader was Sba2 at English Wikipedia .",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+      "source": "https://commons.wikimedia.org/wiki/File:Matira_Beach,_Bora_Bora,_French_Polynesia.jpg"
+    },
+    "buenos-aires-ar": {
+      "src": "/images/destinos/buenos-aires-ar.jpg",
+      "title": "Puerto Madero, Buenos Aires (40689219792) (cropped)",
+      "author": "Deensel",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Puerto_Madero,_Buenos_Aires_(40689219792)_(cropped).jpg"
+    },
+    "cairo-eg": {
+      "src": "/images/destinos/cairo-eg.jpg",
+      "title": "1897 bis 1902 wurde das Ägyptische Museum in Kairo gebaut. 04",
+      "author": "Holger Uwe Schmitt",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:1897_bis_1902_wurde_das_%C3%84gyptische_Museum_in_Kairo_gebaut._04.jpg"
+    },
+    "campos-do-jordao-sp": {
+      "src": "/images/destinos/campos-do-jordao-sp.jpg",
+      "title": "Vista área da Vila Capivari, Campos do Jordão (cropped)",
+      "author": "Governo do Estado de São Paulo",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Vista_%C3%A1rea_da_Vila_Capivari,_Campos_do_Jord%C3%A3o_(cropped).jpg"
+    },
+    "cancun-mx": {
+      "src": "/images/destinos/cancun-mx.jpg",
+      "title": "Cancun Strand Luftbild (22143397586)",
+      "author": "dronepicr",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Cancun_Strand_Luftbild_(22143397586).jpg"
+    },
+    "capadocia-tr": {
+      "src": "/images/destinos/capadocia-tr.jpg",
+      "title": "Cappadocia Aerial View (6998755984)",
+      "author": "Benh LIEU SONG from Torcy, France",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Cappadocia_Aerial_View_(6998755984).jpg"
+    },
+    "cartagena-co": {
+      "src": "/images/destinos/cartagena-co.jpg",
+      "title": "Museo Naval del Caribe",
+      "author": "Sgonzalezb",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Museo_Naval_del_Caribe.JPG"
+    },
+    "chapada-das-mesas-ma": {
+      "src": "/images/destinos/chapada-das-mesas-ma.jpg",
+      "title": "Carolina-ma1",
+      "author": "Fernando Santos Cunha Filho",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Carolina-ma1.jpg"
+    },
+    "chapada-diamantina-ba": {
+      "src": "/images/destinos/chapada-diamantina-ba.jpg",
+      "title": "Parque Nacional Chapada Diamantina Rafael Cristo Watanabe 04",
+      "author": "Rafael Cristo Watanabe",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Parque_Nacional_Chapada_Diamantina_Rafael_Cristo_Watanabe_04.jpg"
+    },
+    "cidade-do-cabo-za": {
+      "src": "/images/destinos/cidade-do-cabo-za.jpg",
+      "title": "Aerial View of Sea Point, Cape Town South Africa",
+      "author": "Hilton1949",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Aerial_View_of_Sea_Point,_Cape_Town_South_Africa.jpg"
+    },
+    "cidade-do-mexico-mx": {
+      "src": "/images/destinos/cidade-do-mexico-mx.jpg",
+      "title": "Sobrevuelos CDMX HJ2A4913 (25514321687) (cropped)",
+      "author": "Gobierno CDMX",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Sobrevuelos_CDMX_HJ2A4913_(25514321687)_(cropped).jpg"
+    },
+    "costa-amalfitana-it": {
+      "src": "/images/destinos/costa-amalfitana-it.jpg",
+      "title": "Amalfi sea view Italy",
+      "author": "No machine-readable author provided. Sudodana2048 assumed (based on copyright cl",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Amalfi_sea_view_Italy.JPG"
+    },
+    "cusco-pe": {
+      "src": "/images/destinos/cusco-pe.jpg",
+      "title": "Vista Calle Suecia",
+      "author": "tomscoffin",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Vista_Calle_Suecia.jpg"
+    },
+    "dubai-ae": {
+      "src": "/images/destinos/dubai-ae.jpg",
+      "title": "Dubai Marina Skyline",
+      "author": "Norlando Pobre",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Dubai_Marina_Skyline.jpg"
+    },
+    "dubrovnik-hr": {
+      "src": "/images/destinos/dubrovnik-hr.jpg",
+      "title": "The walls of the fortress and View of the old city. panorama",
+      "author": "Zysko serhii",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg"
+    },
+    "el-calafate-ar": {
+      "src": "/images/destinos/el-calafate-ar.jpg",
+      "title": "ElCalafate-AvenidaSanMartin",
+      "author": "Heretiq",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "source": "https://commons.wikimedia.org/wiki/File:ElCalafate-AvenidaSanMartin.jpg"
+    },
+    "fernando-de-noronha-pe": {
+      "src": "/images/destinos/fernando-de-noronha-pe.jpg",
+      "title": "EDUARDO MURUCI - BAIA DOS PORCOS-(recorte)",
+      "author": "Eduardo Muruci",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:EDUARDO_MURUCI_-_BAIA_DOS_PORCOS-(recorte).jpg"
+    },
+    "florenca-it": {
+      "src": "/images/destinos/florenca-it.jpg",
+      "title": "Firenze - Cattedrale di Santa Maria del Fiore - 2023-09-21 20-43-59 001",
+      "author": "FrancescoSchiraldi85",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Firenze_-_Cattedrale_di_Santa_Maria_del_Fiore_-_2023-09-21_20-43-59_001.jpg"
+    },
+    "foz-do-iguacu-pr": {
+      "src": "/images/destinos/foz-do-iguacu-pr.jpg",
+      "title": "Foz do Iguaçu - panoramio (cropped)",
+      "author": "enioprado",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Foz_do_Igua%C3%A7u_-_panoramio_(cropped).jpg"
+    },
+    "hanoi-vn": {
+      "src": "/images/destinos/hanoi-vn.jpg",
+      "title": "Hanoi skyline with Ba Vi Mountain",
+      "author": "Quangnlnhe182394",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Hanoi_skyline_with_Ba_Vi_Mountain.jpg"
+    },
+    "havana-cu": {
+      "src": "/images/destinos/havana-cu.jpg",
+      "title": "DJI 0197 crp wiki",
+      "author": "RenaatPeeters",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:DJI_0197_crp_wiki.jpg"
+    },
+    "interlaken-ch": {
+      "src": "/images/destinos/interlaken-ch.jpg",
+      "title": "5637 - Schynige Platte - View of Interlaken and Thunersee",
+      "author": "Andrew Bossi",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "source": "https://commons.wikimedia.org/wiki/File:5637_-_Schynige_Platte_-_View_of_Interlaken_and_Thunersee.JPG"
+    },
+    "istambul-tr": {
+      "src": "/images/destinos/istambul-tr.jpg",
+      "title": "Historical peninsula and modern skyline of Istanbul",
+      "author": "Hunanuk",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Historical_peninsula_and_modern_skyline_of_Istanbul.jpg"
+    },
+    "jericoacoara-ce": {
+      "src": "/images/destinos/jericoacoara-ce.jpg",
+      "title": "Jericoacoara - Duna do Por do Sol - PARQUE NACIONAL DE JERICOACOARA - 1",
+      "author": "Antônio Marcos Capobianco",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Jericoacoara_-_Duna_do_Por_do_Sol_-_PARQUE_NACIONAL_DE_JERICOACOARA_-_1.jpg"
+    },
+    "la-fortuna-cr": {
+      "src": "/images/destinos/la-fortuna-cr.jpg",
+      "title": "Costa rica arenal fortuna 2001 12",
+      "author": "Matthias Prinke ( User:Mprinke )",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "source": "https://commons.wikimedia.org/wiki/File:Costa_rica_arenal_fortuna_2001_12.jpg"
+    },
+    "las-vegas-us": {
+      "src": "/images/destinos/las-vegas-us.jpg",
+      "title": "City of Las Vegas skyline",
+      "author": "Http2007",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:City_of_Las_Vegas_skyline.jpg"
+    },
+    "lencois-maranhenses-ma": {
+      "src": "/images/destinos/lencois-maranhenses-ma.jpg",
+      "title": "Lencois Maranhenses 3",
+      "author": "Iain and Sarah from London, UK",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Lencois_Maranhenses_3.jpg"
+    },
+    "lima-pe": {
+      "src": "/images/destinos/lima-pe.jpg",
+      "title": "Estadio Monumental 2021",
+      "author": "Sigloestadio21",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Estadio_Monumental_2021.jpg"
+    },
+    "lisboa-pt": {
+      "src": "/images/destinos/lisboa-pt.jpg",
+      "title": "Lisbon (36831596786) (cropped)",
+      "author": "Deensel",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Lisbon_(36831596786)_(cropped).jpg"
+    },
+    "londres-gb": {
+      "src": "/images/destinos/londres-gb.jpg",
+      "title": "London Skyline",
+      "author": "Ilya Grigorik",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:London_Skyline_(125508655).jpeg"
+    },
+    "los-angeles-us": {
+      "src": "/images/destinos/los-angeles-us.jpg",
+      "title": "Good morning LA (cropped)",
+      "author": "mjhbower",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Good_morning_LA_(cropped).jpg"
+    },
+    "madri-es": {
+      "src": "/images/destinos/madri-es.jpg",
+      "title": "Plaza Mayor De Madrid",
+      "author": "Francisco Anzola",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Plaza_Mayor_De_Madrid_(215862629)_edited.jpeg"
+    },
+    "maldivas-mv": {
+      "src": "/images/destinos/maldivas-mv.jpg",
+      "title": "Male-total",
+      "author": "Shahee Ilyas",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Male-total.jpg"
+    },
+    "manaus-am": {
+      "src": "/images/destinos/manaus-am.jpg",
+      "title": "Manaus amazonas",
+      "author": "Arne Müseler",
+      "license": "CC BY-SA 3.0 de",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Manaus_amazonas.jpg"
+    },
+    "maragogi-al": {
+      "src": "/images/destinos/maragogi-al.jpg",
+      "title": "Praia de Ipioca - Maceió - Alagoas (11394603505)",
+      "author": "Cícero R. C. Omena",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Praia_de_Ipioca_-_Macei%C3%B3_-_Alagoas_(11394603505).jpg"
+    },
+    "marrakech-ma": {
+      "src": "/images/destinos/marrakech-ma.jpg",
+      "title": "Pavillon Menaragärten",
+      "author": "Acp",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Pavillon_Menarag%C3%A4rten.jpg"
+    },
+    "miami-us": {
+      "src": "/images/destinos/miami-us.jpg",
+      "title": "Miami Skyline 2020",
+      "author": "Chris6d",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Miami_Skyline_2020.jpg"
+    },
+    "montevideu-uy": {
+      "src": "/images/destinos/montevideu-uy.jpg",
+      "title": "PALACIO LEGISLATIVO 01",
+      "author": "Eduardo Ruggieri",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:PALACIO_LEGISLATIVO_01.JPG"
+    },
+    "nova-york-us": {
+      "src": "/images/destinos/nova-york-us.jpg",
+      "title": "View of Empire State Building from Rockefeller Center New York City dllu (cropped)",
+      "author": "Dllu",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu_(cropped).jpg"
+    },
+    "orlando-us": {
+      "src": "/images/destinos/orlando-us.jpg",
+      "title": "Orlando, Florida (cropped)",
+      "author": "Quintin Soloviev",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Orlando,_Florida_(cropped).jpg"
+    },
+    "paraty-rj": {
+      "src": "/images/destinos/paraty-rj.jpg",
+      "title": "Museu de Arte Sacra de Paraty 01",
+      "author": "Ministério da Cultura",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Museu_de_Arte_Sacra_de_Paraty_01.jpg"
+    },
+    "paris-fr": {
+      "src": "/images/destinos/paris-fr.jpg",
+      "title": "La Tour Eiffel vue de la Tour Saint-Jacques, Paris août 2014 (2)",
+      "author": "Yann Caradec from Paris, France",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques,_Paris_ao%C3%BBt_2014_(2).jpg"
+    },
+    "phuket-th": {
+      "src": "/images/destinos/phuket-th.jpg",
+      "title": "Phuket viewed from Koh Lon",
+      "author": "User SElephant on zh.wikipedia",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Phuket_viewed_from_Koh_Lon.jpg"
+    },
+    "porto-de-galinhas-pe": {
+      "src": "/images/destinos/porto-de-galinhas-pe.jpg",
+      "title": "Porto de Galinhas-003",
+      "author": "Cleferson Comarela",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Porto_de_Galinhas-003.jpg"
+    },
+    "porto-pt": {
+      "src": "/images/destinos/porto-pt.jpg",
+      "title": "Puente Don Luis I, Oporto, Portugal, 2012-05-09, DD 13",
+      "author": "Diego Delso",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Puente_Don_Luis_I,_Oporto,_Portugal,_2012-05-09,_DD_13.JPG"
+    },
+    "praga-cz": {
+      "src": "/images/destinos/praga-cz.jpg",
+      "title": "Karlův most Praha, Staré Město 20170810 007",
+      "author": "Tilman2007",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Karl%C5%AFv_most_Praha,_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg"
+    },
+    "punta-cana-do": {
+      "src": "/images/destinos/punta-cana-do.jpg",
+      "title": "Punta Cana 29 april 2012",
+      "author": "Emmanuell Núñez Suriel",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Punta_Cana_29_april_2012.jpg"
+    },
+    "punta-del-este-uy": {
+      "src": "/images/destinos/punta-del-este-uy.jpg",
+      "title": "Casino",
+      "author": "Marcelo Campi",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Casino_(141347675).jpeg"
+    },
+    "queenstown-nz": {
+      "src": "/images/destinos/queenstown-nz.jpg",
+      "title": "Queenstown from Bob's Peak",
+      "author": "Lawrence Murray from Perth, Australia",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Queenstown_from_Bob%27s_Peak.jpg"
+    },
+    "quioto-jp": {
+      "src": "/images/destinos/quioto-jp.jpg",
+      "title": "Amanohashidate view from Kasamatsu Park01s3s4410",
+      "author": "663highland",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+      "source": "https://commons.wikimedia.org/wiki/File:Amanohashidate_view_from_Kasamatsu_Park01s3s4410.jpg"
+    },
+    "reykjavik-is": {
+      "src": "/images/destinos/reykjavik-is.jpg",
+      "title": "President Ronald Reagan Says Goodbye to Soviet General Secretary Gorbachev After The Last Meeting at",
+      "author": "President (1981-1989 : Reagan). White House Photographic Office. 1981-1989",
+      "license": "Public domain",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:President_Ronald_Reagan_Says_Goodbye_to_Soviet_General_Secretary_Gorbachev_After_The_Last_Meeting_at_Hofdi_House_Reykjavik_Iceland_-_DPLA_-_52e614a2e7c0706a37e0b9f3a873c385.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:President_Ronald_Reagan_Says_Goodbye_to_Soviet_General_Secretary_Gorbachev_After_The_Last_Meeting_at_Hofdi_House_Reykjavik_Iceland_-_DPLA_-_52e614a2e7c0706a37e0b9f3a873c385.jpg"
+    },
+    "roma-it": {
+      "src": "/images/destinos/roma-it.jpg",
+      "title": "Trevi-Brunnen abends",
+      "author": "Thomas Wolf , www.foto-tw.de",
+      "license": "CC BY-SA 3.0 de",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Trevi-Brunnen_abends.jpg"
+    },
+    "rovaniemi-fi": {
+      "src": "/images/destinos/rovaniemi-fi.jpg",
+      "title": "Rovaniemi -The ”Lumberjack's Candle Bridge",
+      "author": "Tarja Mitrovic",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Rovaniemi_-The_%E2%80%9DLumberjack%27s_Candle_Bridge.jpg"
+    },
+    "salvador-ba": {
+      "src": "/images/destinos/salvador-ba.jpg",
+      "title": "Salvador BA (cropped) 2",
+      "author": "Fotos Gov/Ba",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Salvador_BA_(cropped)_2.jpg"
+    },
+    "san-francisco-us": {
+      "src": "/images/destinos/san-francisco-us.jpg",
+      "title": "San Francisco skyline from Marin Headlands",
+      "author": "Ryan Schwark",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:San_Francisco_skyline_from_Marin_Headlands.jpg"
+    },
+    "san-pedro-de-atacama-cl": {
+      "src": "/images/destinos/san-pedro-de-atacama-cl.jpg",
+      "title": "San Pedro de Atacama oasis",
+      "author": "Pierre cb",
+      "license": "Public domain",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:San_Pedro_de_Atacama_oasis.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:San_Pedro_de_Atacama_oasis.jpg"
+    },
+    "santiago-cl": {
+      "src": "/images/destinos/santiago-cl.jpg",
+      "title": "Inicio del partido Chile - Uruguay, Copa América Chile 2015",
+      "author": "Abbagliati",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Inicio_del_partido_Chile_-_Uruguay,_Copa_Am%C3%A9rica_Chile_2015.jpg"
+    },
+    "santorini-gr": {
+      "src": "/images/destinos/santorini-gr.jpg",
+      "title": "Prehistoric Site of Akrotiri, Santorini - Greece",
+      "author": "Klearchos Kapoutsis from Paleo Faliro, Greece.",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Prehistoric_Site_of_Akrotiri,_Santorini_-_Greece.jpg"
+    },
+    "sao-paulo-sp": {
+      "src": "/images/destinos/sao-paulo-sp.jpg",
+      "title": "Marginal Pinheiros e Jockey Club",
+      "author": "Agent010",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Marginal_Pinheiros_e_Jockey_Club.jpg"
+    },
+    "singapura-sg": {
+      "src": "/images/destinos/singapura-sg.jpg",
+      "title": "Singapore Skyline Panorama",
+      "author": "Someformofhuman",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Singapore_Skyline_Panorama.jpg"
+    },
+    "sydney-au": {
+      "src": "/images/destinos/sydney-au.jpg",
+      "title": "Sydney Australia. (21339175489)",
+      "author": "Bernard Spragg. NZ from Christchurch, New Zealand",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "source": "https://commons.wikimedia.org/wiki/File:Sydney_Australia._(21339175489).jpg"
+    },
+    "toronto-ca": {
+      "src": "/images/destinos/toronto-ca.jpg",
+      "title": "Toronto Skyline from Olympic Island, June 20 2026 (5-3 cropped)",
+      "author": "Dillan Payne",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Toronto_Skyline_from_Olympic_Island,_June_20_2026_(5-3_cropped).jpg"
+    },
+    "ushuaia-ar": {
+      "src": "/images/destinos/ushuaia-ar.jpg",
+      "title": "Sobrevolando Ushuaia en Helicoptero - Helicopter flying over Ushuaia . - panoramio",
+      "author": "Horacio_Fernandez",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sobrevolando_Ushuaia_en_Helicoptero_-_Helicopter_flying_over_Ushuaia_._-_panoramio.jpg"
+    },
+    "uyuni-bo": {
+      "src": "/images/destinos/uyuni-bo.jpg",
+      "title": "Uyuni Potosi Ave Aerial",
+      "author": "Jaimalalatete",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Uyuni_Potosi_Ave_Aerial.jpg"
+    },
+    "veneza-it": {
+      "src": "/images/destinos/veneza-it.jpg",
+      "title": "Venezia aerial view",
+      "author": "kallerna",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Venezia_aerial_view.jpg"
+    },
+    "zanzibar-tz": {
+      "src": "/images/destinos/zanzibar-tz.jpg",
+      "title": "Stone Town, Zanzibar (1)",
+      "author": "Paul Brockmeyer from Chicago, USA",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Stone_Town,_Zanzibar_(1).jpg"
+    },
+    "zermatt-ch": {
+      "src": "/images/destinos/zermatt-ch.jpg",
+      "title": "3802 - Zermatt - Matterhorn viewed from Gornergratbahn",
+      "author": "Andrew Bossi",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "source": "https://commons.wikimedia.org/wiki/File:3802_-_Zermatt_-_Matterhorn_viewed_from_Gornergratbahn.JPG"
+    },
+    "amsterda-nl": {
+      "src": "/images/destinos/amsterda-nl.jpg",
+      "title": "Keizersgracht Jul 2019",
+      "author": "JayAmber",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Keizersgracht_Jul_2019.jpg"
+    },
+    "petra-jo": {
+      "src": "/images/destinos/petra-jo.jpg",
+      "title": "Al khazneh",
+      "author": "Susanahajer",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Al_khazneh.jpg"
+    },
+    "santos-sp": {
+      "src": "/images/destinos/santos-sp.jpg",
+      "title": "Monte Serrat pic03",
+      "author": "Paulocarmona at Portuguese Wikipedia",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Monte_Serrat_pic03.JPG"
+    },
+    "seul-kr": {
+      "src": "/images/destinos/seul-kr.jpg",
+      "title": "Gyeongbokgung-GeunJeongJeon",
+      "author": "Blmtduddl at English Wikipedia",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:Gyeongbokgung-GeunJeongJeon.jpg"
+    },
+    "toquio-jp": {
+      "src": "/images/destinos/toquio-jp.jpg",
+      "title": "Tokio Tempel Senso-ji bei Nacht 1",
+      "author": "Zairon",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tokio_Tempel_Senso-ji_bei_Nacht_1.jpg"
+    }
+  },
+  "days": {
+    "fernando-de-noronha-5-dias": [
+      {
+        "src": "/images/roteiros/fernando-de-noronha-5-dias-dia-1.jpg",
+        "title": "Forte de Nossa Senhora dos Remédios de Fernando de Noronha - Pernambuco, Brasil",
+        "author": "Jorge from Brazil",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Forte_de_Nossa_Senhora_dos_Rem%C3%A9dios_de_Fernando_de_Noronha_-_Pernambuco,_Brasil.jpg"
+      },
+      {
+        "src": "/images/roteiros/fernando-de-noronha-5-dias-dia-2.jpg",
+        "title": "EDUARDO MURUCI - BAIA DOS PORCOS-(recorte)",
+        "author": "Eduardo Muruci",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:EDUARDO_MURUCI_-_BAIA_DOS_PORCOS-(recorte).jpg"
+      },
+      {
+        "src": "/images/roteiros/fernando-de-noronha-5-dias-dia-3.jpg",
+        "title": "Ponta da Sapata",
+        "author": "A C Moraes from Brasília, Brasil",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Ponta_da_Sapata.jpg"
+      },
+      {
+        "src": "/images/roteiros/fernando-de-noronha-5-dias-dia-4.jpg",
+        "title": "Forte de Nossa Senhora dos Remédios de Fernando de Noronha - Pernambuco, Brasil",
+        "author": "Jorge from Brazil",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Forte_de_Nossa_Senhora_dos_Rem%C3%A9dios_de_Fernando_de_Noronha_-_Pernambuco,_Brasil.jpg"
+      },
+      {
+        "src": "/images/roteiros/fernando-de-noronha-5-dias-dia-5.jpg",
+        "title": "EDUARDO MURUCI - BAIA DOS PORCOS-(recorte)",
+        "author": "Eduardo Muruci",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:EDUARDO_MURUCI_-_BAIA_DOS_PORCOS-(recorte).jpg"
+      }
+    ],
+    "arraial-do-cabo-3-dias": [
+      {
+        "src": "/images/roteiros/arraial-do-cabo-3-dias-dia-1.jpg",
+        "title": "Cidade de Arraial do Cabo",
+        "author": "marcusrg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cidade_de_Arraial_do_Cabo.jpg"
+      },
+      {
+        "src": "/images/roteiros/arraial-do-cabo-3-dias-dia-2.jpg",
+        "title": "Cabo Frio (344068854)",
+        "author": "Benjamin Thompson from Orlando, FL, USA",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cabo_Frio_(344068854).jpg"
+      },
+      {
+        "src": "/images/roteiros/arraial-do-cabo-3-dias-dia-3.jpg",
+        "title": "Cidade de Arraial do Cabo",
+        "author": "marcusrg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cidade_de_Arraial_do_Cabo.jpg"
+      }
+    ],
+    "paraty-4-dias": [
+      {
+        "src": "/images/roteiros/paraty-4-dias-dia-1.jpg",
+        "title": "Around Paraty, Brazil 2018 094",
+        "author": "Photograph by Mike Peel ( www.mikepeel.net ).",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Around_Paraty,_Brazil_2018_094.jpg"
+      },
+      null,
+      {
+        "src": "/images/roteiros/paraty-4-dias-dia-3.jpg",
+        "title": "Paraty 05",
+        "author": "Vani Ribeiro",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Paraty_05.JPG"
+      },
+      null
+    ],
+    "porto-de-galinhas-4-dias": [
+      {
+        "src": "/images/roteiros/porto-de-galinhas-4-dias-dia-1.jpg",
+        "title": "Praia do Paiva e a Praia de Barra de Jangada ao fundo o bairro de Candeias, Jaboatão dos Guararapes,",
+        "author": "LLuiz Antonio",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Praia_do_Paiva_e_a_Praia_de_Barra_de_Jangada_ao_fundo_o_bairro_de_Candeias,_Jaboat%C3%A3o_dos_Guararapes,_Pernambuco_-_Brasil.jpg"
+      },
+      {
+        "src": "/images/roteiros/porto-de-galinhas-4-dias-dia-2.jpg",
+        "title": "Área de Proteção Ambiental Costa dos Corais (Recifes de corais na praia dos carneiros, Pernambuco)",
+        "author": "edmarpazfotografias",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:%C3%81rea_de_Prote%C3%A7%C3%A3o_Ambiental_Costa_dos_Corais_(Recifes_de_corais_na_praia_dos_carneiros,_Pernambuco).jpg"
+      },
+      {
+        "src": "/images/roteiros/porto-de-galinhas-4-dias-dia-3.jpg",
+        "title": "Estaleiro Atlântico Sul - Ipojuca, Pernambuco",
+        "author": "C.A.Müller",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Estaleiro_Atl%C3%A2ntico_Sul_-_Ipojuca,_Pernambuco.jpg"
+      },
+      null
+    ],
+    "lencois-maranhenses-4-dias": [
+      null,
+      {
+        "src": "/images/roteiros/lencois-maranhenses-4-dias-dia-2.jpg",
+        "title": "Lencois Maranhenses 3",
+        "author": "Iain and Sarah from London, UK",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Lencois_Maranhenses_3.jpg"
+      },
+      null,
+      null
+    ],
+    "chapada-das-mesas-4-dias": [
+      null,
+      {
+        "src": "/images/roteiros/chapada-das-mesas-4-dias-dia-2.jpg",
+        "title": "Carolina-ma1",
+        "author": "Fernando Santos Cunha Filho",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Carolina-ma1.jpg"
+      },
+      {
+        "src": "/images/roteiros/chapada-das-mesas-4-dias-dia-3.jpg",
+        "title": "Carolina-ma1",
+        "author": "Fernando Santos Cunha Filho",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Carolina-ma1.jpg"
+      },
+      null
+    ],
+    "gramado-e-canela-3-dias": [
+      {
+        "src": "/images/roteiros/gramado-e-canela-3-dias-dia-1.jpg",
+        "title": "Lago Negro, Gramado, RS, Brasil",
+        "author": "TheWikiGuardian",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Lago_Negro,_Gramado,_RS,_Brasil.jpg"
+      },
+      {
+        "src": "/images/roteiros/gramado-e-canela-3-dias-dia-2.jpg",
+        "title": "Fachada do Mundo a Vapor",
+        "author": "Mundo a Vapor",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Fachada_do_Mundo_a_Vapor.jpg"
+      },
+      {
+        "src": "/images/roteiros/gramado-e-canela-3-dias-dia-3.jpg",
+        "title": "Mini Mundo em setembro de 2019 (24)",
+        "author": "Érico",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mini_Mundo_em_setembro_de_2019_(24).jpg"
+      }
+    ],
+    "rio-de-janeiro-5-dias": [
+      {
+        "src": "/images/roteiros/rio-de-janeiro-5-dias-dia-1.jpg",
+        "title": "At Rio de Janeiro 2019 133",
+        "author": "Photograph by Mike Peel ( www.mikepeel.net ).",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:At_Rio_de_Janeiro_2019_133.jpg"
+      },
+      {
+        "src": "/images/roteiros/rio-de-janeiro-5-dias-dia-2.jpg",
+        "title": "Vista do Morro Dona Marta",
+        "author": "Ccarelo",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Vista_do_Morro_Dona_Marta.jpg"
+      },
+      {
+        "src": "/images/roteiros/rio-de-janeiro-5-dias-dia-3.jpg",
+        "title": "Praia de Copacabana - Rio de Janeiro, Brasil",
+        "author": "[www.flickr.com/photos/26912057@N02/ bisonlux]",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Praia_de_Copacabana_-_Rio_de_Janeiro,_Brasil.jpg"
+      },
+      {
+        "src": "/images/roteiros/rio-de-janeiro-5-dias-dia-4.jpg",
+        "title": "Orla Conde 08",
+        "author": "Tânia Rêgo/Agência Brasil",
+        "license": "CC BY 3.0 br",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/br/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Orla_Conde_08.jpg"
+      },
+      {
+        "src": "/images/roteiros/rio-de-janeiro-5-dias-dia-5.jpg",
+        "title": "A bela vista do Cristo",
+        "author": "Ana Carolina do Nascimento Guimarães",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:A_bela_vista_do_Cristo.jpg"
+      }
+    ],
+    "florianopolis-5-dias": [
+      {
+        "src": "/images/roteiros/florianopolis-5-dias-dia-1.jpg",
+        "title": "Mercado Público de Florianópolis (3886761127)",
+        "author": "Rodrigo Soldon from Rio de Janeiro, Brazil",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mercado_P%C3%BAblico_de_Florian%C3%B3polis_(3886761127).jpg"
+      },
+      {
+        "src": "/images/roteiros/florianopolis-5-dias-dia-2.jpg",
+        "title": "Joaquina centro",
+        "author": "No machine-readable author provided. Herbert VAlterE assumed (based on copyright",
+        "license": "CC BY 2.5",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+        "source": "https://commons.wikimedia.org/wiki/File:Joaquina_centro.JPG"
+      },
+      {
+        "src": "/images/roteiros/florianopolis-5-dias-dia-3.jpg",
+        "title": "Ilha do Campeche von NW",
+        "author": "Der Kolonist",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "source": "https://commons.wikimedia.org/wiki/File:Ilha_do_Campeche_von_NW.JPG"
+      },
+      {
+        "src": "/images/roteiros/florianopolis-5-dias-dia-4.jpg",
+        "title": "Praia da Lagoinha do Leste, Florianópolis",
+        "author": "Papa Pic",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Praia_da_Lagoinha_do_Leste,_Florian%C3%B3polis.jpg"
+      },
+      {
+        "src": "/images/roteiros/florianopolis-5-dias-dia-5.jpg",
+        "title": "Jurerê Internacional panorama",
+        "author": "Rafael Ghidini",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Jurer%C3%AA_Internacional_panorama.jpg"
+      }
+    ],
+    "porto-seguro-5-dias": [
+      {
+        "src": "/images/roteiros/porto-seguro-5-dias-dia-1.jpg",
+        "title": "Porto Seguro.1",
+        "author": "Jackeline Gomes",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Porto_Seguro.1.jpg"
+      },
+      {
+        "src": "/images/roteiros/porto-seguro-5-dias-dia-2.jpg",
+        "title": "Porto Seguro.1",
+        "author": "Jackeline Gomes",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Porto_Seguro.1.jpg"
+      },
+      {
+        "src": "/images/roteiros/porto-seguro-5-dias-dia-3.jpg",
+        "title": "Arraial D'Ajuda - Porto Seguro-BA - panoramio (2)",
+        "author": "Vilamir Azevedo",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Arraial_D%27Ajuda_-_Porto_Seguro-BA_-_panoramio_(2).jpg"
+      },
+      {
+        "src": "/images/roteiros/porto-seguro-5-dias-dia-4.jpg",
+        "title": "Trancoso, Porto Seguro, Bahia Brazil",
+        "author": "Michel Y.G. Meunier",
+        "license": "Public domain",
+        "licenseUrl": "https://commons.wikimedia.org/wiki/File:Trancoso,_Porto_Seguro,_Bahia_Brazil.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Trancoso,_Porto_Seguro,_Bahia_Brazil.jpg"
+      },
+      {
+        "src": "/images/roteiros/porto-seguro-5-dias-dia-5.jpg",
+        "title": "Praia do Espelho",
+        "author": "Gabriel Castaldini",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Praia_do_Espelho.jpg"
+      }
+    ],
+    "fortaleza-5-dias": [
+      {
+        "src": "/images/roteiros/fortaleza-5-dias-dia-1.jpg",
+        "title": "Mercado Central de Fortaleza 2025",
+        "author": "W26",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mercado_Central_de_Fortaleza_2025.jpg"
+      },
+      {
+        "src": "/images/roteiros/fortaleza-5-dias-dia-2.jpg",
+        "title": "Praia do cumbuco",
+        "author": "Fabiobarros",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Praia_do_cumbuco.jpg"
+      },
+      {
+        "src": "/images/roteiros/fortaleza-5-dias-dia-3.jpg",
+        "title": "Aguasbelasceara",
+        "author": "Ygor Coelho",
+        "license": "Public domain",
+        "licenseUrl": "https://commons.wikimedia.org/wiki/File:Aguasbelasceara.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Aguasbelasceara.jpg"
+      },
+      null,
+      null
+    ],
+    "santiago-5-dias": [
+      {
+        "src": "/images/roteiros/santiago-5-dias-dia-1.jpg",
+        "title": "Vista lateral Cerro Santa Lucia",
+        "author": "Rjcastillo",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Vista_lateral_Cerro_Santa_Lucia.jpg"
+      },
+      {
+        "src": "/images/roteiros/santiago-5-dias-dia-2.jpg",
+        "title": "San Cristóbal altura",
+        "author": "Carlos yo",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:San_Crist%C3%B3bal_altura.jpg"
+      },
+      null,
+      null,
+      null
+    ],
+    "barcelona-4-dias": [
+      {
+        "src": "/images/roteiros/barcelona-4-dias-dia-1.jpg",
+        "title": "Casa Milà - Barcelona, Spain - Jan 2007",
+        "author": "Diliff",
+        "license": "CC BY 2.5",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+        "source": "https://commons.wikimedia.org/wiki/File:Casa_Mil%C3%A0_-_Barcelona,_Spain_-_Jan_2007.jpg"
+      },
+      {
+        "src": "/images/roteiros/barcelona-4-dias-dia-2.jpg",
+        "title": "Casa generalitat web",
+        "author": "Jan Harenburg",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Casa_generalitat_web.jpg"
+      },
+      {
+        "src": "/images/roteiros/barcelona-4-dias-dia-3.jpg",
+        "title": "Parc guell - panoramio",
+        "author": "essetefano",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Parc_guell_-_panoramio.jpg"
+      },
+      {
+        "src": "/images/roteiros/barcelona-4-dias-dia-4.jpg",
+        "title": "Estadi Olímpic Lluís Companys",
+        "author": "Sprok",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Estadi_Ol%C3%ADmpic_Llu%C3%ADs_Companys.JPG"
+      }
+    ],
+    "cancun-playa-del-carmen-7-dias": [
+      null,
+      {
+        "src": "/images/roteiros/cancun-playa-del-carmen-7-dias-dia-2.jpg",
+        "title": "Cabo Catoche aerial",
+        "author": "P199",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cabo_Catoche_aerial.JPG"
+      },
+      null,
+      null,
+      {
+        "src": "/images/roteiros/cancun-playa-del-carmen-7-dias-dia-5.jpg",
+        "title": "Cozumel Beach",
+        "author": "No machine-readable author provided. Kushboy assumed (based on copyright claims)",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "source": "https://commons.wikimedia.org/wiki/File:Cozumel_Beach.jpg"
+      },
+      {
+        "src": "/images/roteiros/cancun-playa-del-carmen-7-dias-dia-6.jpg",
+        "title": "Cancun Strand Luftbild (22143397586)",
+        "author": "dronepicr",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cancun_Strand_Luftbild_(22143397586).jpg"
+      },
+      {
+        "src": "/images/roteiros/cancun-playa-del-carmen-7-dias-dia-7.jpg",
+        "title": "The Beach at Xcaret Park",
+        "author": "FeldBum",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:The_Beach_at_Xcaret_Park.jpg"
+      }
+    ],
+    "bangkok-4-dias": [
+      {
+        "src": "/images/roteiros/bangkok-4-dias-dia-1.jpg",
+        "title": "0005574-พระบรมมหาราชวังและวัดพระศรีรัตนราศดาราม",
+        "author": "Preecha.MJ",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:0005574-%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%A3%E0%B8%A1%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%B1%E0%B8%87%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%A3%E0%B8%B1%E0%B8%95%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%A8%E0%B8%94%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1.jpg"
+      },
+      {
+        "src": "/images/roteiros/bangkok-4-dias-dia-2.jpg",
+        "title": "4Y1A1159 Bangkok (33536795515)",
+        "author": "Ninara from Helsinki, Finland",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:4Y1A1159_Bangkok_(33536795515).jpg"
+      },
+      null,
+      {
+        "src": "/images/roteiros/bangkok-4-dias-dia-4.jpg",
+        "title": "Bangkok - Jatujak Market 02",
+        "author": "Azreey",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Bangkok_-_Jatujak_Market_02.JPG"
+      }
+    ],
+    "montanhas-rochosas-canada-7-dias": [
+      {
+        "src": "/images/roteiros/montanhas-rochosas-canada-7-dias-dia-1.jpg",
+        "title": "Banff Spring Hotel Alberta Kim Payant 02",
+        "author": "Kimpayant",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Banff_Spring_Hotel_Alberta_Kim_Payant_02.jpg"
+      },
+      {
+        "src": "/images/roteiros/montanhas-rochosas-canada-7-dias-dia-2.jpg",
+        "title": "1 lake louise pano 2019",
+        "author": "Chensiyuan",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:1_lake_louise_pano_2019.jpg"
+      },
+      {
+        "src": "/images/roteiros/montanhas-rochosas-canada-7-dias-dia-3.jpg",
+        "title": "Takakkaw Falls - panoramio (1)",
+        "author": "Jack Borno",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Takakkaw_Falls_-_panoramio_(1).jpg"
+      },
+      {
+        "src": "/images/roteiros/montanhas-rochosas-canada-7-dias-dia-4.jpg",
+        "title": "Moraine Lake 17092005",
+        "author": "Gorgo",
+        "license": "Public domain",
+        "licenseUrl": "https://commons.wikimedia.org/wiki/File:Moraine_Lake_17092005.jpg",
+        "source": "https://commons.wikimedia.org/wiki/File:Moraine_Lake_17092005.jpg"
+      },
+      null,
+      null,
+      null
+    ],
+    "jordania-petra-5-dias": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "roma-4-dias": [
+      {
+        "src": "/images/roteiros/roma-4-dias-dia-1.jpg",
+        "title": "Trevi-Brunnen abends",
+        "author": "Thomas Wolf , www.foto-tw.de",
+        "license": "CC BY-SA 3.0 de",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Trevi-Brunnen_abends.jpg"
+      },
+      {
+        "src": "/images/roteiros/roma-4-dias-dia-2.jpg",
+        "title": "Chapelle sixtine2",
+        "author": "Antoine Taveneaux",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Chapelle_sixtine2.jpg"
+      },
+      {
+        "src": "/images/roteiros/roma-4-dias-dia-3.jpg",
+        "title": "Rome Pantheon front",
+        "author": "Roberta Dragan",
+        "license": "CC BY-SA 2.5",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+        "source": "https://commons.wikimedia.org/wiki/File:Rome_Pantheon_front.jpg"
+      },
+      {
+        "src": "/images/roteiros/roma-4-dias-dia-4.jpg",
+        "title": "Roma - Villa Medici - 2023-09-10 18-13-14 006",
+        "author": "Laterbat",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Roma_-_Villa_Medici_-_2023-09-10_18-13-14_006.jpeg"
+      }
+    ],
+    "paris-4-dias": [
+      {
+        "src": "/images/roteiros/paris-4-dias-dia-1.jpg",
+        "title": "Trocadéro as seen from the Eiffel Tower, 25 September 2010",
+        "author": "Yortw from Auckland, New Zealand",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Trocad%C3%A9ro_as_seen_from_the_Eiffel_Tower,_25_September_2010.jpg"
+      },
+      {
+        "src": "/images/roteiros/paris-4-dias-dia-2.jpg",
+        "title": "Pavillon de Flore, Louvre Museum, Paris 5 November 2019",
+        "author": "Ali Sabbagh",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Pavillon_de_Flore,_Louvre_Museum,_Paris_5_November_2019.jpg"
+      },
+      {
+        "src": "/images/roteiros/paris-4-dias-dia-3.jpg",
+        "title": "Notre-Dame de Paris, 4 October 2017",
+        "author": "Ali Sabbagh",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Notre-Dame_de_Paris,_4_October_2017.jpg"
+      },
+      {
+        "src": "/images/roteiros/paris-4-dias-dia-4.jpg",
+        "title": "Aspet de // Labaie de Mont // martre Les paris // fait le // 19 Mars 1625 : Veuë de l'Abbaye de Mont",
+        "author": "Étienne Martellange",
+        "license": "Public domain",
+        "licenseUrl": "https://commons.wikimedia.org/wiki/File:Abbaye.de.Montmartre.1625.Gallica.Etienne.Martellange.jpeg",
+        "source": "https://commons.wikimedia.org/wiki/File:Abbaye.de.Montmartre.1625.Gallica.Etienne.Martellange.jpeg"
+      }
+    ]
+  }
+}

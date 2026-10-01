@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, BedDouble, CalendarDays, Lightbulb, MapPin, Wallet } from "lucide-react";
+import { TripAssistant } from "@/components/assistant/TripAssistant";
 import { StyleIcon } from "@/components/destinations/StyleIcon";
 import { Container } from "@/components/ui/Container";
 import { PhotoCredit } from "@/components/ui/PhotoCredit";
 import { destinationStyleLabel, monthLong } from "@/lib/labels";
-import { destinationCover } from "@/lib/photos";
+import { destinationCover, readyDayPhoto } from "@/lib/photos";
+import { getDestination } from "@/lib/queries";
 import {
   READY_ITINERARIES,
   budgetLabel,
@@ -36,6 +38,7 @@ export default async function ReadyItineraryPage({
   if (!r) notFound();
   const cover = r.destinationSlug ? destinationCover(r.destinationSlug) : null;
   const months = [...r.bestMonths].sort((a, b) => a - b);
+  const destination = r.destinationSlug ? await getDestination(r.destinationSlug) : null;
 
   return (
     <Container>
@@ -130,6 +133,26 @@ export default async function ReadyItineraryPage({
                   <span className="sr-only">Dia {i + 1}: </span>
                   {day.title}
                 </h3>
+                {(() => {
+                  const photo = readyDayPhoto(r.slug, i);
+                  return photo ? (
+                    <figure className="mt-3">
+                      <div className="relative aspect-[16/9] overflow-hidden rounded-xl">
+                        <Image
+                          src={photo.src}
+                          alt={photo.title}
+                          fill
+                          sizes="(min-width: 1024px) 50vw, 100vw"
+                          className="object-cover"
+                        />
+                      </div>
+                      <figcaption className="mt-1 flex flex-wrap items-baseline justify-between gap-2 text-xs text-tinta-soft">
+                        <span>{photo.title}</span>
+                        <PhotoCredit credit={photo} />
+                      </figcaption>
+                    </figure>
+                  ) : null;
+                })()}
                 <ul className="mt-3 space-y-3">
                   {day.stops.map((stop) => (
                     <li key={stop.title} className="rounded-xl bg-espuma p-4">
@@ -146,7 +169,21 @@ export default async function ReadyItineraryPage({
           </ol>
         </section>
 
-        <aside className="space-y-6">
+        <div className="space-y-6">
+          {destination && (
+            <TripAssistant
+              destination={{
+                slug: destination.slug,
+                name: destination.name,
+                city: destination.city,
+                country: destination.country,
+                latitude: destination.latitude === null ? null : Number(destination.latitude),
+                longitude: destination.longitude === null ? null : Number(destination.longitude),
+                styles: destination.styles ?? r.styles,
+              }}
+              mentions={r.days.flatMap((d) => d.stops.map((st) => st.title))}
+            />
+          )}
           <section aria-labelledby="onde-ficar" className="rounded-2xl border border-linha p-5">
             <h2 id="onde-ficar" className="mb-3 flex items-center gap-2 font-bold text-petroleo">
               <BedDouble aria-hidden="true" className="h-5 w-5" />
@@ -206,7 +243,7 @@ export default async function ReadyItineraryPage({
           >
             Montar meu roteiro a partir deste
           </Link>
-        </aside>
+        </div>
       </div>
     </Container>
   );
