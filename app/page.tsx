@@ -12,6 +12,7 @@ import { ShareCta } from "@/components/home/ShareCta";
 import { Container } from "@/components/ui/Container";
 import { DemoBadge } from "@/components/ui/DemoBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { DESTINATION_PHOTOS } from "@/lib/photos";
 import type { DestinationWithStats } from "@/types/database";
 import {
   listAchados,
@@ -44,7 +45,7 @@ function toGlobe(destinations: DestinationWithStats[]): GlobeDestination[] {
  */
 async function loadHome() {
   const [destinations, posts, itineraries, topPlaces, achados] = await Promise.all([
-    listDestinations(12),
+    listDestinations(500),
     listPosts({ limit: 6 }),
     listItineraries({ limit: 6, publicOnly: true }),
     listPlaces({ minReviews: 1, limit: 6 }),
@@ -52,7 +53,14 @@ async function loadHome() {
   ]);
   return {
     globe: toGlobe(destinations),
-    destinations: destinations.slice(0, 6),
+    // Na vitrine, primeiro os que têm avaliações ou foto própria; o globo mostra todos.
+    destinations: [...destinations]
+      .sort(
+        (a, b) =>
+          b.reviews_count - a.reviews_count ||
+          Number(Boolean(DESTINATION_PHOTOS[b.slug])) - Number(Boolean(DESTINATION_PHOTOS[a.slug])),
+      )
+      .slice(0, 6),
     posts,
     itineraries,
     topPlaces,

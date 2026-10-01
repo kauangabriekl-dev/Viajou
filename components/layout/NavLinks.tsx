@@ -16,6 +16,7 @@ export function DesktopNav() {
     { href: "/destinos", label: "Destinos" },
     { href: "/achados", label: "Achadinhos" },
     { href: "/roteiros", label: "Roteiros" },
+    { href: "/hospedagem", label: "Hospedagem" },
     { href: "/vou-viajar", label: "Vou viajar" },
   ];
   return (

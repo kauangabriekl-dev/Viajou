@@ -47,6 +47,7 @@ export const budgetLabel: Record<ReadyItinerary["budget"], string> = {
 export const READY_ITINERARIES: ReadyItinerary[] = [
   {
     slug: "fernando-de-noronha-5-dias",
+    destinationSlug: "fernando-de-noronha-pe",
     title: "Fernando de Noronha em 5 dias",
     place: "Fernando de Noronha",
     country: "Brasil",
@@ -168,6 +169,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "arraial-do-cabo-3-dias",
+    destinationSlug: "arraial-do-cabo-rj",
     title: "Arraial do Cabo em 3 dias",
     place: "Arraial do Cabo",
     country: "Brasil",
@@ -244,6 +246,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "paraty-4-dias",
+    destinationSlug: "paraty-rj",
     title: "Paraty em 4 dias",
     place: "Paraty",
     country: "Brasil",
@@ -336,6 +339,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "porto-de-galinhas-4-dias",
+    destinationSlug: "porto-de-galinhas-pe",
     title: "Porto de Galinhas em 4 dias",
     place: "Porto de Galinhas",
     country: "Brasil",
@@ -409,6 +413,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "lencois-maranhenses-4-dias",
+    destinationSlug: "lencois-maranhenses-ma",
     title: "Lençóis Maranhenses em 4 dias",
     place: "Barreirinhas e Atins",
     country: "Brasil",
@@ -475,6 +480,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "chapada-das-mesas-4-dias",
+    destinationSlug: "chapada-das-mesas-ma",
     title: "Chapada das Mesas em 4 dias",
     place: "Carolina",
     country: "Brasil",
@@ -1012,6 +1018,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "santiago-5-dias",
+    destinationSlug: "santiago-cl",
     title: "Santiago do Chile em 5 dias",
     place: "Santiago",
     country: "Chile",
@@ -1104,6 +1111,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "barcelona-4-dias",
+    destinationSlug: "barcelona-es",
     title: "Barcelona em 4 dias",
     place: "Barcelona",
     country: "Espanha",
@@ -1193,6 +1201,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "cancun-playa-del-carmen-7-dias",
+    destinationSlug: "cancun-mx",
     title: "Cancún e Playa del Carmen em 7 dias",
     place: "Cancún",
     country: "México",
@@ -1295,6 +1304,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "bangkok-4-dias",
+    destinationSlug: "bangkok-th",
     title: "Bangkok em 4 dias",
     place: "Bangkok",
     country: "Tailândia",
@@ -1370,6 +1380,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "montanhas-rochosas-canada-7-dias",
+    destinationSlug: "banff-ca",
     title: "Montanhas Rochosas canadenses em 7 dias",
     place: "Banff e Jasper",
     country: "Canadá",
@@ -1470,6 +1481,7 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
   },
   {
     slug: "jordania-petra-5-dias",
+    destinationSlug: "petra-jo",
     title: "Jordânia: Petra, Wadi Rum e Mar Morto em 5 dias",
     place: "Petra",
     country: "Jordânia",

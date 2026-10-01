@@ -262,6 +262,19 @@ export default async function DestinationPage({
           </section>
         )}
 
+        <Link
+          href={`/hospedagem?onde=${encodeURIComponent(destination.name)}`}
+          className="flex min-h-14 items-center justify-between gap-3 rounded-[var(--radius-card)] bg-petroleo px-6 py-4 font-semibold text-white hover:bg-petroleo-900"
+        >
+          <span>
+            Onde ficar em {destination.name}
+            <span className="block text-sm font-light text-white/80">
+              Mapa de hospedagens e comparação de preços no Booking, Airbnb, Expedia, Google e Kayak
+            </span>
+          </span>
+          <span aria-hidden="true">→</span>
+        </Link>
+
         <section aria-labelledby="roteiros-title">
           <SectionHeading
             id="roteiros-title"

@@ -7,6 +7,7 @@ import { RatingStars } from "@/components/ui/RatingStars";
 import { Scene, sceneFor } from "@/components/ui/Scene";
 import { destinationStyleLabel } from "@/lib/labels";
 import { destinationCover } from "@/lib/photos";
+import { isBrazil } from "@/lib/regions";
 import type { DestinationWithStats } from "@/types/database";
 import { formatCoordinates, pluralize } from "@/utils/format";
 
@@ -16,6 +17,8 @@ import { formatCoordinates, pluralize } from "@/utils/format";
  */
 export function DestinationCard({ destination }: { destination: DestinationWithStats }) {
   const cover = destinationCover(destination.slug, destination.cover_url);
+  // No Brasil a sigla do estado basta; fora, o país diz mais que a região.
+  const badge = isBrazil(destination.country) ? destination.state : destination.country;
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] bg-petroleo text-white shadow-[0_18px_40px_-24px_rgba(15,59,77,0.8)]">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -37,7 +40,7 @@ export function DestinationCard({ destination }: { destination: DestinationWithS
           className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-petroleo"
           aria-hidden="true"
         >
-          {destination.state}
+          {badge}
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
@@ -47,7 +50,7 @@ export function DestinationCard({ destination }: { destination: DestinationWithS
             className="font-semibold after:absolute after:inset-0 after:content-['']"
           >
             {destination.name}
-            <span className="sr-only">, {destination.state}</span>
+            <span className="sr-only">, {badge}</span>
           </Link>
           <ArrowUpRight
             aria-hidden="true"

@@ -160,6 +160,12 @@ export default async function ReadyItineraryPage({
                 </li>
               ))}
             </ul>
+            <Link
+              href={`/hospedagem?onde=${encodeURIComponent(r.place)}`}
+              className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-petroleo hover:underline"
+            >
+              Buscar hospedagem e comparar preços
+            </Link>
           </section>
           <section aria-labelledby="custos" className="rounded-2xl border border-linha p-5">
             <h2 id="custos" className="mb-3 flex items-center gap-2 font-bold text-petroleo">

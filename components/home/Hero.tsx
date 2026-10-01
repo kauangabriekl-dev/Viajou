@@ -4,6 +4,7 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { DemoBadge } from "@/components/ui/DemoBadge";
 import { HeroBackdrop } from "@/components/home/HeroBackdrop";
 import { HERO_PHOTOS } from "@/lib/photos";
+import { distanceKm } from "@/lib/geo-search";
 import { WORLD_HIGHLIGHTS } from "@/lib/world-highlights";
 
 /**
@@ -81,7 +82,13 @@ export function Hero({ destinations, demo }: HeroProps) {
           <div className="mt-6 w-full sm:mt-8">
             <DestinationGlobe
               destinations={points}
-              highlights={WORLD_HIGHLIGHTS}
+              highlights={WORLD_HIGHLIGHTS.filter(
+                // Destaque que já virou destino do Viajou some, para não duplicar o pino.
+                (h) =>
+                  !destinations.some(
+                    (d) => distanceKm(h.latitude, h.longitude, d.latitude, d.longitude) < 60,
+                  ),
+              )}
               initialFocus={BRAZIL}
             />
           </div>

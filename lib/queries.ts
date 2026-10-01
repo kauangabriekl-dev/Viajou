@@ -1,6 +1,6 @@
 import "server-only";
 import { inList, one, rows } from "@/lib/db/client";
-import { normalizePlace } from "@/lib/geo-search";
+import { distanceKm, normalizePlace } from "@/lib/geo-search";
 import { destinationStyleValues } from "@/lib/labels";
 import type { Candidate } from "@/lib/suggested-itinerary";
 import type {
@@ -1049,3 +1049,51 @@ export async function getSuggestionCandidates(destinationId: string): Promise<Ca
 }
 
 export type { ProfileSummary };
+
+// ---------------------------------------------------------------------------
+// Hospedagem
+// ---------------------------------------------------------------------------
+
+export type StayPlace = PlaceSummary & {
+  latitude: number;
+  longitude: number;
+  distance_km: number;
+};
+
+/**
+ * Hotéis e pousadas cadastrados (pela equipe ou pela comunidade) num raio do ponto buscado.
+ * Filtra primeiro por uma caixa de latitude/longitude (usa índice) e depois pela distância real.
+ */
+export async function listStaysNear(
+  latitude: number,
+  longitude: number,
+  radiusKm = 30,
+): Promise<StayPlace[]> {
+  const dLat = radiusKm / 111;
+  const dLng = radiusKm / (111 * Math.max(0.1, Math.cos((latitude * Math.PI) / 180)));
+  const found = await rows<PlaceSummary & { latitude: number; longitude: number }>(
+    `SELECT ${PLACE_SUMMARY}, latitude, longitude FROM places
+      WHERE type = 'hotel' AND latitude BETWEEN $1 AND $2 AND longitude BETWEEN $3 AND $4
+      LIMIT 300`,
+    [latitude - dLat, latitude + dLat, longitude - dLng, longitude + dLng],
+  );
+  return found
+    .map((p) => {
+      const lat = Number(p.latitude);
+      const lng = Number(p.longitude);
+      return {
+        ...p,
+        latitude: lat,
+        longitude: lng,
+        rating_avg: Number(p.rating_avg),
+        distance_km: distanceKm(latitude, longitude, lat, lng),
+      };
+    })
+    .filter((p) => p.distance_km <= radiusKm)
+    .sort(
+      (a, b) =>
+        b.reviews_count - a.reviews_count ||
+        b.rating_avg - a.rating_avg ||
+        a.distance_km - b.distance_km,
+    );
+}
