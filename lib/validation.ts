@@ -207,6 +207,11 @@ export const tripPlanSchema = z
       .max(50, "Máximo de 50 pessoas."),
     budget: moneyToCents,
     preferences: z.array(z.enum(travelTagValues)).default([]),
+    about: z
+      .string()
+      .trim()
+      .max(2000, "Escreva no máximo 2000 caracteres.")
+      .transform((v) => v || null),
   })
   .refine((d) => d.endDate >= d.startDate, {
     message: "A volta precisa ser no mesmo dia ou depois da ida.",

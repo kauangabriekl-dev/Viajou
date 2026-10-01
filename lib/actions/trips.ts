@@ -8,8 +8,7 @@ import { fieldErrors, tripPlanSchema } from "@/lib/validation";
 
 /**
  * "Vou viajar": salva o plano e leva aos resultados.
- * O MVP só cruza destino + preferências com roteiros e relatos. O plano salvo
- * (datas, pessoas, orçamento) é a entrada que uma IA de roteiros usará no futuro.
+ * O texto "Conte sobre você" (about) alimenta o roteiro personalizado (lib/trip-builder.ts).
  */
 export async function createTripPlan(
   _prev: ActionResult | null,
@@ -22,6 +21,7 @@ export async function createTripPlan(
     travelers: formData.get("travelers"),
     budget: formData.get("budget") ?? "",
     preferences: formData.getAll("preferences"),
+    about: formData.get("about") ?? "",
   });
   if (!parsed.success)
     return {
@@ -37,8 +37,8 @@ export async function createTripPlan(
 
   try {
     await exec(
-      `INSERT INTO trip_plans (id, user_id, destination_id, start_date, end_date, travelers, budget_cents, preferences)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, ${sqlArray(d.preferences)})`,
+      `INSERT INTO trip_plans (id, user_id, destination_id, start_date, end_date, travelers, budget_cents, preferences, about)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, ${sqlArray(d.preferences)}, $8)`,
       [
         planId,
         session.userId,
@@ -47,6 +47,7 @@ export async function createTripPlan(
         d.endDate,
         d.travelers,
         d.budget ?? null,
+        d.about,
       ],
     );
   } catch (error) {

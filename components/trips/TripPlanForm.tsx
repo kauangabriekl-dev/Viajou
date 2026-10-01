@@ -104,6 +104,23 @@ export function TripPlanForm({ destinations, initialDestinationId = "", signedIn
           ))}
         </div>
       </fieldset>
+      <Field
+        id="about"
+        label="Conte sobre você"
+        optional
+        hint="Com quem você vai, seu ritmo, do que gosta e do que não gosta. Usamos isso para montar o seu roteiro."
+        errors={e("about")}
+      >
+        <textarea
+          id="about"
+          name="about"
+          rows={5}
+          maxLength={2000}
+          placeholder="Ex.: Vou com minha esposa e nosso filho de 6 anos. Gostamos de praia e de comer bem, mas não curtimos balada. Preferimos um ritmo tranquilo e queremos economizar na hospedagem."
+          className={inputClass}
+          aria-describedby={describedBy("about", e("about"))}
+        />
+      </Field>
       <FormMessage state={state} />
       {signedIn ? (
         <SubmitButton pendingLabel="Buscando…" variant="accent" className="w-full">

@@ -1789,6 +1789,492 @@ export const READY_ITINERARIES: ReadyItinerary[] = [
       "Use o metrô: chega a quase todas as atrações.",
     ],
   },
+  {
+    slug: "nova-york-5-dias",
+    title: "Nova York em 5 dias",
+    place: "Nova York",
+    country: "Estados Unidos",
+    region: "internacional",
+    destinationSlug: "nova-york-us",
+    styles: ["cidade", "gastronomia"],
+    bestMonths: [4, 5, 6, 9, 10, 11, 12],
+    budget: 3,
+    summary:
+      "Manhattan concentra boa parte do que vale a pena, mas os melhores dias misturam os ícones com um passeio a pé pelos bairros. O metrô funciona 24 horas e resolve quase todos os deslocamentos.",
+    days: [
+      {
+        title: "Central Park e museus",
+        stops: [
+          {
+            period: "manha",
+            title: "Central Park",
+            note: "Entre pela 59th Street e caminhe até o Bethesda Terrace; bicicleta ajuda a ver mais.",
+          },
+          {
+            period: "tarde",
+            title: "Metropolitan Museum of Art",
+            note: "Um dos maiores museus do mundo, na borda do parque. Escolha poucas alas.",
+          },
+          {
+            period: "noite",
+            title: "Times Square",
+            note: "Mais impressionante à noite, com os painéis acesos.",
+          },
+        ],
+      },
+      {
+        title: "Estátua da Liberdade e sul de Manhattan",
+        stops: [
+          {
+            period: "manha",
+            title: "Estátua da Liberdade e Ellis Island",
+            note: "Barco saindo do Battery Park; reserve antes se quiser subir no pedestal ou na coroa.",
+          },
+          {
+            period: "tarde",
+            title: "Memorial do 11 de Setembro",
+            note: "As duas piscinas no lugar das torres; o museu tem ingresso.",
+          },
+          {
+            period: "tarde",
+            title: "Wall Street",
+            note: "Distrito financeiro, a pé a partir do memorial.",
+          },
+        ],
+      },
+      {
+        title: "Brooklyn",
+        stops: [
+          {
+            period: "manha",
+            title: "Ponte do Brooklyn a pé",
+            note: "Atravesse de Manhattan para o Brooklyn para ter a vista dos prédios às costas.",
+          },
+          {
+            period: "tarde",
+            title: "DUMBO",
+            note: "Ruas de pedra e a vista clássica da Manhattan Bridge.",
+          },
+          {
+            period: "noite",
+            title: "Pôr do sol no Brooklyn Bridge Park",
+            note: "O skyline acende do outro lado do rio.",
+          },
+        ],
+      },
+      {
+        title: "Lado oeste",
+        stops: [
+          {
+            period: "manha",
+            title: "High Line",
+            note: "Parque suspenso sobre uma antiga linha de trem.",
+          },
+          {
+            period: "tarde",
+            title: "Chelsea Market",
+            note: "Mercado coberto com bancas de comida de vários países.",
+          },
+          {
+            period: "noite",
+            title: "Espetáculo da Broadway",
+            note: "Ingressos com desconto saem no mesmo dia em bilheterias oficiais.",
+          },
+        ],
+      },
+      {
+        title: "Mirantes e Midtown",
+        stops: [
+          {
+            period: "manha",
+            title: "Rockefeller Center e Catedral de São Patrício",
+            note: "Na 5ª Avenida, perto uma da outra.",
+          },
+          {
+            period: "noite",
+            title: "Mirante no alto de um arranha-céu",
+            note: "Empire State, Top of the Rock ou Edge: o horário do pôr do sol é o mais disputado.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Midtown", why: "Central e perto de muitas linhas de metrô." },
+      { area: "Lower East Side / East Village", why: "Mais vida de bairro e restaurantes." },
+      { area: "Long Island City (Queens)", why: "Diárias menores, a uma estação de Manhattan." },
+    ],
+    extraCosts: [
+      "Barco da Estátua da Liberdade, museus e mirantes.",
+      "Taxas de hotel cobradas à parte da diária.",
+      "Gorjeta de 18% a 20% em restaurantes.",
+    ],
+    tips: [
+      "Use o cartão de aproximação direto na catraca do metrô.",
+      "Dezembro tem decoração de Natal, mas lota e as diárias sobem.",
+    ],
+  },
+  {
+    slug: "foz-do-iguacu-3-dias",
+    title: "Foz do Iguaçu em 3 dias",
+    place: "Foz do Iguaçu",
+    country: "Brasil",
+    region: "brasil",
+    destinationSlug: "foz-do-iguacu-pr",
+    styles: ["cachoeira", "floresta", "aventura"],
+    bestMonths: [3, 4, 5, 9, 10, 11],
+    budget: 2,
+    summary:
+      "As cataratas vistas dos dois lados da fronteira, a usina de Itaipu e o encontro de três países. O lado brasileiro mostra o panorama; o argentino leva para dentro das quedas.",
+    days: [
+      {
+        title: "Cataratas pelo lado brasileiro",
+        stops: [
+          {
+            period: "manha",
+            title: "Parque Nacional do Iguaçu",
+            note: "A trilha das Cataratas termina na passarela sobre a água: leve capa de chuva.",
+          },
+          {
+            period: "tarde",
+            title: "Parque das Aves",
+            note: "Ao lado da entrada do parque, com aves da Mata Atlântica.",
+          },
+          {
+            period: "noite",
+            title: "Marco das Três Fronteiras",
+            note: "Pôr do sol no ponto onde se veem Brasil, Argentina e Paraguai.",
+          },
+        ],
+      },
+      {
+        title: "Lado argentino",
+        stops: [
+          {
+            period: "dia",
+            title: "Parque Nacional Iguazú",
+            note: "Trem e passarelas até a Garganta do Diabo. Leve documento para cruzar a fronteira e reserve o dia inteiro.",
+          },
+        ],
+      },
+      {
+        title: "Itaipu",
+        stops: [
+          {
+            period: "manha",
+            title: "Usina de Itaipu",
+            note: "Visita panorâmica ou circuito especial por dentro da barragem.",
+          },
+          {
+            period: "tarde",
+            title: "Passeio de barco perto das quedas",
+            note: "Barcos chegam bem perto das cataratas; você sai encharcado.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Centro", why: "Restaurantes e ônibus para os parques." },
+      { area: "Rodovia das Cataratas", why: "Hotéis com área verde, perto do parque nacional." },
+    ],
+    extraCosts: [
+      "Ingressos dos parques nacionais dos dois lados.",
+      "Passeios de barco e a visita a Itaipu.",
+    ],
+    tips: [
+      "De março a maio e de setembro a novembro o volume de água costuma ser alto e o calor, menor.",
+      "No lado argentino, chegue na abertura: a fila do trem cresce rápido.",
+    ],
+  },
+  {
+    slug: "bariloche-4-dias",
+    title: "Bariloche em 4 dias",
+    place: "Bariloche",
+    country: "Argentina",
+    region: "internacional",
+    destinationSlug: "bariloche-ar",
+    styles: ["frio", "montanha", "trilha"],
+    bestMonths: [1, 2, 7, 8, 12],
+    budget: 2,
+    summary:
+      "Lagos, bosques e montanhas da Patagônia argentina. No inverno é destino de neve e esqui; no verão, de trilhas e passeios de barco. O roteiro funciona nas duas estações.",
+    days: [
+      {
+        title: "Circuito Chico",
+        stops: [
+          {
+            period: "manha",
+            title: "Cerro Campanario",
+            note: "Teleférico de cadeirinha até um dos mirantes mais bonitos da região.",
+          },
+          {
+            period: "tarde",
+            title: "Circuito Chico",
+            note: "Estrada à beira dos lagos, com paradas em mirantes e no Hotel Llao Llao.",
+          },
+        ],
+      },
+      {
+        title: "Cerro Catedral",
+        stops: [
+          {
+            period: "dia",
+            title: "Cerro Catedral",
+            note: "No inverno, esqui e neve; no verão, teleféricos e trilhas no alto da montanha.",
+          },
+        ],
+      },
+      {
+        title: "Lago e bosque",
+        stops: [
+          {
+            period: "dia",
+            title: "Isla Victoria e Bosque de Arrayanes",
+            note: "Passeio de barco pelo Lago Nahuel Huapi até um bosque de árvores de tronco cor de canela.",
+          },
+        ],
+      },
+      {
+        title: "Centro e chocolates",
+        stops: [
+          {
+            period: "manha",
+            title: "Cerro Otto",
+            note: "Teleférico com vista do lago e da cidade.",
+          },
+          {
+            period: "tarde",
+            title: "Centro Cívico e rua Mitre",
+            note: "Prédios de pedra e madeira e as lojas de chocolate.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Centro", why: "Tudo a pé, com restaurantes e saída das excursões." },
+      { area: "Avenida Bustillo", why: "Hotéis à beira do lago, a caminho do Cerro Catedral." },
+    ],
+    extraCosts: ["Teleféricos e passe de esqui.", "Aluguel de roupa de neve no inverno."],
+    tips: [
+      "No inverno, alugue a roupa de neve na cidade, que sai mais barato que na montanha.",
+      "Leve RG emitido há menos de 10 anos ou passaporte.",
+    ],
+  },
+  {
+    slug: "jericoacoara-4-dias",
+    title: "Jericoacoara em 4 dias",
+    place: "Jericoacoara",
+    country: "Brasil",
+    region: "brasil",
+    destinationSlug: "jericoacoara-ce",
+    styles: ["praia", "aventura"],
+    bestMonths: [7, 8, 9, 10, 11, 12],
+    budget: 2,
+    summary:
+      "Vila de ruas de areia dentro de um parque nacional, com dunas, lagoas de água doce e vento constante para o kitesurf. Planeje os passeios pela maré.",
+    days: [
+      {
+        title: "Chegada e Duna do Pôr do Sol",
+        stops: [
+          {
+            period: "tarde",
+            title: "Duna do Pôr do Sol",
+            note: "Programa de todo fim de tarde na vila; muita gente aplaude o sol se pondo.",
+          },
+          {
+            period: "noite",
+            title: "Rua Principal",
+            note: "Restaurantes, forró e barracas de drinques.",
+          },
+        ],
+      },
+      {
+        title: "Pedra Furada",
+        stops: [
+          {
+            period: "manha",
+            title: "Pedra Furada",
+            note: "Arco de pedra à beira-mar; só dá para chegar pela praia na maré baixa.",
+          },
+          { period: "tarde", title: "Praia da Malhada", note: "Mais calma, ao lado da vila." },
+        ],
+      },
+      {
+        title: "Lagoas",
+        stops: [
+          {
+            period: "dia",
+            title: "Lagoa do Paraíso e Lagoa Azul",
+            note: "Águas transparentes com redes armadas dentro d'água; vá de buggy ou 4x4.",
+          },
+        ],
+      },
+      {
+        title: "Lado oeste",
+        stops: [
+          {
+            period: "dia",
+            title: "Passeio a Tatajuba",
+            note: "Buggy pelas dunas, travessia de balsa e a Árvore da Preguiça no caminho.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Vila de Jericoacoara", why: "Tudo a pé pela areia." },
+      { area: "Preá", why: "Perto das escolas de kitesurf e mais sossegado." },
+    ],
+    extraCosts: [
+      "Taxa de turismo sustentável cobrada pelo município.",
+      "Transfer 4x4 desde Jijoca e os passeios de buggy.",
+    ],
+    tips: [
+      "Não há asfalto na vila: leve chinelo e uma mochila em vez de mala de rodinha.",
+      "De julho a dezembro venta mais, bom para o kitesurf.",
+    ],
+  },
+  {
+    slug: "campos-do-jordao-3-dias",
+    title: "Campos do Jordão em 3 dias",
+    place: "Campos do Jordão",
+    country: "Brasil",
+    region: "brasil",
+    destinationSlug: "campos-do-jordao-sp",
+    styles: ["frio", "montanha", "gastronomia"],
+    bestMonths: [5, 6, 7, 8],
+    budget: 3,
+    summary:
+      "Serra da Mantiqueira com arquitetura de montanha, noites frias e muita comida de inverno. Um fim de semana prolongado é o suficiente para o essencial.",
+    days: [
+      {
+        title: "Capivari",
+        stops: [
+          {
+            period: "tarde",
+            title: "Vila Capivari",
+            note: "Centrinho turístico com lojas, chocolates e restaurantes.",
+          },
+          {
+            period: "noite",
+            title: "Fondue",
+            note: "O jantar clássico das noites frias da serra.",
+          },
+        ],
+      },
+      {
+        title: "Mirantes e natureza",
+        stops: [
+          {
+            period: "manha",
+            title: "Morro do Elefante",
+            note: "Teleférico saindo de Capivari até um mirante sobre a cidade.",
+          },
+          {
+            period: "tarde",
+            title: "Parque Estadual de Campos do Jordão (Horto Florestal)",
+            note: "Trilhas curtas entre araucárias e riachos.",
+          },
+        ],
+      },
+      {
+        title: "Palácio e Pedra do Baú",
+        stops: [
+          {
+            period: "manha",
+            title: "Palácio Boa Vista",
+            note: "Residência de inverno do governo paulista, com acervo de arte.",
+          },
+          {
+            period: "tarde",
+            title: "Pedra do Baú",
+            note: "Formação rochosa em São Bento do Sapucaí; a subida tem escadas e grampos.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Capivari", why: "Tudo a pé e vida noturna." },
+      { area: "Alto da Boa Vista", why: "Pousadas tranquilas com vista, perto do palácio." },
+    ],
+    extraCosts: ["Teleférico e ingressos de parques.", "Em julho, as diárias sobem bastante."],
+    tips: [
+      "Julho é o mês mais cheio: reserve com meses de antecedência.",
+      "Leve roupa para frio forte à noite mesmo fora do inverno.",
+    ],
+  },
+  {
+    slug: "amsterda-3-dias",
+    title: "Amsterdã em 3 dias",
+    place: "Amsterdã",
+    country: "Países Baixos",
+    region: "internacional",
+    destinationSlug: "amsterda-nl",
+    styles: ["cidade", "historico"],
+    bestMonths: [4, 5, 6, 9],
+    budget: 3,
+    summary:
+      "Canais do século XVII, museus de primeira linha e uma cidade feita para a bicicleta. Três dias cobrem os museus, os bairros e um bate-volta aos moinhos.",
+    days: [
+      {
+        title: "Museus",
+        stops: [
+          {
+            period: "manha",
+            title: "Rijksmuseum",
+            note: "O museu nacional, com a Ronda Noturna de Rembrandt.",
+          },
+          {
+            period: "tarde",
+            title: "Museu Van Gogh",
+            note: "Ingresso com horário marcado, vendido só on-line.",
+          },
+          {
+            period: "tarde",
+            title: "Vondelpark",
+            note: "Parque ao lado dos museus, bom para descansar.",
+          },
+        ],
+      },
+      {
+        title: "Canais e Jordaan",
+        stops: [
+          {
+            period: "manha",
+            title: "Casa de Anne Frank",
+            note: "Os ingressos são liberados on-line com antecedência e esgotam rápido.",
+          },
+          {
+            period: "tarde",
+            title: "Jordaan",
+            note: "Bairro de canais estreitos, lojas pequenas e cafés.",
+          },
+          {
+            period: "noite",
+            title: "Passeio de barco pelos canais",
+            note: "O cinturão de canais é Patrimônio Mundial; à noite as pontes ficam iluminadas.",
+          },
+        ],
+      },
+      {
+        title: "Moinhos",
+        stops: [
+          {
+            period: "dia",
+            title: "Zaanse Schans",
+            note: "Vila com moinhos de vento históricos, a menos de meia hora de trem.",
+          },
+        ],
+      },
+    ],
+    base: [
+      { area: "Cinturão de canais", why: "Central e bonito, mas caro." },
+      { area: "De Pijp", why: "Bairro animado, perto dos museus." },
+    ],
+    extraCosts: ["Ingressos dos museus.", "Taxa turística cobrada sobre a diária."],
+    tips: [
+      "Cuidado com as ciclovias: nunca caminhe nelas.",
+      "Compre os ingressos de museus e da Casa de Anne Frank antes de viajar.",
+    ],
+  },
 ];
 
 export function getReadyItinerary(slug: string) {

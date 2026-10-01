@@ -740,10 +740,12 @@ export type TripPlanRow = {
   travelers: number;
   budget_cents: number | null;
   preferences: string[];
+  /** "Conte sobre você": texto livre usado no roteiro personalizado. */
+  about: string | null;
   destination: Pick<Destination, "id" | "slug" | "name" | "state">;
 };
 
-const TRIP_SELECT = `SELECT t.id, t.start_date, t.end_date, t.travelers, t.budget_cents, t.preferences,
+const TRIP_SELECT = `SELECT t.id, t.start_date, t.end_date, t.travelers, t.budget_cents, t.preferences, t.about,
         d.id AS d_id, d.slug AS d_slug, d.name AS d_name, d.state AS d_state
    FROM trip_plans t JOIN destinations d ON d.id = t.destination_id`;
 type TripRaw = Omit<TripPlanRow, "destination"> & {
