@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
+import { useState } from "react";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -18,7 +19,7 @@ type Props = {
 };
 
 export function PostForm({ destinations, places, initialDestinationId = "" }: Props) {
-  const [state, action] = useActionState(createPost, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createPost);
   const [destinationId, setDestinationId] = useState(initialDestinationId);
   const [beachTrip, setBeachTrip] = useState(false);
   const [visited, setVisited] = useState<PickedPlace[]>([]);
@@ -29,7 +30,7 @@ export function PostForm({ destinations, places, initialDestinationId = "" }: Pr
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <form action={action} className="space-y-6" noValidate>
+    <form action={action} onReset={onReset} className="space-y-6" noValidate>
       <Field
         id="body"
         label="Como foi a viagem?"

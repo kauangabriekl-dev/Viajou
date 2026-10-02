@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const next = safeNext(typeof params.next === "string" ? params.next : "/");
   if (await getSession()) redirect(next);
   return (
-    <AuthShell title="Entrar" description="Bom te ver de novo." next={next}>
+    <AuthShell title="Entrar" description="Bom te ver de novo.">
       {params.erro && (
         <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
           Não foi possível entrar. Tente de novo.

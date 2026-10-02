@@ -7,6 +7,8 @@ import { exec, tx } from "@/lib/db/client";
 import { notify, ownerOf, visibleItinerary } from "@/lib/db/rules";
 import { friendlyError, type ActionResult } from "@/lib/errors";
 import { commentSchema, fieldErrors, reportSchema } from "@/lib/validation";
+import { hideIfReported } from "@/lib/moderation";
+import { hitLimit, LIMITS } from "@/lib/rate-limit";
 
 const id = z.uuid();
 const LOGIN_REQUIRED = "Entre na sua conta para continuar.";
@@ -169,10 +171,17 @@ export async function submitReport(
     return { ok: false, error: "Escolha um motivo.", fieldErrors: fieldErrors(parsed.error) };
   const session = await getSession();
   if (!session) return { ok: false, error: LOGIN_REQUIRED };
+  const limit = await hitLimit(`report:${session.userId}`, LIMITS.report);
+  if (!limit.allowed)
+    return { ok: false, error: "Você enviou muitas denúncias seguidas. Tente de novo mais tarde." };
 
+  // Lugares e achadinhos da comunidade têm fila própria e saem do ar com 3 denúncias.
+  const community = parsed.data.targetType === "place" || parsed.data.targetType === "achado";
   try {
     await exec(
-      "INSERT INTO reports (id, reporter_id, target_type, target_id, reason, details) VALUES ($1, $2, $3, $4, $5, $6)",
+      community
+        ? "INSERT INTO community_reports (id, reporter_id, target_type, target_id, reason, details) VALUES ($1, $2, $3, $4, $5, $6)"
+        : "INSERT INTO reports (id, reporter_id, target_type, target_id, reason, details) VALUES ($1, $2, $3, $4, $5, $6)",
       [
         crypto.randomUUID(),
         session.userId,
@@ -186,6 +195,9 @@ export async function submitReport(
     if (isDuplicate(error))
       return { ok: true, message: "Você já denunciou este conteúdo. Ele está em análise." };
     return { ok: false, error: friendlyError(error as Error, "report") };
+  }
+  if (community) {
+    await hideIfReported(parsed.data.targetType as "place" | "achado", parsed.data.targetId);
   }
   return {
     ok: true,

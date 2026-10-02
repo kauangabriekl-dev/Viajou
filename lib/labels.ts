@@ -60,6 +60,8 @@ export const reportTargetLabels: Record<ReportTarget, string> = {
   review: "avaliação",
   profile: "usuário",
   photo: "foto",
+  place: "lugar",
+  achado: "achadinho",
 };
 
 export const notificationLabels: Record<NotificationType, string> = {

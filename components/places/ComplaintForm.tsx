@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -9,10 +9,10 @@ import { createComplaint } from "@/lib/actions/complaints";
 import { complaintCategoryLabels } from "@/lib/labels";
 
 export function ComplaintForm({ placeId }: { placeId: string }) {
-  const [state, action] = useActionState(createComplaint, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createComplaint);
   const e = (f: string) => errorsFor(state, f);
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <form action={action} onReset={onReset} className="space-y-5" noValidate>
       <input type="hidden" name="placeId" value={placeId} />
       <Field id="category" label="Categoria" errors={e("category")}>
         <select

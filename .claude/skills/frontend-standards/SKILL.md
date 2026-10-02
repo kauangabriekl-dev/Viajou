@@ -32,9 +32,8 @@ Dentro de arquivos `"use client"`, arrow functions que chamam server actions est
 
 ## Dados
 
-- Leituras ficam em `lib/queries.ts` e recebem o cliente do usuário (`ServerClient`). Não chame `supabase.from()` dentro de componentes.
+- Leituras ficam em `lib/queries.ts` e recebem o `viewerId` quando o conteúdo pode ser privado. Não escreva SQL dentro de componentes.
 - A sessão vem de `getSession()`, memoizada por requisição. Páginas privadas usam `await requireSession("/rota")`, que redireciona para `/login?next=`.
-- Toda página que lê o banco começa com `createClientIfConfigured()`. Se vier `null`, retorne `<SetupNotice what="..." />`, para o app continuar de pé sem Supabase.
 - Consulte em paralelo com `Promise.all` e carregue só a aba ativa (`?aba=`).
 
 ## Formulários

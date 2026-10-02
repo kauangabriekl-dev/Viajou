@@ -1,9 +1,10 @@
 "use client";
 
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import { Flag } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useActionState, useRef } from "react";
+import { useRef } from "react";
 import { FormMessage } from "@/components/forms/FormMessage";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { submitReport } from "@/lib/actions/social";
@@ -16,7 +17,7 @@ type ReportButtonProps = { targetType: ReportTarget; targetId: string; signedIn:
 export function ReportButton({ targetType, targetId, signedIn }: ReportButtonProps) {
   const pathname = usePathname();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [state, formAction] = useActionState(submitReport, null);
+  const { state: state, formAction: formAction, onReset } = useKeptActionState(submitReport);
   const label = `Denunciar ${reportTargetLabels[targetType]}`;
   const className =
     "inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold text-tinta-soft hover:bg-red-50 hover:text-red-700";
@@ -49,7 +50,7 @@ export function ReportButton({ targetType, targetId, signedIn }: ReportButtonPro
         ref={dialogRef}
         className="m-auto w-[min(92vw,28rem)] rounded-2xl p-0 backdrop:bg-tinta/50"
       >
-        <form action={formAction} className="space-y-4 p-6">
+        <form action={formAction} onReset={onReset} className="space-y-4 p-6">
           <h2 className="text-lg font-extrabold">{label}</h2>
           <input type="hidden" name="targetType" value={targetType} />
           <input type="hidden" name="targetId" value={targetId} />

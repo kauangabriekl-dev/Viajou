@@ -2,7 +2,7 @@
 
 # VIAJOU
 
-Rede social de viagens: "Experiências reais de quem já esteve lá." Next.js 16 + Supabase, em português do Brasil.
+Rede social de viagens: "Experiências reais de quem já esteve lá." Next.js 16 + banco H2 local (modo PostgreSQL), em português do Brasil.
 
 ## Skills do projeto (`.claude/skills/`)
 

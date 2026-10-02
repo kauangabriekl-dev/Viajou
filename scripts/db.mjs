@@ -4,6 +4,7 @@
 //   npm run db:migrate   aplica as migrations novas de db/migrations
 //   npm run db:seed      critérios de avaliação + destinos/lugares de demonstração (só local)
 //   npm run db:status    migrations aplicadas e contagem das tabelas principais
+//   node scripts/db.mjs admin <username>    dá acesso à moderação (/moderacao); --remover tira
 //   node scripts/db.mjs reset --confirmar   APAGA todo o banco local (pede confirmação explícita)
 //
 // Configuração (opcional, no ambiente ou .env.local): DB_HOST, DB_PORT, DB_NAME, DB_USER,
@@ -30,13 +31,22 @@ if (existsSync(envFile)) {
   }
 }
 
-const config = {
-  host: process.env.DB_HOST || "127.0.0.1",
-  port: Number(process.env.DB_PORT || 5435),
-  database: process.env.DB_NAME || "viajou",
-  user: process.env.DB_USER || "viajou",
-  password: process.env.DB_PASSWORD || "viajou",
-};
+// DATABASE_URL (Postgres gerenciado) tem prioridade; sem ela, H2 local pelos DB_*.
+const config = process.env.DATABASE_URL
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DB_SSL === "false" ? false : { rejectUnauthorized: false },
+      host: new URL(process.env.DATABASE_URL).hostname,
+      port: Number(new URL(process.env.DATABASE_URL).port || 5432),
+      database: new URL(process.env.DATABASE_URL).pathname.slice(1),
+    }
+  : {
+      host: process.env.DB_HOST || "127.0.0.1",
+      port: Number(process.env.DB_PORT || 5435),
+      database: process.env.DB_NAME || "viajou",
+      user: process.env.DB_USER || "viajou",
+      password: process.env.DB_PASSWORD || "viajou",
+    };
 
 // Datas (DATE) voltam como texto "AAAA-MM-DD": sem conversão para o fuso local.
 pg.types.setTypeParser(1082, (value) => value);
@@ -173,6 +183,25 @@ const commands = {
         await runFile(client, join(dir, file));
         console.log(`seed: ${file}`);
       }
+    } finally {
+      await client.end();
+    }
+  },
+
+  async admin(args) {
+    const username = args.find((a) => !a.startsWith("--"));
+    if (!username) throw new Error("Uso: node scripts/db.mjs admin <username> [--remover]");
+    const remove = args.includes("--remover");
+    const client = await connect();
+    try {
+      const res = await client.query("UPDATE profiles SET is_admin = $1 WHERE username = $2", [
+        !remove,
+        username.replace(/^@/, ""),
+      ]);
+      if (!res.rowCount) throw new Error(`Usuário @${username} não encontrado.`);
+      console.log(
+        remove ? `@${username} não é mais administrador.` : `@${username} agora é administrador.`,
+      );
     } finally {
       await client.end();
     }

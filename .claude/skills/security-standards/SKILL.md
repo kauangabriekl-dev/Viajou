@@ -7,29 +7,30 @@ description: Regras de segurança e privacidade do VIAJOU (autenticação, autor
 
 ## Modelo
 
-O navegador e as server actions usam apenas a **chave anônima** do Supabase. Quem decide o que cada usuário pode fazer é o **RLS no banco**. As verificações no app melhoram as mensagens de erro, mas não são a proteção. Se uma regra só existe no TypeScript, ela não existe.
+Não há RLS: quem decide o que cada usuário pode fazer é **cada consulta e cada action**, que filtram por `viewerId` ou `user_id` da sessão. Uma regra esquecida numa consulta é um vazamento; por isso as regras compartilhadas ficam em `lib/db/rules.ts` e as listagens públicas sempre escondem conteúdo oculto pela moderação.
 
 ## Regras invioláveis
 
-- **Service role nunca** no código do app, em variável `NEXT_PUBLIC_*` ou em qualquer arquivo versionado. `.env.local` fica fora do git. `.env.example` só tem nomes e valores de exemplo.
-- **Nunca confie em ids do cliente para autoria.** O `user_id` sai de `session.userId`, e o RLS confere com `auth.uid()`.
+- **Credenciais do banco nunca** em variável `NEXT_PUBLIC_*` ou em arquivo versionado. `.env.local` fica fora do git. `.env.example` só tem nomes e valores de exemplo.
+- **Nunca confie em ids do cliente para autoria.** O `user_id` sai sempre de `session.userId`.
 - **Server actions são endpoints públicos**: qualquer um pode chamá-las com qualquer argumento. Valide todo argumento com Zod (`z.uuid()` para ids) e confira a sessão dentro da action.
 - **Redirecionamentos** usam `safeNext()` (`lib/url.ts`), que só aceita caminhos internos. `//evil.com`, `https://...` e `/\evil.com` caem em `/`.
 - **Erros** chegam ao usuário só via `friendlyError`. Mensagem crua do Postgres revela nomes de tabelas e regras.
-- **Sessão no servidor** vem de `supabase.auth.getUser()` (validada no Auth), nunca de `getSession()` do supabase-js, que só lê o cookie.
+- **Sessão** vem de `getSession()` (`lib/auth.ts`), que confere no banco o hash do token do cookie; senha com scrypt e comparação em tempo constante.
 
 ## Uploads
 
 - Valide tipo **e** assinatura binária (`matchesSignature`), extensão coerente e tamanho, via `uploadImages()`. Arquivo HTML renomeado para `.jpg` precisa ser rejeitado, e existe teste para isso.
-- O caminho é sempre `<userId>/<pasta>/<uuid>.<ext>`, gerado no servidor. As políticas do Storage exigem que a primeira pasta seja o `auth.uid()`.
-- O bucket `photos` é público para leitura. Não guarde nele nada que não deva ser público.
-- **Pendente e importante**: remover metadados EXIF (incluindo GPS) antes do upload. Fotos de viagem podem revelar onde a pessoa está hospedada ou mora. Ao mexer em uploads, trate isso como prioridade.
+- O caminho é sempre `<userId>/<pasta>/<uuid>.<ext>`, gerado no servidor, e `/fotos/...` só serve nomes nesse formato.
+- As fotos enviadas são públicas para leitura. Não guarde nelas nada que não deva ser público.
+- A localização GPS (EXIF/XMP) é apagada antes de salvar (`lib/image-privacy.ts`).
 
 ## Abuso
 
 - Limites no banco evitam duplicação: PKs compostas (curtida, salvo, follow), `unique` em avaliação e denúncia.
-- Ainda **não há limite de requisições** para cadastro, comentários, denúncias e reclamações. Ao adicionar, prefira o rate limit do Supabase Auth para login e cadastro, e um contador por usuário e janela de tempo no banco ou num serviço como Upstash para o resto.
-- `serverActions.bodySizeLimit` está em 55 MB por causa das fotos. Não aumente, e se possível reduza, migrando para upload direto ao Storage com URL assinada.
+- Login e cadastro têm limite de tentativas por IP e por e-mail (`lib/rate-limit.ts`, tabela `rate_limits`). Use o mesmo `hitLimit()` ao proteger outras ações (comentários, denúncias, reclamações).
+- Lugares e achadinhos da comunidade saem do ar sozinhos com 3 denúncias e voltam ou são removidos em `/moderacao` (só administradores).
+- `serverActions.bodySizeLimit` está em 55 MB por causa das fotos. Não aumente, e se possível reduza, migrando para upload direto a um armazenamento de arquivos com URL assinada.
 
 ## Dados pessoais (LGPD)
 

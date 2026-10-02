@@ -12,7 +12,6 @@ A regra principal: **o build passar não prova que funciona.** Nesta base, bugs 
 | Comando                              | O que cobre                                                     | Onde                          |
 | ------------------------------------ | --------------------------------------------------------------- | ----------------------------- |
 | `npm test`                           | Validação Zod, `friendlyError`, imagens, `safeNext`, formatação | `tests/*.test.ts` (Vitest)    |
-| `npm run test:db`                    | RLS, constraints, triggers, RPCs, Storage                       | `supabase/tests/rls.test.sql` |
 | `npm run lint` / `npm run typecheck` | Estilo e tipos (inclui `next typegen`)                          | —                             |
 | `npm run build`                      | Compilação de produção                                          | —                             |
 

@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     is_community: boolean;
   }>(
     `SELECT id, name, type, city, state, is_community FROM places
-      WHERE search_key LIKE $1 ${typeFilter}
+      WHERE search_key LIKE $1 AND hidden_at IS NULL ${typeFilter}
       ORDER BY CASE WHEN destination_id = $2 THEN 0 ELSE 1 END, reviews_count DESC, name
       LIMIT 8`,
     params,

@@ -1,7 +1,5 @@
 /**
- * Tipos das tabelas do Supabase (espelham supabase/migrations).
- * Quando houver um projeto Supabase, gere a versão oficial com:
- *   npx supabase gen types typescript --project-id <id> > types/supabase.ts
+ * Tipos das tabelas do banco (espelham db/migrations). Mantenha em dia a cada migration nova.
  */
 
 export type PlaceType = "hotel" | "restaurant" | "beach" | "attraction" | "tour" | "other";
@@ -14,7 +12,7 @@ export type ComplaintCategory =
   | "advertising"
   | "other";
 export type ComplaintStatus = "pending" | "answered" | "resolved" | "closed";
-export type ReportTarget = "post" | "comment" | "review" | "profile" | "photo";
+export type ReportTarget = "post" | "comment" | "review" | "profile" | "photo" | "place" | "achado";
 export type ReportReason =
   "spam" | "offensive" | "false_information" | "fraud" | "inappropriate" | "other";
 export type NotificationType =

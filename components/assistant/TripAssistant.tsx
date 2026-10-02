@@ -237,16 +237,10 @@ export async function TripAssistant({
               Compre um chip virtual (eSIM) antes de embarcar: você chega com internet, sem depender
               de Wi-Fi nem pagar roaming. Confira se o seu celular aceita eSIM.
             </p>
-            <a
-              href="https://esim.holafly.com/pt/"
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="mt-2 inline-flex min-h-10 items-center gap-1 rounded-full border border-linha px-3 text-xs font-semibold text-petroleo hover:border-petroleo"
-            >
-              Ver planos de eSIM (Holafly)
-              <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
-              <span className="sr-only">(abre em nova aba)</span>
-            </a>
+            <p className="mt-2 text-xs text-tinta-soft">
+              Ao comparar planos, veja se cobre todos os países do roteiro, quantos GB inclui e se
+              dá para recarregar pelo aplicativo.
+            </p>
           </Section>
         )}
 

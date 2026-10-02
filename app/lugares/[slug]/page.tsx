@@ -12,6 +12,7 @@ import { DemoBadge } from "@/components/ui/DemoBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RatingStars } from "@/components/ui/RatingStars";
 import { Tabs } from "@/components/ui/Tabs";
+import { ReportButton } from "@/components/social/ReportButton";
 import { getSession } from "@/lib/auth";
 import { placeTypeLabels } from "@/lib/labels";
 import {
@@ -79,7 +80,10 @@ export default async function PlacePage({ params, searchParams }: PageProps<"/lu
               </>
             )}
           </p>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl">{place.name}</h1>
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl">{place.name}</h1>
+            <ReportButton targetType="place" targetId={place.id} signedIn={Boolean(session)} />
+          </div>
           <div className="flex flex-wrap items-center gap-3">
             {place.reviews_count > 0 ? (
               <>

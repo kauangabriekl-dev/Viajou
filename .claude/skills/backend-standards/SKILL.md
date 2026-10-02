@@ -1,6 +1,6 @@
 ---
 name: backend-standards
-description: Padrões de backend do VIAJOU (server actions, Supabase SSR, validação com Zod 4, tratamento de erros, uploads). Use SEMPRE que for criar ou alterar arquivos em lib/actions/, lib/queries.ts, lib/supabase/, route handlers, schemas de validação ou qualquer código que escreva no banco ou no Storage.
+description: Padrões de backend do VIAJOU (server actions, banco H2 via lib/db, validação com Zod 4, tratamento de erros, uploads). Use SEMPRE que for criar ou alterar arquivos em lib/actions/, lib/queries.ts, lib/db/, route handlers, schemas de validação ou qualquer código que escreva no banco ou nos arquivos enviados.
 ---
 
 # Backend do VIAJOU
@@ -9,8 +9,8 @@ description: Padrões de backend do VIAJOU (server actions, Supabase SSR, valida
 
 - **Escritas** são server actions em `lib/actions/<domínio>.ts`, com `"use server"`.
 - **Leituras** ficam em `lib/queries.ts`, com `import "server-only"`.
-- **Clientes Supabase**: `lib/supabase/server.ts` (servidor, com cookies), `client.ts` (navegador) e `proxy.ts` (renova a sessão). Todos usam a chave anônima, porque a segurança vem do RLS.
-- **A service role nunca entra no app.** Tarefas administrativas ficam em scripts ou no painel do Supabase.
+- **Banco**: `lib/db/client.ts` (`rows`, `one`, `exec`, `tx`, `inList`, `sqlArray`). Não há RLS: a regra de acesso fica na própria consulta (veja `database-standards`).
+- **Sessão**: `lib/auth.ts` (`getSession`, `requireSession`, `startSession`, `endSession`), cookie httpOnly com o hash da sessão no banco.
 
 ## Anatomia de uma server action
 
@@ -32,11 +32,16 @@ export async function createX(
   // 2. Sessão
   const session = await getSession();
   if (!session) return { ok: false, error: "Entre na sua conta para continuar." };
-  // 3. Escrever com user_id da sessão (o RLS confere de novo)
-  const { error } = await session.supabase
-    .from("x")
-    .insert({ ...parsed.data, user_id: session.userId });
-  if (error) return { ok: false, error: friendlyError(error, "createX") };
+  // 3. Escrever com user_id da sessão (nunca um id vindo do cliente)
+  try {
+    await exec("INSERT INTO x (id, user_id, nome) VALUES ($1, $2, $3)", [
+      crypto.randomUUID(),
+      session.userId,
+      parsed.data.nome,
+    ]);
+  } catch (error) {
+    return { ok: false, error: friendlyError(error as Error, "createX") };
+  }
   // 4. Revalidar e responder
   revalidatePath("/rota");
   return { ok: true, message: "Pronto." };
@@ -45,14 +50,14 @@ export async function createX(
 
 - Actions chamadas com argumentos (toggles, exclusões) validam o id com `z.uuid()`, porque são endpoints públicos e qualquer um pode chamá-los.
 - `redirect()` fica fora de try/catch, pois funciona lançando uma exceção.
-- Em UPDATE e DELETE, filtre também por `user_id` e acrescente `.select("id")`. O RLS filtra em silêncio (0 linhas, sem erro), então "nada aconteceu" precisa virar uma mensagem clara.
-- Operações que precisam ser atômicas em várias tabelas viram RPC em SQL (`create_itinerary`, `copy_itinerary`). Quando não dá, faça compensação: se as fotos falham, apague o post e os arquivos já enviados.
+- Em UPDATE e DELETE, filtre também por `user_id` e confira o `rowCount` que `exec()` devolve: 0 linhas significa que não era da pessoa, e isso vira uma mensagem clara.
+- Operações em várias tabelas usam `tx()`. Arquivos não entram na transação: se as fotos falham, apague o que já foi gravado.
 
 ## Erros
 
-- Nunca exiba `error.message` do Postgres ou do Supabase. Use `friendlyError(error, contexto)`, que registra no log fora de produção e devolve um texto amigável.
+- Nunca exiba `error.message` do banco. Use `friendlyError(error, contexto)`, que registra no log fora de produção e devolve um texto amigável.
 - Código de erro novo recebe mapeamento em `lib/errors.ts` e um teste em `tests/utils.test.ts`.
-- Em `queries.ts`, `unwrap` (listas) e `unwrapOne` (item único) lançam erro, e o `error.tsx` da rota responde.
+- Em `queries.ts`, erro de banco sobe e o `error.tsx` da rota responde.
 
 ## Zod 4: armadilhas reais
 

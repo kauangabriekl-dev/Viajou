@@ -41,19 +41,19 @@ export function DestinationInsights({ insights, destination, viewerId, activeTop
       />
 
       <Link
-        href={`${basePath}/roteiro`}
+        href={`/vou-viajar?destino=${destination.id}`}
         className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] bg-petroleo px-6 py-5 text-white hover:bg-petroleo-900"
       >
         <span>
           <span className="block text-lg font-semibold">
-            Roteiro pronto para {destination.name}
+            Monte seu roteiro para {destination.name}
           </span>
           <span className="block text-sm font-light text-white/85">
-            Montado com os lugares mais bem avaliados e votados pela comunidade.
+            Com os lugares mais bem avaliados pela comunidade, no seu ritmo e do seu jeito.
           </span>
         </span>
         <span className="rounded-full bg-agua px-5 py-2.5 text-sm font-semibold text-tinta">
-          Ver roteiro
+          Vou viajar
         </span>
       </Link>
 

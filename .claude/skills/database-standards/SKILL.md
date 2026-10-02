@@ -1,52 +1,49 @@
 ---
 name: database-standards
-description: Padrões de banco do VIAJOU (PostgreSQL/Supabase, migrations, RLS, triggers, funções RPC, seed). Use SEMPRE que for criar ou alterar tabelas, colunas, índices, políticas RLS, triggers, funções SQL, o seed ou o bucket de Storage, ou quando uma consulta nova depender de uma relação entre tabelas.
+description: Padrões de banco do VIAJOU (H2 em modo PostgreSQL, migrations, regras no app, seed). Use SEMPRE que for criar ou alterar tabelas, colunas, índices, o seed, as consultas de lib/queries.ts ou qualquer regra de quem pode ler ou escrever o quê.
 ---
 
 # Banco de dados do VIAJOU
 
-## Migrations
+## Onde fica
 
-- Ficam em `supabase/migrations/AAAAMMDDHHMMSS_descricao.sql`. **Nunca edite uma migration já aplicada**: crie uma nova. As três atuais são `_schema`, `_rls` e `_storage`.
-- Uma mudança de schema vem sempre acompanhada de: política RLS, atualização de `types/database.ts` e teste em `supabase/tests/rls.test.sql`.
-- Tudo com prefixo `public.` e explícito. Funções com `set search_path`.
+- Banco **H2 2.5** em modo PostgreSQL, servidor local na porta 5435 (`npm run db:start`), dados em `.data/db`. O app conecta pelo driver `pg` (`lib/db/client.ts`).
+- Migrations em `db/migrations/NNNN_descricao.sql`, aplicadas em ordem por `npm run db:migrate`. **Nunca edite uma migration já aplicada**: crie a próxima. Toda mudança de schema atualiza também `types/database.ts`.
+- Seeds em `db/seed/` (critérios, destinos do mundo, demonstração). `02_demo_local.sql` só roda fora de produção.
+
+## Particularidades do H2
+
+- `DEFAULT` vem antes de `PRIMARY KEY` na definição da coluna.
+- Não há `RETURNING`: gere ids com `crypto.randomUUID()` no Node e insira.
+- Parâmetro dentro de `ARRAY[...]` derruba o servidor: use `sqlArray()` (literais validados) e `inList()` (um parâmetro por item).
+- `"key"` é palavra reservada: use aspas.
+- DDL faz commit automático: não conte com rollback de migration.
+- Erros: `23505` (único), `23506` (chave estrangeira), `23513` (CHECK).
+- Datas chegam como `2026-10-01 09:32:51-03`: converta com `toIsoTimestamp` (`lib/db/dates.ts`).
 
 ## Regras de modelagem
 
-- Chaves primárias `uuid default gen_random_uuid()`. Tabelas de vínculo (curtidas, salvos, seguidores) usam PK composta, que é o que impede duplicação.
-- Regras de negócio moram em constraints, não só no app: `unique (place_id, user_id)` em reviews (uma avaliação por usuário e lugar), `check (follower_id <> following_id)`, notas entre 1 e 5, `trip_end >= trip_start`, limites de tamanho de texto, e username no formato `^[a-z0-9_]{3,30}$`.
-- Dinheiro em `integer` de centavos. Datas de viagem em `date`, eventos em `timestamptz`.
-- Enums para conjuntos fechados (`place_type`, `complaint_status`...). Rótulos de UI ficam em `lib/labels.ts`, não no banco.
-- Dados de demonstração têm `is_demo = true`, para a UI mostrar o selo.
-- Toda coluna usada em filtro ou ordenação frequente leva índice. Para busca, a ideia é um índice trigram sobre `normalize_text(...)` quando o volume crescer.
+- Chaves primárias `UUID DEFAULT RANDOM_UUID()`. Tabelas de vínculo (curtidas, salvos, seguidores) usam chave composta, que impede duplicação.
+- Regras de negócio também em constraints: uma avaliação por usuário e lugar, notas de 1 a 5, `end_date >= start_date`, tamanho de textos, username `^[a-z0-9_]{3,30}$`.
+- Dinheiro em inteiro de centavos. Datas de viagem em `DATE`, eventos em `TIMESTAMP WITH TIME ZONE`.
+- Conjuntos fechados em `CHECK (coluna IN (...))`; rótulos de UI ficam em `lib/labels.ts`.
+- Dados de demonstração têm `is_demo = TRUE`, para a UI mostrar o selo.
+- Coluna usada em filtro ou ordenação frequente leva índice.
 
-## RLS: o modelo de segurança
+## Quem pode ler e escrever (as regras vivem no app)
 
-RLS é ligado em **todas** as tabelas. O app usa só a chave anônima, então a política é a última linha de defesa.
+Não existe RLS: **toda** consulta e ação aplica a regra explicitamente.
 
-- Conteúdo público (posts, avaliações, perfis): `select using (true)`. Escrita: `with check (user_id = auth.uid())`.
-- Privado (salvos, notificações, planos, denúncias): `select using (user_id = auth.uid())`.
-- Tabelas filhas herdam a visibilidade do pai via `exists (...)` (dias e paradas de roteiros privados).
-- Catálogo (destinos, lugares, critérios) não tem política de escrita: só a service role escreve.
-- Resposta a reclamação exige estabelecimento com `claim_status = 'verified'` e vinculado ao lugar.
-- Transições de estado ficam em trigger (`guard_complaint_status`), porque o RLS não compara valor antigo e novo.
-
-Lembre que UPDATE e DELETE bloqueados pelo RLS **não dão erro**: afetam 0 linhas. INSERT bloqueado dá `42501`.
-
-## Funções e triggers
-
-- `SECURITY DEFINER` só quando precisa ultrapassar o RLS de forma controlada (criar perfil, notificar, recalcular nota média), sempre com `set search_path = public`. Revogue EXECUTE de `anon` e `authenticated` quando a função não deve ser chamada direto (ex.: `notify`).
-- RPCs chamadas pelo app são `SECURITY INVOKER`, para que o RLS continue valendo (`create_itinerary`, `copy_itinerary`, `search_all`).
-- Notificações nascem por trigger (follow, curtida, comentário, roteiro salvo, resposta de estabelecimento), nunca pelo app, e ignoram ações do usuário sobre o próprio conteúdo.
-
-## Relações e PostgREST
-
-Ao criar uma segunda FK entre as mesmas tabelas, ou uma tabela de junção, as consultas que já existem ficam ambíguas e passam a falhar em runtime. Procure em `lib/queries.ts` os embeds afetados e adicione o hint `!nome_da_fk`.
+- Leituras em `lib/queries.ts` recebem o `viewerId` quando o conteúdo pode ser privado (roteiros, planos, salvos) e filtram por ele.
+- Escritas em `lib/actions/` começam com `requireSession()` e conferem o dono com `WHERE user_id = $n`; use o `rowCount` de `exec()` para saber se a linha era mesmo da pessoa.
+- Regras compartilhadas (nota média do lugar, notificações, visibilidade de roteiro, dono do conteúdo) ficam em `lib/db/rules.ts`.
+- Conteúdo da comunidade oculto pela moderação (`hidden_at` preenchido) não aparece em nenhuma listagem pública.
+- Notificações ignoram ações do usuário sobre o próprio conteúdo.
 
 ## Seed
 
-`supabase/seed.sql` contém só critérios de avaliação, destinos reais com textos próprios e lugares **fictícios** marcados "(demo)". Nunca crie usuários, avaliações ou publicações falsas no seed.
+Só critérios de avaliação, destinos reais com textos próprios e lugares **fictícios** marcados "(demo)". Nunca crie usuários, avaliações ou publicações falsas.
 
 ## Testar
 
-`npm run test:db` recria um banco local, aplica stub, migrations e seed, e roda `supabase/tests/rls.test.sql`. Para cada regra nova, escreva ao menos um caso permitido e um negado, usando `tests.throws(sql, sqlstate, msg)` ou `tests.affected(sql)` (este para UPDATE e DELETE). O stub `00_local_supabase_stub.sql` imita o Supabase e **nunca** deve ser aplicado num projeto real.
+Funções puras (motor de roteiros, validação, datas) têm testes em `tests/` (`npm test`). Regras de acesso novas devem ser conferidas também num teste de ponta a ponta com dois usuários (um dono, um não dono).

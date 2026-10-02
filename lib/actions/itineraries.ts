@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getSession } from "@/lib/auth";
-import { exec, one, rows, searchKey, sqlArray, tx } from "@/lib/db/client";
+import { exec, inList, one, rows, searchKey, sqlArray, tx } from "@/lib/db/client";
 import { visibleItinerary } from "@/lib/db/rules";
 import { friendlyError, type ActionResult } from "@/lib/errors";
 import { fieldErrors, itinerarySchema, type ItineraryInput } from "@/lib/validation";
@@ -43,6 +43,21 @@ export async function createItinerary(
         ],
         client,
       );
+      // Cada parada guarda o nome do lugar como reserva: se o lugar for apagado,
+      // o roteiro continua mostrando o que era (a coluna place_id vira NULL).
+      const placeIds = [
+        ...new Set(d.days.flatMap((day) => day.stops.map((st) => st.placeId))),
+      ].filter((v): v is string => Boolean(v));
+      const names = new Map<string, string>();
+      if (placeIds.length) {
+        const list = inList(placeIds, 1);
+        for (const p of await rows<{ id: string; name: string }>(
+          `SELECT id, name FROM places WHERE id ${list.sql}`,
+          list.params,
+          client,
+        ))
+          names.set(p.id, p.name.slice(0, 120));
+      }
       for (const [dayIndex, day] of d.days.entries()) {
         const dayId = crypto.randomUUID();
         await exec(
@@ -58,7 +73,7 @@ export async function createItinerary(
               crypto.randomUUID(),
               dayId,
               stop.placeId ?? null,
-              stop.customName ?? null,
+              stop.customName ?? (stop.placeId ? (names.get(stop.placeId) ?? null) : null),
               stop.startTime ?? null,
               stop.notes ?? null,
               position,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { StarInput } from "@/components/forms/StarInput";
@@ -12,13 +12,13 @@ type Props = { destinationId: string; destinationName: string };
 
 /** Avaliar o destino como um todo: nota, melhores meses, gasto por dia e relato. */
 export function DestinationReviewForm({ destinationId, destinationName }: Props) {
-  const [state, action] = useActionState(createDestinationReview, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createDestinationReview);
   if (state?.ok) return <FormMessage state={state} />;
   const e = (f: string) => errorsFor(state, f);
   const thisYear = new Date().getFullYear();
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <form action={action} onReset={onReset} className="space-y-5" noValidate>
       <input type="hidden" name="destinationId" value={destinationId} />
       <StarInput
         name="rating"
@@ -126,11 +126,17 @@ export function DestinationReviewForm({ destinationId, destinationName }: Props)
 
 /** Dica por assunto: melhor época, café da manhã, onde comer, onde ficar, passeios, custo, transporte. */
 export function TipForm({ destinationId, defaultTopic }: Props & { defaultTopic?: string }) {
-  const [state, action] = useActionState(createTip, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createTip);
   const e = (f: string) => errorsFor(state, f);
 
   return (
-    <form action={action} className="space-y-5" noValidate key={state?.ok ? "enviado" : "novo"}>
+    <form
+      action={action}
+      onReset={onReset}
+      className="space-y-5"
+      noValidate
+      key={state?.ok ? "enviado" : "novo"}
+    >
       <input type="hidden" name="destinationId" value={destinationId} />
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-tinta">Sobre o quê?</legend>

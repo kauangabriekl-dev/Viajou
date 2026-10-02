@@ -2,7 +2,6 @@ import "server-only";
 import { inList, one, rows } from "@/lib/db/client";
 import { distanceKm, normalizePlace } from "@/lib/geo-search";
 import { destinationStyleValues } from "@/lib/labels";
-import type { Candidate } from "@/lib/suggested-itinerary";
 import type {
   Achado,
   Comment,
@@ -130,7 +129,7 @@ async function stylesFor(destinationIds: string[]): Promise<Map<string, Destinat
       ids.params,
     ),
     rows<{ destination_id: string; category: string }>(
-      `SELECT DISTINCT destination_id, category FROM achados WHERE destination_id ${ids.sql}`,
+      `SELECT DISTINCT destination_id, category FROM achados WHERE hidden_at IS NULL AND destination_id ${ids.sql}`,
       ids.params,
     ),
   ]);
@@ -193,6 +192,8 @@ export async function listPlaces(
 ): Promise<PlaceSummary[]> {
   const where: string[] = [];
   const params: unknown[] = [];
+  // Lugar tirado do ar pela moderação não aparece em listagem nenhuma.
+  where.push("hidden_at IS NULL");
   if (filters.destinationId) where.push(`destination_id = $${params.push(filters.destinationId)}`);
   if (filters.type) where.push(`type = $${params.push(filters.type)}`);
   if (filters.minReviews) where.push(`reviews_count >= $${params.push(filters.minReviews)}`);
@@ -207,7 +208,7 @@ export async function getPlace(slug: string) {
   const place = await one<Place>(
     `SELECT id, destination_id, slug, name, type, description, address, city, state, country,
             latitude, longitude, image_url, website, phone, rating_avg, reviews_count, is_demo
-       FROM places WHERE slug = $1`,
+       FROM places WHERE slug = $1 AND hidden_at IS NULL`,
     [slug],
   );
   if (!place) return null;
@@ -234,7 +235,7 @@ export async function listDestinationOptions() {
 
 export async function listPlaceOptions() {
   return rows<Pick<Place, "id" | "name" | "type" | "destination_id">>(
-    "SELECT id, name, type, destination_id FROM places ORDER BY name LIMIT 500",
+    "SELECT id, name, type, destination_id FROM places WHERE hidden_at IS NULL ORDER BY name LIMIT 500",
   );
 }
 
@@ -785,7 +786,7 @@ export async function searchAll(q: string, viewerId?: Viewer): Promise<SearchRes
       [term],
     ),
     rows<PlaceSummary>(
-      `SELECT ${PLACE_SUMMARY} FROM places WHERE search_key LIKE $1 ORDER BY reviews_count DESC, name LIMIT 8`,
+      `SELECT ${PLACE_SUMMARY} FROM places WHERE search_key LIKE $1 AND hidden_at IS NULL ORDER BY reviews_count DESC, name LIMIT 8`,
       [term],
     ),
     rows<ProfileSummary>(
@@ -925,6 +926,7 @@ export async function listAchados(
   const params: unknown[] = [];
   if (filters.destinationId) where.push(`destination_id = $${params.push(filters.destinationId)}`);
   if (filters.userId) where.push(`user_id = $${params.push(filters.userId)}`);
+  where.push("hidden_at IS NULL");
   if (filters.ids) {
     const list = inList(filters.ids, params.length + 1);
     where.push(`id ${list.sql}`);
@@ -939,7 +941,10 @@ export async function listAchados(
 }
 
 export async function getAchado(id: string): Promise<Achado | null> {
-  const row = await one<AchadoRow>(`SELECT ${ACHADO_COLUMNS} FROM achados WHERE id = $1`, [id]);
+  const row = await one<AchadoRow>(
+    `SELECT ${ACHADO_COLUMNS} FROM achados WHERE id = $1 AND hidden_at IS NULL`,
+    [id],
+  );
   return row ? (await hydrateAchados([row]))[0] : null;
 }
 
@@ -951,103 +956,6 @@ export async function viewerSavedAchado(userId: string | undefined, achadoId: st
       achadoId,
     ]),
   );
-}
-
-// ---------------------------------------------------------------------------
-// Roteiro sugerido pela comunidade: reúne os sinais (notas, votos, salvos, uso em roteiros)
-// ---------------------------------------------------------------------------
-const ACHADO_KIND: Record<string, Candidate["kind"]> = {
-  comida: "food",
-  cafe: "cafe",
-  praia: "beach",
-  mirante: "sight",
-  trilha: "sight",
-  cachoeira: "sight",
-  cultura: "sight",
-  compras: "other",
-  outro: "other",
-};
-const TIP_KIND: Partial<Record<string, Candidate["kind"]>> = {
-  cafe_da_manha: "breakfast",
-  onde_comer: "food",
-  passeios: "sight",
-};
-
-export async function getSuggestionCandidates(destinationId: string): Promise<Candidate[]> {
-  const [places, picks, uses, achados, tips] = await Promise.all([
-    rows<{
-      id: string;
-      slug: string;
-      name: string;
-      type: PlaceType;
-      rating_avg: number;
-      reviews_count: number;
-    }>(
-      "SELECT id, slug, name, type, rating_avg, reviews_count FROM places WHERE destination_id = $1",
-      [destinationId],
-    ),
-    rows<{ place_id: string; kind: string; n: number }>(
-      `SELECT b.place_id, b.kind, COUNT(*) AS n FROM post_beach_picks b
-         JOIN places p ON p.id = b.place_id WHERE p.destination_id = $1 GROUP BY b.place_id, b.kind`,
-      [destinationId],
-    ),
-    rows<{ place_id: string; n: number }>(
-      `SELECT ip.place_id, COUNT(DISTINCT d.itinerary_id) AS n
-         FROM itinerary_places ip
-         JOIN itinerary_days d ON d.id = ip.day_id
-         JOIN itineraries i ON i.id = d.itinerary_id
-         JOIN places p ON p.id = ip.place_id
-        WHERE i.is_public = TRUE AND p.destination_id = $1
-        GROUP BY ip.place_id`,
-      [destinationId],
-    ),
-    rows<{ id: string; title: string; category: string; saves: number }>(
-      `SELECT a.id, a.title, a.category, (SELECT COUNT(*) FROM achado_saves s WHERE s.achado_id = a.id) AS saves
-         FROM achados a WHERE a.destination_id = $1`,
-      [destinationId],
-    ),
-    rows<{ id: string; title: string; topic: string; votes: number }>(
-      `SELECT t.id, t.title, t.topic, (SELECT COUNT(*) FROM destination_tip_votes v WHERE v.tip_id = t.id) AS votes
-         FROM destination_tips t WHERE t.destination_id = $1`,
-      [destinationId],
-    ),
-  ]);
-  const pick = (placeId: string, kind: string) =>
-    Number(picks.find((p) => p.place_id === placeId && p.kind === kind)?.n ?? 0);
-  return [
-    ...places.map((p): Candidate => ({
-      key: `place:${p.id}`,
-      name: p.name,
-      source: "place",
-      kind: p.type,
-      placeSlug: p.slug,
-      ratingAvg: Number(p.rating_avg),
-      reviewsCount: Number(p.reviews_count),
-      recommendVotes: pick(p.id, "recomenda"),
-      favoriteVotes: pick(p.id, "favorita"),
-      avoidVotes: pick(p.id, "nao_voltaria"),
-      itineraryUses: Number(uses.find((u) => u.place_id === p.id)?.n ?? 0),
-    })),
-    ...achados.map((a): Candidate => ({
-      key: `achado:${a.id}`,
-      name: a.title,
-      source: "achado",
-      kind: ACHADO_KIND[a.category] ?? "other",
-      achadoId: a.id,
-      // Achadinho conta como recomendação de quem postou, mais quem salvou.
-      recommendVotes: 1,
-      saves: Number(a.saves),
-    })),
-    ...tips
-      .filter((t) => TIP_KIND[t.topic] && Number(t.votes) > 0)
-      .map((t): Candidate => ({
-        key: `tip:${t.id}`,
-        name: t.title,
-        source: "tip",
-        kind: TIP_KIND[t.topic]!,
-        tipVotes: Number(t.votes),
-      })),
-  ];
 }
 
 export type { ProfileSummary };
@@ -1075,7 +983,7 @@ export async function listStaysNear(
   const dLng = radiusKm / (111 * Math.max(0.1, Math.cos((latitude * Math.PI) / 180)));
   const found = await rows<PlaceSummary & { latitude: number; longitude: number }>(
     `SELECT ${PLACE_SUMMARY}, latitude, longitude FROM places
-      WHERE type = 'hotel' AND latitude BETWEEN $1 AND $2 AND longitude BETWEEN $3 AND $4
+      WHERE type = 'hotel' AND hidden_at IS NULL AND latitude BETWEEN $1 AND $2 AND longitude BETWEEN $3 AND $4
       LIMIT 300`,
     [latitude - dLat, latitude + dLat, longitude - dLng, longitude + dLng],
   );

@@ -3,7 +3,7 @@ import { exec, one, type Queryable } from "@/lib/db/client";
 import type { NotificationType } from "@/types/database";
 
 /**
- * Regras que no Supabase eram triggers e RLS, agora chamadas pelas Server Actions
+ * Regras de negócio do banco (antes eram triggers e RLS), chamadas pelas Server Actions
  * dentro da mesma transação da escrita.
  */
 

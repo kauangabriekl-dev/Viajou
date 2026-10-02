@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { ImageUploader } from "@/components/forms/ImageUploader";
@@ -10,10 +10,10 @@ import { updateProfile } from "@/lib/actions/profile";
 import type { Profile } from "@/types/database";
 
 export function ProfileForm({ profile }: { profile: Profile }) {
-  const [state, action] = useActionState(updateProfile, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(updateProfile);
   const e = (f: string) => errorsFor(state, f);
   return (
-    <form action={action} className="space-y-6" noValidate>
+    <form action={action} onReset={onReset} className="space-y-6" noValidate>
       <div className="flex items-center gap-4">
         <Avatar name={profile.full_name} src={profile.avatar_url} size="lg" />
         <div className="flex-1">

@@ -23,15 +23,21 @@ pg.types.setTypeParser(1700, (v) => Number(v)); // NUMERIC (médias, coordenadas
 export type Queryable = { query: pg.Pool["query"] | pg.PoolClient["query"] };
 
 function createPool() {
-  return new pg.Pool({
-    host: process.env.DB_HOST || "127.0.0.1",
-    port: Number(process.env.DB_PORT || 5435),
-    database: process.env.DB_NAME || "viajou",
-    user: process.env.DB_USER || "viajou",
-    password: process.env.DB_PASSWORD || "viajou",
-    max: 5,
-    idleTimeoutMillis: 30_000,
-  });
+  // Em produção, um Postgres gerenciado costuma vir como DATABASE_URL (com SSL).
+  // Sem ela, usa o H2 local pelos DB_* (padrões de desenvolvimento).
+  const connection = process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.DB_SSL === "false" ? false : { rejectUnauthorized: false },
+      }
+    : {
+        host: process.env.DB_HOST || "127.0.0.1",
+        port: Number(process.env.DB_PORT || 5435),
+        database: process.env.DB_NAME || "viajou",
+        user: process.env.DB_USER || "viajou",
+        password: process.env.DB_PASSWORD || "viajou",
+      };
+  return new pg.Pool({ ...connection, max: 5, idleTimeoutMillis: 30_000 });
 }
 
 // Em desenvolvimento o módulo é recarregado a cada mudança: reaproveita o pool.

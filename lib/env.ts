@@ -14,9 +14,3 @@ const emptyToUndefined = (value: string | undefined) => (value ? value : undefin
 export const publicEnv = publicSchema.parse({
   NEXT_PUBLIC_SITE_URL: emptyToUndefined(process.env.NEXT_PUBLIC_SITE_URL),
 });
-
-/**
- * Login com Google dependia do Supabase Auth e ainda não existe no banco local.
- * O botão fica escondido até haver um provedor OAuth configurado.
- */
-export const googleAuthEnabled = false;

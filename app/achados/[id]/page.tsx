@@ -5,6 +5,7 @@ import { Navigation } from "lucide-react";
 import { z } from "zod";
 import { AchadoSaveButton, DeleteAchado } from "@/components/achados/AchadoActions";
 import { AchadosMap } from "@/components/achados/AchadosMap";
+import { ReportButton } from "@/components/social/ReportButton";
 import { Avatar } from "@/components/ui/Avatar";
 import { Container } from "@/components/ui/Container";
 import { getSession } from "@/lib/auth";
@@ -66,7 +67,11 @@ export default async function AchadoPage({ params }: PageProps<"/achados/[id]">)
             count={achado.saves}
             signedIn={Boolean(session)}
           />
-          {session?.userId === achado.user_id && <DeleteAchado achadoId={achado.id} />}
+          {session?.userId === achado.user_id ? (
+            <DeleteAchado achadoId={achado.id} />
+          ) : (
+            <ReportButton targetType="achado" targetId={achado.id} signedIn={Boolean(session)} />
+          )}
         </div>
       </header>
 

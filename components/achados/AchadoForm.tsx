@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import { LocationPicker } from "@/components/achados/LocationPicker";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
@@ -11,11 +11,11 @@ import { achadoCategories } from "@/lib/labels";
 
 /** Postar um achadinho: foto, o que tem de especial e a localização exata. */
 export function AchadoForm() {
-  const [state, action] = useActionState(createAchado, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createAchado);
   const e = (f: string) => errorsFor(state, f);
 
   return (
-    <form action={action} className="space-y-6" noValidate>
+    <form action={action} onReset={onReset} className="space-y-6" noValidate>
       <Field id="title" label="Nome do achadinho" errors={e("title")}>
         <input
           id="title"

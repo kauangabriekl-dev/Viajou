@@ -1,5 +1,5 @@
 /**
- * Converte erros técnicos (Postgres/Supabase/Auth) em mensagens amigáveis.
+ * Converte erros técnicos (banco e login) em mensagens amigáveis.
  * Detalhes técnicos só vão para o log do servidor, nunca para a interface.
  */
 type ErrorLike = { code?: string; message?: string; status?: number } | null | undefined;

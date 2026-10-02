@@ -1,7 +1,8 @@
 "use client";
 
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import Link from "next/link";
-import { useActionState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { SubmitButton } from "@/components/forms/SubmitButton";
@@ -14,7 +15,7 @@ import { formatRelativeDate } from "@/utils/format";
 type CommentSectionProps = { postId: string; comments: Comment[]; viewerId: string | null };
 
 export function CommentSection({ postId, comments, viewerId }: CommentSectionProps) {
-  const [state, formAction] = useActionState(addComment, null);
+  const { state: state, formAction: formAction, onReset } = useKeptActionState(addComment);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export function CommentSection({ postId, comments, viewerId }: CommentSectionPro
       )}
 
       {viewerId ? (
-        <form ref={formRef} action={formAction} className="space-y-3">
+        <form ref={formRef} action={formAction} onReset={onReset} className="space-y-3">
           <input type="hidden" name="postId" value={postId} />
           <label htmlFor="comment-body" className="sr-only">
             Escreva um comentário

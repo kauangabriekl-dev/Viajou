@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { StarInput } from "@/components/forms/StarInput";
@@ -16,7 +16,7 @@ export function ReviewForm({
   placeId: string;
   categories: ReviewCategory[];
 }) {
-  const [state, action] = useActionState(createReview, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createReview);
   if (state?.ok) return <FormMessage state={state} />;
   const body = errorsFor(state, "body");
   const today = new Date().toISOString().slice(0, 10);
@@ -24,6 +24,7 @@ export function ReviewForm({
   return (
     <form
       action={action}
+      onReset={onReset}
       className="space-y-5 rounded-[var(--radius-card)] bg-white p-5 ring-1 ring-linha sm:p-6"
       noValidate
     >

@@ -1,7 +1,7 @@
 "use client";
 
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import Link from "next/link";
-import { useActionState } from "react";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { SubmitButton } from "@/components/forms/SubmitButton";
@@ -16,12 +16,13 @@ type Props = {
 };
 
 export function TripPlanForm({ destinations, initialDestinationId = "", signedIn }: Props) {
-  const [state, action] = useActionState(createTripPlan, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(createTripPlan);
   const e = (f: string) => errorsFor(state, f);
   const today = new Date().toISOString().slice(0, 10);
   return (
     <form
       action={action}
+      onReset={onReset}
       className="space-y-5 rounded-[2rem] bg-white p-6 ring-1 ring-linha sm:p-8"
       noValidate
     >

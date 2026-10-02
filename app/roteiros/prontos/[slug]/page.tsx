@@ -44,11 +44,11 @@ export default async function ReadyItineraryPage({
     <Container>
       <div className="pt-8">
         <Link
-          href="/roteiros/prontos"
+          href="/roteiros?origem=equipe"
           className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-petroleo hover:underline"
         >
           <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-          Roteiros prontos
+          Roteiros
         </Link>
       </div>
 
@@ -80,7 +80,7 @@ export default async function ReadyItineraryPage({
             {r.styles.map((s) => (
               <li key={s}>
                 <Link
-                  href={`/roteiros/prontos?estilo=${s}`}
+                  href={`/destinos?estilo=${s}`}
                   className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-petroleo-100 px-3 text-sm font-medium text-petroleo hover:bg-petroleo hover:text-white"
                 >
                   <StyleIcon style={s} />

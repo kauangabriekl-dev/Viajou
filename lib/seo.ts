@@ -14,10 +14,13 @@ export function buildMetadata({
   title,
   description = siteConfig.description,
   path = "/",
+  noIndex = false,
 }: {
   title?: string;
   description?: string;
   path?: string;
+  /** Páginas internas (moderação) ficam fora dos buscadores. */
+  noIndex?: boolean;
 }): Metadata {
   const fullTitle = title
     ? `${title} | ${siteConfig.name}`
@@ -26,6 +29,7 @@ export function buildMetadata({
     title: fullTitle,
     description,
     alternates: { canonical: path },
+    ...(noIndex ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title: fullTitle,
       description,

@@ -5,9 +5,15 @@ import { endSession, safeNext, startSession } from "@/lib/auth";
 import { exec, one, searchKey, tx } from "@/lib/db/client";
 import { friendlyError, type ActionResult } from "@/lib/errors";
 import { dummyPasswordHash, hashPassword, verifyPassword } from "@/lib/password";
+import { clearLimit, clientIp, hitLimit, LIMITS } from "@/lib/rate-limit";
 import { fieldErrors, signInSchema, signUpSchema } from "@/lib/validation";
 
 const WRONG_LOGIN: ActionResult = { ok: false, error: "E-mail ou senha incorretos." };
+
+const tooMany = (minutes: number): ActionResult => ({
+  ok: false,
+  error: `Muitas tentativas. Tente de novo em ${minutes} ${minutes === 1 ? "minuto" : "minutos"}.`,
+});
 
 export async function signUp(
   _prev: ActionResult | null,
@@ -21,6 +27,9 @@ export async function signUp(
       fieldErrors: fieldErrors(parsed.error),
     };
   const { fullName, username, email, password } = parsed.data;
+
+  const signupLimit = await hitLimit(`signup:ip:${await clientIp()}`, LIMITS.signupIp);
+  if (!signupLimit.allowed) return tooMany(signupLimit.retryAfterMinutes);
 
   const [emailTaken, usernameTaken] = await Promise.all([
     one("SELECT id FROM users WHERE email = $1", [email]),
@@ -40,7 +49,7 @@ export async function signUp(
   const userId = crypto.randomUUID();
   const passwordHash = await hashPassword(password);
   try {
-    // Conta e perfil nascem juntos (no Supabase isso era o trigger handle_new_user).
+    // Conta e perfil nascem juntos, na mesma transação.
     await tx(async (client) => {
       await exec(
         "INSERT INTO users (id, email, password_hash) VALUES ($1, $2, $3)",
@@ -76,6 +85,13 @@ export async function signIn(
       fieldErrors: fieldErrors(parsed.error),
     };
 
+  // Limite por IP (todas as contas) e por e-mail (protege uma conta específica).
+  const emailBucket = `login:email:${parsed.data.email}`;
+  const ipLimit = await hitLimit(`login:ip:${await clientIp()}`, LIMITS.loginIp);
+  if (!ipLimit.allowed) return tooMany(ipLimit.retryAfterMinutes);
+  const emailLimit = await hitLimit(emailBucket, LIMITS.loginEmail);
+  if (!emailLimit.allowed) return tooMany(emailLimit.retryAfterMinutes);
+
   const user = await one<{ id: string; password_hash: string }>(
     "SELECT id, password_hash FROM users WHERE email = $1",
     [parsed.data.email],
@@ -86,6 +102,7 @@ export async function signIn(
     user?.password_hash ?? (await dummyPasswordHash()),
   );
   if (!user || !valid) return WRONG_LOGIN;
+  await clearLimit(emailBucket);
 
   try {
     await startSession(user.id);
@@ -93,11 +110,6 @@ export async function signIn(
     return { ok: false, error: friendlyError(error as Error, "signIn") };
   }
   redirect(safeNext(formData.get("next")));
-}
-
-/** Login com Google não existe no banco local; o botão só aparece com NEXT_PUBLIC_ENABLE_GOOGLE_AUTH=true. */
-export async function signInWithGoogle() {
-  redirect("/login?erro=oauth");
 }
 
 export async function signOut() {

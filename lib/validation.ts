@@ -187,7 +187,7 @@ export const complaintSchema = z.object({
 });
 
 export const reportSchema = z.object({
-  targetType: z.enum(["post", "comment", "review", "profile", "photo"]),
+  targetType: z.enum(["post", "comment", "review", "profile", "photo", "place", "achado"]),
   targetId: z.uuid(),
   reason: z.enum(["spam", "offensive", "false_information", "fraud", "inappropriate", "other"], {
     error: "Escolha um motivo.",

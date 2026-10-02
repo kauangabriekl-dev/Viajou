@@ -1,18 +1,18 @@
 "use client";
 
+import { useKeptActionState } from "@/components/forms/useKeptActionState";
 import Link from "next/link";
-import { useActionState } from "react";
 import { Field, describedBy, inputClass } from "@/components/forms/Field";
 import { FormMessage, errorsFor } from "@/components/forms/FormMessage";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { signIn, signUp } from "@/lib/actions/auth";
 
 export function SignInForm({ next }: { next: string }) {
-  const [state, action] = useActionState(signIn, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(signIn);
   const emailErr = errorsFor(state, "email");
   const passErr = errorsFor(state, "password");
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <form action={action} onReset={onReset} className="space-y-5" noValidate>
       <input type="hidden" name="next" value={next} />
       <Field id="email" label="E-mail" errors={emailErr}>
         <input
@@ -53,11 +53,11 @@ export function SignInForm({ next }: { next: string }) {
 }
 
 export function SignUpForm() {
-  const [state, action] = useActionState(signUp, null);
+  const { state: state, formAction: action, onReset } = useKeptActionState(signUp);
   if (state?.ok) return <FormMessage state={state} />;
   const e = (f: string) => errorsFor(state, f);
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <form action={action} onReset={onReset} className="space-y-5" noValidate>
       <Field id="fullName" label="Nome" errors={e("fullName")}>
         <input
           id="fullName"

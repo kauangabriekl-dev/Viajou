@@ -57,7 +57,6 @@ Toda lista ou página com dados tem:
 - **Vazio**: `<EmptyState>` com frase humana e, quando fizer sentido, uma ação ("Seja a primeira pessoa a…").
 - **Erro**: o `error.tsx` da rota, com "Tentar de novo". Erros de formulário aparecem no campo e no topo.
 - **Carregando**: botões com `pendingLabel`; ações otimistas no `ToggleButton`. Não crie `loading.tsx` na raiz (veja `frontend-standards`).
-- **Sem Supabase**: `<SetupNotice>`.
 - **Demo**: `<DemoBadge>` sempre que houver dado de demonstração.
 
 ## Mobile-first
