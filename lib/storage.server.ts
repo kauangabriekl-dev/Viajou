@@ -6,8 +6,9 @@ import { checkImage, IMAGE_MAX_FILES, matchesSignature } from "@/lib/images";
 import { PHOTO_PATH, type PhotoFolder } from "@/lib/storage";
 
 /** Pasta das fotos enviadas (fora do git). Configurável com UPLOAD_DIR. */
+// turbopackIgnore: sem ele, o build inclui o projeto inteiro (e public/) em cada função do servidor.
 export const UPLOAD_DIR = resolve(
-  process.env.UPLOAD_DIR || join(process.cwd(), ".data", "uploads"),
+  /*turbopackIgnore: true*/ process.env.UPLOAD_DIR || join(process.cwd(), ".data", "uploads"),
 );
 
 /** Caminho absoluto de uma foto, só para caminhos no formato gerado pelo servidor. */
