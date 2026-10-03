@@ -15,6 +15,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
+import { toPostgres } from "./sql-dialect.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = join(ROOT, ".data");
@@ -103,7 +104,8 @@ function statements(sql) {
 }
 
 async function runFile(client, file) {
-  for (const statement of statements(readFileSync(file, "utf8"))) {
+  const sql = readFileSync(file, "utf8");
+  for (const statement of statements(process.env.DATABASE_URL ? toPostgres(sql) : sql)) {
     try {
       await client.query(statement);
     } catch (err) {

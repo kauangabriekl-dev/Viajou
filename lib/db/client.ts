@@ -107,6 +107,8 @@ export function inList(values: readonly unknown[], start: number) {
  * Só aceite valores já validados por enum (tags, preferências): aspas são escapadas mesmo assim.
  */
 export function sqlArray(values: readonly string[]): string {
+  // No Postgres, ARRAY[] vazio não tem tipo e dá erro; '{}' vira o array da coluna.
+  if (!values.length && process.env.DATABASE_URL) return "'{}'";
   return `ARRAY[${values.map((v) => `'${String(v).replace(/'/g, "''")}'`).join(", ")}]`;
 }
 

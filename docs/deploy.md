@@ -13,18 +13,26 @@ DB_SSL=true          # padrão; use false só em rede privada sem SSL
 
 Com `DATABASE_URL`, o app e `scripts/db.mjs` ignoram os `DB_*` locais.
 
-**As migrations estão no dialeto do H2.** Antes de rodar `npm run db:migrate` num Postgres, é preciso uma versão Postgres delas. As diferenças conhecidas:
+**As migrations continuam no dialeto do H2.** Com `DATABASE_URL` definido, `scripts/db.mjs` as traduz na hora para Postgres (`scripts/sql-dialect.mjs`, testado em `tests/sql-dialect.test.ts`):
 
-| No H2 (`db/migrations`)                         | No Postgres                               |
-| ----------------------------------------------- | ----------------------------------------- |
-| `UUID DEFAULT RANDOM_UUID()`                    | `UUID DEFAULT gen_random_uuid()`          |
-| `VARCHAR(40) ARRAY DEFAULT ARRAY[] NOT NULL`    | `VARCHAR(40)[] DEFAULT '{}' NOT NULL`     |
-| `REGEXP_LIKE(coluna, 'padrão')`                 | `coluna ~ 'padrão'` (ou `regexp_like`, Postgres 15+) |
-| `CHAR_LENGTH`, `ON CONFLICT DO NOTHING`, `LEFT` | iguais                                    |
+| No H2 (`db/migrations`)                         | No Postgres                           |
+| ----------------------------------------------- | ------------------------------------- |
+| `UUID DEFAULT RANDOM_UUID()`                    | `UUID DEFAULT gen_random_uuid()`      |
+| `VARCHAR(40) ARRAY DEFAULT ARRAY[] NOT NULL`    | `VARCHAR(40)[] DEFAULT '{}' NOT NULL` |
+| `... ON UPDATE CURRENT_TIMESTAMP`               | removido (o app não lê `updated_at`)  |
+| `REGEXP_LIKE`, `ON CONFLICT DO NOTHING`, `LEFT` | iguais (`regexp_like`: Postgres 15+)  |
 
-Recomendação: criar `db/migrations-postgres/` com as 6 migrations traduzidas e testá-las num Postgres local (Docker ou instalação) antes do primeiro deploy. Isso ainda **não foi feito nem testado**.
+No app, `sqlArray([])` vira `'{}'` com `DATABASE_URL` (no Postgres, `ARRAY[]` vazio não tem tipo).
 
-As consultas do app (`lib/queries.ts`, `lib/actions/`) usam SQL padrão e foram escritas para o modo PostgreSQL do H2; ainda assim, rode o teste de ponta a ponta contra o Postgres antes de abrir o site.
+Testado num PostgreSQL 17 local: migrations, seed, páginas públicas, cadastro e criação de roteiro. Para preparar o banco de produção (Neon, por exemplo), rode do seu computador, com a URL **sem pooler**:
+
+```
+$env:DATABASE_URL="postgresql://...neon.tech/neondb?sslmode=require"   # PowerShell
+npm run db:migrate
+npm run db:seed -- --sem-demo
+```
+
+Se você criar outra migration, não use construções do H2 fora da tabela acima sem ensinar a tradução em `scripts/sql-dialect.mjs`.
 
 ## 2. Armazenamento das fotos dos usuários
 
